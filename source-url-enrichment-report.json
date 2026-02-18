@@ -1,0 +1,1056 @@
+{
+  "matches": [
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1186/cheimwniatikh-froytosalata",
+      "recipeId": "cmlgcvmbo000c7d8q3qz3187d",
+      "recipeTitle": "Winter fruit salad",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/912/giaoyrtloy-kempap",
+      "recipeId": "cmlgcvmo100267d8q5tykdzc6",
+      "recipeTitle": "Greek lamb kebab- Giaourtlou",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7938/doner-kebab",
+      "recipeId": "cmlhuy65800ot13k8bd0usra8",
+      "recipeTitle": "Turkish Doner Kebab",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3120/fakes",
+      "recipeId": "cmlhux1b900e713k8owghj5sj",
+      "recipeTitle": "Mediterranean Lentil Salad",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6012/salata-me-fakes-pligoyri-kai-lachanika",
+      "recipeId": "cmlhux1b900e713k8owghj5sj",
+      "recipeTitle": "Mediterranean Lentil Salad",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3366/fasolakia-ladera-kokkinista",
+      "recipeId": "cmlgcy4ml006j7d8q2eh1ft98",
+      "recipeTitle": "Greek green bean and olive oil stew",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3442/gigantes-foyrnoy",
+      "recipeId": "cmlgcy4qx007w7d8qgi39titm",
+      "recipeTitle": "Greek baked giant beans – Gigantes",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3098/fasolada",
+      "recipeId": "cmlgcy4tx00997d8q2i4a55bt",
+      "recipeTitle": "Greek white bean soup - Fasolada",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4445/revithada",
+      "recipeId": "cmlhwyslo001ah7orwuxk06zh",
+      "recipeTitle": "Moroccan Chickpea Stew",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4138/salata-me-revithia",
+      "recipeId": "cmlge5jop0017dknx1bdyu372",
+      "recipeTitle": "Greek warm spinach and chickpea salad with sauteed chicken",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2075/revithia-me-spanaki-kai-kotopoylo",
+      "recipeId": "cmlge5jop0017dknx1bdyu372",
+      "recipeTitle": "Greek warm spinach and chickpea salad with sauteed chicken",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3920/salata-me-mayromatika-fasolia",
+      "recipeId": "cmlgdqd1q000i3t52cob5lat1",
+      "recipeTitle": "Greek black eyed peas salad",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3196/arakas-kokkinistos",
+      "recipeId": "cmlgdu9c1001k3t52yui7zgm5",
+      "recipeTitle": "Greek tomato pea stew",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3214/h-fava-toy-akh",
+      "recipeId": "cmlgdu9gc002m3t52s7dbw7iv",
+      "recipeTitle": "Traditional Greek fava (yellow split pea puree)",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1369/hummus",
+      "recipeId": "cmlgdu9nc003k3t522qltim2y",
+      "recipeTitle": "Hummus",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3278/agkinares-ala-polita",
+      "recipeId": "cmlgdu9qa004h3t52ha2bdj31",
+      "recipeTitle": "Greek artichoke stew",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/608/gemista",
+      "recipeId": "cmlge9c260024dknxy30io4p4",
+      "recipeTitle": "Greek stuffed vegetables - Gemista",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4046/gemista-me-kima",
+      "recipeId": "cmlge9c6i003gdknx6sxrcr8p",
+      "recipeTitle": "Greek stuffed vegetables with rice and ground meat",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6551/tourlou-stin-katsarola",
+      "recipeId": "cmlge9cab004qdknxbohhkj8n",
+      "recipeTitle": "Greek vegetable stew – Tourlou",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8436/souvlakia-kotopoulou-lemon-pepper",
+      "recipeId": "cmlge9cms006idknxa5u5irn1",
+      "recipeTitle": "Lemon pepper chicken skewers",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2658/mpiftekia-ston-foyrno",
+      "recipeId": "cmlgeveks001sf71tjk51lokb",
+      "recipeTitle": "Old-fashioned Greek burgers - Biftekia",
+      "matchMethod": "slug",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6261/ta-mpiftekia-ths-mamas",
+      "recipeId": "cmlgeveks001sf71tjk51lokb",
+      "recipeTitle": "Old-fashioned Greek burgers - Biftekia",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6690/ta-keftedakia-ths-giagias",
+      "recipeId": "cmlhux22000it13k8bm7e8r7x",
+      "recipeTitle": "Chicken Meatballs",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/232/xoirines-mprizoles-lemonates-me-patates-ston-foyrno",
+      "recipeId": "cmlgeveu0003of71tvr5sv49s",
+      "recipeTitle": "Greek lemon roasted pork chops",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3829/kotopoylo-fileto-pshto-me-tsili-kai-laim",
+      "recipeId": "cmlgevexo004if71tfo4bnqzn",
+      "recipeTitle": "Chili lime chicken fillets",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4613/arni-lemonato-me-patates-ston-foyrno",
+      "recipeId": "cmlgf87vj000fnlu8awyifz5a",
+      "recipeTitle": "Greek lemon roast lamb and potatoes",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1998/pws-na-pshsoyme-moscharisies-mprizoles",
+      "recipeId": "cmlhuy6o300t013k8utcbf24t",
+      "recipeTitle": "Philly Cheesesteak",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4060/elafry-kotopoylo-foyrnoy",
+      "recipeId": "cmlgf881y0023nlu87b2ve999",
+      "recipeTitle": "Roast chicken (light)",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5141/snitsel-kotopoylo",
+      "recipeId": "cmlgf885e002snlu8p137dpqw",
+      "recipeTitle": "Chicken schnitzel",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5076/klasiko-snitsel",
+      "recipeId": "cmlgf888x003mnlu8ycj251tk",
+      "recipeTitle": "Classic schnitzel",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8684/snitsel-choirino-me-patates-sto-air-fryer",
+      "recipeId": "cmlgfapn5004enlu85ul8z36b",
+      "recipeTitle": "Air fryer pork schnitzel with fries",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2076/moschari-kokkinisto",
+      "recipeId": "cmlgfapqa0058nlu8yorqchfx",
+      "recipeTitle": "Tomato beef stew",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4467/kotopoylo-kokkinisto",
+      "recipeId": "cmlgfapuk006bnlu8xrivol2v",
+      "recipeTitle": "Tomato chicken stew",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6150/spanakoryzo-kokkinisto",
+      "recipeId": "cmlgfapx5007gnlu8u59cvb00",
+      "recipeTitle": "Greek spinach and rice with tomato – Spanakorizo",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3719/prasoryzo",
+      "recipeId": "cmlghyenm0001b4kaoqp99z2o",
+      "recipeTitle": "Greek leeks and rice - Prasorizo",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5814/ntomatosoypa-me-pswmi",
+      "recipeId": "cmlghyeo90003b4kadt80lycz",
+      "recipeTitle": "Tomato and bread soup",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4354/soypa-kolokythas",
+      "recipeId": "cmlghyeoq0005b4kauvfxxxcj",
+      "recipeTitle": "Pumpkin soup",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3620/soypa-minestrone",
+      "recipeId": "cmlghyep80007b4kadbn6p2hn",
+      "recipeTitle": "Minestrone soup",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7989/manitarosoupa-me-manitaria-sote-kai-krema-tyriou",
+      "recipeId": "cmlghyepp0009b4ka1q6p4spm",
+      "recipeTitle": "Mushroom soup with sauteed mushrooms and cream cheese",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/9502/gallikh-kremmydosoupa",
+      "recipeId": "cmlhuy70v00un13k8bb08g9de",
+      "recipeTitle": "French Onion Soup Gratinée",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/9411/efkolh-kotosoupa",
+      "recipeId": "cmlgj41jm0014e1j0n9ty5brg",
+      "recipeTitle": "Easy chicken soup",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/118/to-pastitsio-toy-akh",
+      "recipeId": "cmlgj41wu003he1j0gydoxple",
+      "recipeTitle": "Greek Pastitsio - Akis' baked pasta",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3989/ntomatokeftedes-santorinhs",
+      "recipeId": "cmlgj4229004pe1j04sieft4n",
+      "recipeTitle": "Santorini tomato fritters – Tomatokeftedes",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1338/kolokythokeftedes",
+      "recipeId": "cmlgkb49q000ivgch6ufwn8jf",
+      "recipeTitle": "Greek zucchini fritters",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/628/falafel",
+      "recipeId": "cmlgkb4fp001nvgchov0scjqe",
+      "recipeTitle": "Falafel",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1559/moysakas",
+      "recipeId": "cmlgkb4n50030vgchf6pnbc8z",
+      "recipeTitle": "Authentic Greek moussaka",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3443/imam-mpailnti",
+      "recipeId": "cmlgketga0047vgchgdmj027i",
+      "recipeTitle": "Imam bayildi",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8337/pshtes-melitzanes-me-saltsa-ntomatas-kai-feta",
+      "recipeId": "cmlgketiw0053vgchfetar2rd",
+      "recipeTitle": "Baked eggplants with tomato sauce and feta",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5786/paradosiako-mpriam",
+      "recipeId": "cmlgketm10064vgch3iwjn30p",
+      "recipeTitle": "Greek vegetable medley – Briam",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4429/eykolo-soyfle",
+      "recipeId": "cmlgkuelx000drxn123m1tx8b",
+      "recipeTitle": "Easy cheese souffle",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5053/gioyvetsi-keftedakia",
+      "recipeId": "cmlgkuere001krxn14ys0jijq",
+      "recipeTitle": "Meatball and orzo casserole",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2481/gioyvetsi-moschari",
+      "recipeId": "cmlgkuev4002zrxn156t4swm4",
+      "recipeTitle": "Greek beef and orzo casserole - Giouvetsi",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4792/aythentikh-karmponara",
+      "recipeId": "cmlgkwn1t003wrxn15sl8wn5t",
+      "recipeTitle": "Classic carbonara",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6517/grhgorh-makaronada-napolitana",
+      "recipeId": "cmlgkwn4e004orxn12xo2wq84",
+      "recipeTitle": "Quick pasta Napoletana",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8179/garidomakaronada-se-1-skevos",
+      "recipeId": "cmlgkwn96005mrxn1cyfckkdq",
+      "recipeTitle": "One-pot shrimp pasta",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/51/pesto-ala-genovese",
+      "recipeId": "cmlgmzld100077bflms9d23fr",
+      "recipeTitle": "Pesto alla Genovese",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7211/rigkatoni-mpolonez",
+      "recipeId": "cmlgmzlg000107bflkc7upolb",
+      "recipeTitle": "Rigatoni Bolognese",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3600/kanelonia-me-kima-kai-mpesamel",
+      "recipeId": "cmlgmzlkc00297bfljvu3l0f1",
+      "recipeTitle": "Beef cannelloni with béchamel sauce",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4555/lazania-me-kima",
+      "recipeId": "cmlgn234x003l7bflyub815u3",
+      "recipeTitle": "Beef lasagna",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7046/trahanas-soypa",
+      "recipeId": "cmlgn238q004p7bflzu5kfqqo",
+      "recipeTitle": "Greek trahana soup - Trahanosoupa",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5144/gioyvarlakia-avgolemono",
+      "recipeId": "cmlgn23cl005p7bflwdykz01z",
+      "recipeTitle": "Greek meatball soup – Yuvarlakia",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3446/kolokythakia-gemista-me-avgolemono",
+      "recipeId": "cmlge9c260024dknxy30io4p4",
+      "recipeTitle": "Greek stuffed vegetables - Gemista",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1381/rigkatoni-me-ragoy-genovese",
+      "recipeId": "cmlgnj3on001y1u9wpaugrx3d",
+      "recipeTitle": "Rigatoni in a Genovese Ragu",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/175/rizoto-me-manitaria",
+      "recipeId": "cmlgnj3ub002w1u9w92eyncbz",
+      "recipeTitle": "Mushroom risotto",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8641/atzem-pilafi",
+      "recipeId": "cmlgnkysg003x1u9wp8922rff",
+      "recipeTitle": "Greek-style lamb with rice - Ajem pilafi",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2729/tyropita-koyroy",
+      "recipeId": "cmlhux1cz00er13k825w2kvpj",
+      "recipeTitle": "Tyropita (Greek Cheese Pie)",
+      "matchMethod": "slug",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/599/goyakamole",
+      "recipeId": "cmlgnkz3a005w1u9wiv9i0p6j",
+      "recipeTitle": "Guacamole",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/4182/salata-kapreze",
+      "recipeId": "cmlgo8kg1000ap4c4sjc58hbo",
+      "recipeTitle": "Caprese salad",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7129/pantzarosalata",
+      "recipeId": "cmlgo8kiy000wp4c4v99ft9k4",
+      "recipeTitle": "Beetroot salad",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3635/ellhnika-scrambled-eggs",
+      "recipeId": "cmlgo8kmf001jp4c4a5vrxxsw",
+      "recipeTitle": "Greek scrambled eggs",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5517/omeleta-foyrnoy-me-ntomata-kai-piperia",
+      "recipeId": "cmlgoozln0009ixwlcwb7x449",
+      "recipeTitle": "Oven baked tomato and pepper omelet",
+      "matchMethod": "slug",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5881/pitsa-margarita",
+      "recipeId": "cmlgoozoy000xixwlfhlvr5p6",
+      "recipeTitle": "Margherita pizza",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3158/patates-pshtes-ston-foyrno",
+      "recipeId": "cmlgoozsk001oixwld54zmljm",
+      "recipeTitle": "Greek Crunchy Roast Potatoes",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1434/paella",
+      "recipeId": "cmlgor4ev002sixwl7b7r2fw7",
+      "recipeTitle": "Paella",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5220/patatosalata-me-avga",
+      "recipeId": "cmlgor4kq003wixwlsqyzkihg",
+      "recipeTitle": "Potato salad with eggs",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/1971/chwriatikh-salata",
+      "recipeId": "cmlgor4n8004pixwl8fwne89z",
+      "recipeTitle": "Authentic Greek salad - Horiatiki",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/543/caesar-salad",
+      "recipeId": "cmlgpmb5x0001124zoym05umk",
+      "recipeTitle": "Caesar salad",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6324/fish-and-chips-ston-foyrno",
+      "recipeId": "cmlgpn88r0003124z3surtm37",
+      "recipeTitle": "Baked fish and chips",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/2917/giaoyrti-me-mhla-mpacharika-kai-meli",
+      "recipeId": "cmlgpw973000b94iwv0nfmly8",
+      "recipeTitle": "Yogurt with Apples Honey and Spices",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5454/cheeseburger",
+      "recipeId": "cmlgpx3nv001494iwrdog2yaj",
+      "recipeTitle": "Cheeseburger",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8899/mpougiournti",
+      "recipeId": "cmlgpy73w001x94iw00ul89xo",
+      "recipeTitle": "Greek spicy baked feta - Bouyiourdi",
+      "matchMethod": "slug",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5162/takos-me-kima",
+      "recipeId": "cmlgpzg8a002r94iw77s70udi",
+      "recipeTitle": "Ground beef tacos",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6735/paradosiaki-tyrokauteri",
+      "recipeId": "cmlgq0z6z003g94iw4ejvdtt6",
+      "recipeTitle": "Classic Greek spicy cheese dip",
+      "matchMethod": "slug",
+      "confidence": 0.6666666666666666
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/3447/lachanontolmades",
+      "recipeId": "cmlgsvfvn000lv2oihuqn92o2",
+      "recipeTitle": "Greek cabbage rolls",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5479/takos-me-kotopoylo",
+      "recipeId": "cmlhuy6ih00rm13k8dx3ics4c",
+      "recipeTitle": "Chicken Tacos",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/9233/tacos-me-moschari-fajitas",
+      "recipeId": "cmlgzyjfk003sfm3aa6f2ss9q",
+      "recipeTitle": "Beef fajita tacos",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8407/kotopoulo-me-kokkino-kari",
+      "recipeId": "cmlh00ke0006qfm3alazcnoaz",
+      "recipeTitle": "Red curry chicken",
+      "matchMethod": "slug",
+      "confidence": 0.5
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/5457/eykola-lachmatzoyn",
+      "recipeId": "cmlhuy5eu00jz13k86v4cz9o5",
+      "recipeTitle": "Lahmacun Turkish Pizza",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/6165/moscharaki-kari-sth-chytra-tachythtas",
+      "recipeId": "cmlgzx414001pfm3a3x2paavm",
+      "recipeTitle": "Pressure-cooker beef curry",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7856/kebab-kotopoulou",
+      "recipeId": "cmlgzwfjb000lfm3aislmz0rl",
+      "recipeTitle": "Chicken kebab",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/110/klasiko-tampoyle",
+      "recipeId": "cmlgxnpo0000bvlqc232y4zgr",
+      "recipeTitle": "Classic tabbouleh",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/7320/poke-bowl-me-tartar-solomou",
+      "recipeId": "cmlgsw61n001qv2oigp9bllhp",
+      "recipeTitle": "Salmon tartare poke bowl",
+      "matchMethod": "slug",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/268091/easy-korean-ground-beef-bowl/",
+      "recipeId": "cmlhuwza4002913k8mox2liyp",
+      "recipeTitle": "Easy Korean Beef Bowl",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/128589/oyakodon-japanese-chicken-and-egg-rice-bowl/",
+      "recipeId": "cmlhuwzew002w13k8tk2y03cg",
+      "recipeTitle": "Oyakodon (Japanese Chicken and Egg Rice Bowl)",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/256834/buddha-bowl/",
+      "recipeId": "cmlhuwzo6003s13k8eguwhldb",
+      "recipeTitle": "Buddha Bowl Recipe",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/240391/baja-style-chicken-bowl/",
+      "recipeId": "cmlhuwzro004n13k8vvmzx8mi",
+      "recipeTitle": "Baja-Style Chicken Bowl",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/148232/asian-shrimp-rice-bowl/",
+      "recipeId": "cmlhuwzww005d13k8z4avsnri",
+      "recipeTitle": "Shrimp Rice Bowl",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/220123/black-bean-breakfast-bowl/",
+      "recipeId": "cmlhuwzz0006113k8oorbqf7g",
+      "recipeTitle": "Black Bean Breakfast Bowl",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/228241/vegetarian-bibimbap/",
+      "recipeId": "cmlhux052006o13k8lym0c7aj",
+      "recipeTitle": "Vegetarian Bibimbap",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/240390/mexican-vegetable-rice-bowl/",
+      "recipeId": "cmlhux09d007h13k8mrjbf0rd",
+      "recipeTitle": "Mexican Vegetable Rice Bowl",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/75439/tuna-tartare/",
+      "recipeId": "cmlhux0bz008313k832p4ii3f",
+      "recipeTitle": "Tuna Tartare",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/60315/original-steak-tartare/",
+      "recipeId": "cmlhux0f3008l13k86gb52g39",
+      "recipeTitle": "Original Steak Tartare",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/76469/mexican-ceviche/",
+      "recipeId": "cmlhux0l3009813k884m43zuo",
+      "recipeTitle": "Mexican Ceviche",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/237607/basic-ceviche/",
+      "recipeId": "cmlhux0of009w13k83rnasxmk",
+      "recipeTitle": "Basic Ceviche",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/best-ever-ceviche-recipe-8403887",
+      "recipeId": "cmlhux0u100al13k89skk15zu",
+      "recipeTitle": "Best Ever Ceviche",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/90396/avocado-shrimp-ceviche-estillo-sarita/",
+      "recipeId": "cmlhux0yd00bc13k8pg65oi4l",
+      "recipeTitle": "Avocado Shrimp Ceviche ",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/12870/ahi-poke-basic/",
+      "recipeId": "cmlhux10j00by13k8ej5bx6ax",
+      "recipeTitle": "Ahi Tuna Poke",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/263252/do-it-yourself-salmon-poke-bowls/",
+      "recipeId": "cmlhux15900cm13k88796z9h7",
+      "recipeTitle": "Do-It-Yourself Salmon Poke Bowls",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/254946/chef-johns-hawaiian-style-ahi-poke/",
+      "recipeId": "cmlhux19400df13k8xm7fgjnn",
+      "recipeTitle": "Chef John&#39;s Hawaiian-Style Ahi Poke",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/14260/mediterranean-lentil-salad/",
+      "recipeId": "cmlhux1b900e713k8owghj5sj",
+      "recipeTitle": "Mediterranean Lentil Salad",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/279590/greek-cheese-pie/",
+      "recipeId": "cmlhux1cz00er13k825w2kvpj",
+      "recipeTitle": "Tyropita (Greek Cheese Pie)",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/12210/cream-cheese-pie/",
+      "recipeId": "cmlhux1fm00f513k8kuqrx6in",
+      "recipeTitle": "Cream Cheese Pie",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/24213/spinach-pie/",
+      "recipeId": "cmlhux1i700fo13k8qaz6avp5",
+      "recipeTitle": "Spinach Pie",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/18417/spanakopita-greek-spinach-pie/",
+      "recipeId": "cmlhux1n100gc13k887imjdia",
+      "recipeTitle": "Spanakopita (Greek Spinach Pie)",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/chicken-piccata-meatballs-recipe-8696288",
+      "recipeId": "cmlhux1sz00h713k82wu1jn5f",
+      "recipeTitle": "Chicken Piccata Meatballs",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/203203/cheesy-chicken-meatballs/",
+      "recipeId": "cmlhux1wf00i213k8comlzu6h",
+      "recipeTitle": "Cheesy Chicken Meatballs",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/chicken-meatballs-recipe-8646171",
+      "recipeId": "cmlhux22000it13k8bm7e8r7x",
+      "recipeTitle": "Chicken Meatballs",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/215594/lahmacun-turkish-pizza/",
+      "recipeId": "cmlhuy5eu00jz13k86v4cz9o5",
+      "recipeTitle": "Lahmacun Turkish Pizza",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/54538/lahmahjoon-armenian-pizza/",
+      "recipeId": "cmlhuy5km00l513k843ruvyoy",
+      "recipeTitle": "Lahmahjoon (Armenian Pizza)",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/240559/traditional-gyros/",
+      "recipeId": "cmlhuy5sa00m313k8vtn7qh63",
+      "recipeTitle": "Traditional Gyros",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/173420/traditional-gyro-meat/",
+      "recipeId": "cmlhuy5w700n113k8de0qlq95",
+      "recipeTitle": "Traditional Gyro Meat",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/easy-doner-style-kebab-recipe-11871835",
+      "recipeId": "cmlhuy62n00ny13k822gt6au6",
+      "recipeTitle": "Easy Doner-Style Kebab",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/easy-doner-style-kebab-recipe-11873236",
+      "recipeId": "cmlhuy63800oj13k88lzueqb3",
+      "recipeTitle": "Dinners",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/262546/authentic-turkish-doner-kebab/",
+      "recipeId": "cmlhuy65800ot13k8bd0usra8",
+      "recipeTitle": "Turkish Doner Kebab",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/64116/creamy-spiced-coleslaw/",
+      "recipeId": "cmlhuy66x00pd13k8emqx72ph",
+      "recipeTitle": "Creamy Spiced Coleslaw",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/24475/egg-souffle/",
+      "recipeId": "cmlhuy6ab00py13k8inkjz3dd",
+      "recipeTitle": "Egg Soufflé",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/246866/rigatoni-alla-genovese/",
+      "recipeId": "cmlhuy6ea00qq13k8s001w3ox",
+      "recipeTitle": "Rigatoni alla Genovese",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/37906/chicken-tacos/",
+      "recipeId": "cmlhuy6ih00rm13k8dx3ics4c",
+      "recipeTitle": "Chicken Tacos",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/20803/monte-cristo-sandwich/",
+      "recipeId": "cmlhuy6k800sb13k8e9lk2uez",
+      "recipeTitle": "Monte Cristo Sandwich",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/36621/philly-steak-sandwich/",
+      "recipeId": "cmlhuy6o300t013k8utcbf24t",
+      "recipeTitle": "Philly Cheesesteak",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/13309/rich-and-simple-french-onion-soup/",
+      "recipeId": "cmlhuy6u100ts13k8phzekyyd",
+      "recipeTitle": "Rich and Simple French Onion Soup",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/91192/french-onion-soup-gratinee/",
+      "recipeId": "cmlhuy70v00un13k8bb08g9de",
+      "recipeTitle": "French Onion Soup Gratinée",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/ground-beef-and-rice-skillet-recipe-8767178",
+      "recipeId": "cmlhuy75z00vl13k8y38attl1",
+      "recipeTitle": "Ground Beef and Rice Skillet",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/creamy-tomato-chicken-and-white-beans-recipe-11790632",
+      "recipeId": "cmlhuy7a800wf13k8luvf4fa3",
+      "recipeTitle": "Creamy Tomato Chicken and White Beans",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/polish-cabbage-roll-soup-recipe-11699185",
+      "recipeId": "cmlhuy7ez00x913k8qqyn2j1g",
+      "recipeTitle": "Polish Cabbage Roll Soup",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/213268/classic-goulash/",
+      "recipeId": "cmlhuy7is00y313k8a0jwlt7m",
+      "recipeTitle": "Classic Goulash",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/262061/one-pot-ground-beef-stroganoff/",
+      "recipeId": "cmlhuy7mb00yt13k8mlbnic1h",
+      "recipeTitle": "One-Pot Ground Beef Stroganoff",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/105045/moroccan-couscous/",
+      "recipeId": "cmlhuy7rh00zq13k86yk7k0eu",
+      "recipeTitle": "Moroccan Couscous",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/8479335/moroccan-harira-soup/",
+      "recipeId": "cmlhwysvn0048h7orrlkkx2wq",
+      "recipeTitle": "Moroccan Harira Soup",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/217109/make-ahead-vegetarian-moroccan-stew/",
+      "recipeId": "cmlhuy82p012h13k85xewoo2f",
+      "recipeTitle": "Make-Ahead Vegetarian Moroccan Stew",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/69633/stovetop-moroccan-tagine/",
+      "recipeId": "cmlhuy871013l13k8cb5snchx",
+      "recipeTitle": "Easy Moroccan Chicken Tagine",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/261701/vegetarian-moroccan-harira/",
+      "recipeId": "cmlhuy8c7014k13k89av5sneq",
+      "recipeTitle": "Vegetarian Moroccan Harira",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/285649/moroccan-shrimp-stew/",
+      "recipeId": "cmlhwysho000dh7orx5shag19",
+      "recipeTitle": "Moroccan Shrimp Stew",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/217947/moroccan-chickpea-stew/",
+      "recipeId": "cmlhwyslo001ah7orwuxk06zh",
+      "recipeTitle": "Moroccan Chickpea Stew",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/244876/moroccan-carrots/",
+      "recipeId": "cmlhwysoe0024h7orpsjb962p",
+      "recipeTitle": "Moroccan Carrots",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/13988/marrakesh-vegetable-curry/",
+      "recipeId": "cmlhwyssl002yh7orn94inhb5",
+      "recipeTitle": "Marrakesh Vegetable Curry",
+      "matchMethod": "scrape",
+      "confidence": 1
+    },
+    {
+      "url": "https://www.allrecipes.com/recipe/8479335/moroccan-harira-soup/",
+      "recipeId": "cmlhwysvn0048h7orrlkkx2wq",
+      "recipeTitle": "Moroccan Harira Soup",
+      "matchMethod": "scrape",
+      "confidence": 1
+    }
+  ],
+  "noMatch": [
+    {
+      "url": "https://akispetretzikis.com/recipe/5235/pshta-lachanika",
+      "slug": "pshta-lachanika"
+    },
+    {
+      "url": "https://akispetretzikis.com/en/recipe/8803/kokkinisto-lachanoryzo",
+      "slug": "kokkinisto-lachanoryzo"
+    },
+    {
+      "url": "https://akispetretzikis.com/recipe/3514/kreatosoypa-aygolemono",
+      "slug": "kreatosoypa-aygolemono"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "totalUrls": 150,
+    "matched": 147,
+    "matchedBySlug": 92,
+    "matchedByScrape": 55,
+    "noMatch": 3,
+    "errors": 0
+  }
+}

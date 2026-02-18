@@ -1,0 +1,200 @@
+// PostgreSQL version of Prisma schema
+// To switch: copy this file to schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management - Enhanced for authentication
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String?  // null for OAuth users
+  name         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  recipes      Recipe[]
+  mealPlans    MealPlan[]
+  cookingPlans CookingPlan[]
+  shoppingLists ShoppingList[]
+
+  @@map("users")
+}
+
+// Recipe Management
+model Recipe {
+  id           String   @id @default(cuid())
+  userId       String
+  title        String
+  description  String?
+  servings     Int      @default(4)
+  prepTime     Int?     // minutes
+  cookTime     Int?     // minutes
+  imageUrl     String?
+  instructions String   // JSON string of array of steps
+  tags         String   // Comma-separated tags: "vegetarian,quick,dinner"
+  status       String   @default("active") // "active", "deleted"
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ingredients       RecipeIngredient[]
+  nutrition         RecipeNutrition?
+  mealPlanRecipes   MealPlanRecipe[]
+
+  @@index([userId])
+  @@index([title])
+  @@index([status])
+  @@map("recipes")
+}
+
+// Recipe Ingredients (junction table with quantity)
+model RecipeIngredient {
+  id           String @id @default(cuid())
+  recipeId     String
+  ingredientId String
+  quantity     Float
+  unit         String // "cup", "tbsp", "g", "oz", etc.
+  notes        String? // e.g., "chopped", "diced"
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+
+  @@unique([recipeId, ingredientId])
+  @@index([recipeId])
+  @@index([ingredientId])
+  @@map("recipe_ingredients")
+}
+
+// Master Ingredient List (global - shared across users)
+model Ingredient {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  category  String? // "produce", "dairy", "meat", "pantry", etc.
+  tags      String   @default("") // Comma-separated tags: "organic,local,seasonal"
+  createdAt DateTime @default(now())
+
+  recipeIngredients RecipeIngredient[]
+  shoppingListItems ShoppingListItem[]
+
+  @@index([category])
+  @@map("ingredients")
+}
+
+// Nutritional Information per Recipe
+model RecipeNutrition {
+  id       String @id @default(cuid())
+  recipeId String @unique
+  calories Float?
+  protein  Float? // grams
+  carbs    Float? // grams
+  fat      Float? // grams
+  fiber    Float? // grams
+  sugar    Float? // grams
+  sodium   Float? // mg
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@map("recipe_nutrition")
+}
+
+// Weekly Meal Planning
+model MealPlan {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String // e.g., "Week of Jan 8-14"
+  startDate DateTime
+  endDate   DateTime
+  status    String   @default("active") // "active", "completed", "deleted"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  meals         MealPlanRecipe[]
+  shoppingLists ShoppingList[]
+
+  @@index([userId])
+  @@index([startDate])
+  @@index([status])
+  @@map("meal_plans")
+}
+
+// Individual Meals in a Meal Plan
+model MealPlanRecipe {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  recipeId   String
+  date       DateTime
+  mealType   String // "breakfast", "lunch", "dinner", "snack"
+  servings   Int      @default(1)
+  notes      String?
+  completed  Boolean  @default(false)
+
+  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([mealPlanId])
+  @@index([date])
+  @@map("meal_plan_recipes")
+}
+
+// Cooking Plan (saved cooking schedules)
+model CookingPlan {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  mealPlanIds String   // Comma-separated meal plan IDs
+  cookDays    String   // Comma-separated ISO date strings (yyyy-MM-dd)
+  status      String   @default("active") // "active", "deleted"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("cooking_plans")
+}
+
+// Shopping List Management
+model ShoppingList {
+  id         String   @id @default(cuid())
+  userId     String   // Added: each shopping list belongs to a user
+  name       String   @default("Shopping List")
+  mealPlanId String?
+  status     String   @default("active") // "active", "completed", "deleted"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mealPlan MealPlan?          @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  items    ShoppingListItem[]
+
+  @@index([userId])
+  @@index([mealPlanId])
+  @@index([status])
+  @@map("shopping_lists")
+}
+
+// Shopping List Items (aggregated from recipes)
+model ShoppingListItem {
+  id             String  @id @default(cuid())
+  shoppingListId String
+  ingredientId   String
+  quantity       Float
+  unit           String
+  checked        Boolean @default(false)
+
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient   @relation(fields: [ingredientId], references: [id])
+
+  @@index([shoppingListId])
+  @@index([ingredientId])
+  @@map("shopping_list_items")
+}

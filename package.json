@@ -1,0 +1,36 @@
+{
+  "name": "mealplan",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Meal planning and cooking application",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:backend": "npm run dev -w backend",
+    "dev:frontend": "npm run dev -w frontend",
+    "build": "npm run build --workspaces --if-present",
+    "prisma:migrate": "npm run prisma:migrate -w backend",
+    "prisma:studio": "npm run prisma:studio -w backend",
+    "prisma:generate": "npm run prisma:generate -w backend"
+  },
+  "keywords": [
+    "meal-planning",
+    "recipe-management",
+    "cooking"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.1.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "puppeteer": "^24.36.1",
+    "xlsx": "^0.18.5"
+  }
+}
