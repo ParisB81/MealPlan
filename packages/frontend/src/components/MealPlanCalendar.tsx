@@ -167,10 +167,12 @@ export default function MealPlanCalendar({
   const handleTouchStart = useCallback((e: React.TouchEvent, dateKey: string, mealTypes: string[]) => {
     if (mealTypes.length === 0) return;
     longPressTriggeredRef.current = false;
+    // Capture touch coordinates immediately — React recycles the event object
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
     longPressTimerRef.current = setTimeout(() => {
       longPressTriggeredRef.current = true;
-      const touch = e.touches[0];
-      openContextMenu(touch.clientX, touch.clientY, dateKey, mealTypes);
+      openContextMenu(touchX, touchY, dateKey, mealTypes);
       // Haptic feedback
       if (navigator.vibrate) navigator.vibrate(50);
     }, 500);
@@ -206,7 +208,7 @@ export default function MealPlanCalendar({
           <div className="flex items-center gap-2 text-sm min-w-0">
             <Copy size={14} className="text-amber-600 shrink-0" />
             <span className="text-amber-800 truncate">
-              Copying <strong>{copyState.label}</strong> — click days to paste
+              Copying <strong>{copyState.label}</strong> — tap days to paste
             </span>
           </div>
           <button

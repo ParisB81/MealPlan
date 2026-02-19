@@ -51,22 +51,28 @@ export default function CalendarContextMenu({
     setPosition({ x: adjustedX, y: adjustedY });
   }, [x, y]);
 
-  // Close on click outside
+  // Close on click/tap outside
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const target = (e as TouchEvent).touches
+        ? document.elementFromPoint(
+            (e as TouchEvent).touches[0].clientX,
+            (e as TouchEvent).touches[0].clientY
+          )
+        : (e as MouseEvent).target as Node;
+      if (menuRef.current && target && !menuRef.current.contains(target as Node)) {
         onClose();
       }
     };
-    // Use setTimeout so the opening right-click doesn't immediately close it
+    // Use setTimeout so the opening right-click/long-press doesn't immediately close it
     const timer = setTimeout(() => {
-      document.addEventListener('mousedown', handleClick);
-      document.addEventListener('touchstart', handleClick as any);
-    }, 10);
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    }, 100);
     return () => {
       clearTimeout(timer);
-      document.removeEventListener('mousedown', handleClick);
-      document.removeEventListener('touchstart', handleClick as any);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [onClose]);
 
@@ -97,6 +103,7 @@ export default function CalendarContextMenu({
           <button
             className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 active:bg-gray-100 min-h-[44px]"
             onClick={() => onSelect('all')}
+            onTouchEnd={(e) => { e.preventDefault(); onSelect('all'); }}
           >
             <Copy size={14} className="text-gray-500 shrink-0" />
             <span>Copy all meals</span>
@@ -109,6 +116,7 @@ export default function CalendarContextMenu({
           key={type}
           className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 active:bg-gray-100 min-h-[44px]"
           onClick={() => onSelect(type)}
+          onTouchEnd={(e) => { e.preventDefault(); onSelect(type); }}
         >
           <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${MEAL_TYPE_COLORS[type] || 'bg-gray-400'}`} />
           <span>Copy {type}</span>
