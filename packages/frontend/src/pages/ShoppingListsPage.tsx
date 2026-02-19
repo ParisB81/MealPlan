@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   useShoppingLists,
   useGenerateShoppingList,
@@ -31,6 +31,7 @@ export default function ShoppingListsPage() {
   const permanentDeleteShoppingList = usePermanentDeleteShoppingList();
   const generateFromRecipes = useGenerateFromRecipes();
   const createCustomShoppingList = useCreateCustomShoppingList();
+  const navigate = useNavigate();
 
   const handleCreateFromMealPlans = (mealPlanIds: string[], name?: string) => {
     generateShoppingList.mutate(
@@ -330,10 +331,16 @@ export default function ShoppingListsPage() {
               return (
                 <div
                   key={list.id}
-                  className={`bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 ${
-                    showBulkActions ? 'cursor-pointer' : ''
-                  } ${selectedLists.has(list.id) ? 'ring-2 ring-blue-500' : ''}`}
-                  onClick={() => showBulkActions && handleSelectList(list.id)}
+                  className={`bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer ${
+                    selectedLists.has(list.id) ? 'ring-2 ring-blue-500' : ''
+                  }`}
+                  onClick={() => {
+                    if (showBulkActions) {
+                      handleSelectList(list.id);
+                    } else {
+                      navigate(`/shopping-lists/${list.id}`);
+                    }
+                  }}
                 >
                   {showBulkActions && (
                     <div className="pb-2 mb-2 border-b border-gray-200">
@@ -393,7 +400,7 @@ export default function ShoppingListsPage() {
                   )}
 
                   {/* Actions */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                     <Link
                       to={`/shopping-lists/${list.id}`}
                       className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center"

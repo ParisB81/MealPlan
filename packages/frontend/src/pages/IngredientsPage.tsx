@@ -466,10 +466,16 @@ export default function IngredientsPage() {
                   return (
                     <tr
                       key={ingredient.id}
-                      className={`hover:bg-gray-50 ${
-                        showBulkActions ? 'cursor-pointer' : ''
-                      } ${selectedIngredients.has(ingredient.id) ? 'bg-blue-50' : ''}`}
-                      onClick={() => showBulkActions && handleSelectIngredient(ingredient.id)}
+                      className={`hover:bg-gray-50 cursor-pointer ${
+                        selectedIngredients.has(ingredient.id) ? 'bg-blue-50' : ''
+                      }`}
+                      onClick={() => {
+                        if (showBulkActions) {
+                          handleSelectIngredient(ingredient.id);
+                        } else if (!editingId) {
+                          setSelectedIngredientForRecipes({ id: ingredient.id, name: ingredient.name });
+                        }
+                      }}
                     >
                       {showBulkActions && (
                         <td className="px-6 py-4">
