@@ -111,20 +111,29 @@ export class RecipeService {
     // Filter by status (default to active)
     where.status = status || 'active';
 
-    // Search by title, description, or tags
+    // Search by title, description, tags, or ingredient names (case-insensitive for PostgreSQL)
     if (search) {
       where.OR = [
-        { title: { contains: search } },
-        { description: { contains: search } },
-        { tags: { contains: search } },
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { tags: { contains: search, mode: 'insensitive' } },
+        {
+          ingredients: {
+            some: {
+              ingredient: {
+                name: { contains: search, mode: 'insensitive' },
+              },
+            },
+          },
+        },
       ];
     }
 
-    // Filter by tags
+    // Filter by tags (case-insensitive for PostgreSQL)
     if (tags) {
       const tagArray = tags.split(',').map((t) => t.trim());
       where.AND = tagArray.map((tag) => ({
-        tags: { contains: tag },
+        tags: { contains: tag, mode: 'insensitive' },
       }));
     }
 

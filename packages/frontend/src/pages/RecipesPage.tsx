@@ -617,7 +617,7 @@ export default function RecipesPage() {
         <div className="mb-6">
           <Input
             type="text"
-            placeholder="Search by title, description, or tag — use commas for multiple tags (e.g. dinner, Italian)"
+            placeholder="Search by title, description, tag, or ingredient — use commas for multi-tag filter (e.g. Greek, Main Dishes)"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="px-4 py-3"
