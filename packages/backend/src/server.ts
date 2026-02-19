@@ -7,6 +7,7 @@ import 'express-async-errors';
 import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import { errorHandler } from './middleware/errorHandler.js';
+import { requireAuth, loginHandler, checkAuthHandler } from './middleware/auth.js';
 import healthRouter from './routes/health.js';
 import recipesRouter from './routes/recipes.js';
 import ingredientsRouter from './routes/ingredients.js';
@@ -57,6 +58,13 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Auth routes (before auth middleware)
+app.post('/api/auth/login', loginHandler);
+app.get('/api/auth/check', checkAuthHandler);
+
+// Auth middleware (protects all API routes below)
+app.use('/api', requireAuth);
 
 // Routes
 app.use('/api/health', healthRouter);
