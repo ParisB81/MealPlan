@@ -11,6 +11,8 @@ import {
   isWithinInterval,
   addMonths,
   subMonths,
+  addDays,
+  subDays,
 } from 'date-fns';
 import { Copy, X } from 'lucide-react';
 import CalendarContextMenu from './CalendarContextMenu';
@@ -135,7 +137,7 @@ export default function MealPlanCalendar({
   }, []);
 
   // Handle day button click
-  const handleDayClick = useCallback((dateKey: string, hasMeals: boolean, inPlanRange: boolean) => {
+  const handleDayClick = useCallback((dateKey: string, hasMeals: boolean, isValidPasteTarget: boolean) => {
     // If long-press just triggered, suppress the click
     if (longPressTriggeredRef.current) {
       longPressTriggeredRef.current = false;
@@ -144,7 +146,7 @@ export default function MealPlanCalendar({
 
     // Paste mode: click to paste
     if (copyState) {
-      if (inPlanRange && dateKey !== copyState.sourceDate && !isPasting) {
+      if (isValidPasteTarget && dateKey !== copyState.sourceDate && !isPasting) {
         onPasteMeals?.(dateKey);
       }
       return;
@@ -272,19 +274,25 @@ export default function MealPlanCalendar({
 
             // Paste mode styling
             const isSourceDay = copyState?.sourceDate === dateKey;
-            const isValidTarget = copyState && inPlanRange && inCurrentMonth && !isSourceDay;
+            const inPasteRange = copyState
+              ? isWithinInterval(day, {
+                  start: subDays(new Date(copyState.sourceDate), 7),
+                  end: addDays(new Date(copyState.sourceDate), 7),
+                })
+              : false;
+            const isValidTarget = copyState && inPasteRange && inCurrentMonth && !isSourceDay;
             const inPasteMode = !!copyState;
 
             // Determine if button should be disabled
             const isDisabled = inPasteMode
-              ? (!inPlanRange || !inCurrentMonth || isSourceDay)
+              ? (!inPasteRange || !inCurrentMonth || isSourceDay)
               : !hasMeals;
 
             return (
               <button
                 key={day.toISOString()}
                 type="button"
-                onClick={() => handleDayClick(dateKey, hasMeals, inPlanRange)}
+                onClick={() => handleDayClick(dateKey, hasMeals, inPasteRange)}
                 onContextMenu={(e) => handleContextMenu(e, dateKey, mealTypes)}
                 onTouchStart={(e) => handleTouchStart(e, dateKey, mealTypes)}
                 onTouchEnd={handleTouchEnd}
@@ -300,7 +308,7 @@ export default function MealPlanCalendar({
                   ${isSourceDay ? 'ring-2 ring-amber-400 bg-amber-50' : ''}
                   ${isValidTarget ? 'text-gray-900 border-2 border-dashed border-green-300 hover:bg-green-50 active:bg-green-100 cursor-copy' : ''}
                   ${isValidTarget && isPasting ? 'opacity-50 cursor-wait' : ''}
-                  ${inPasteMode && inCurrentMonth && inPlanRange && !isSourceDay && !isValidTarget ? '' : ''}
+                  ${inPasteMode && inCurrentMonth && inPasteRange && !isSourceDay && !isValidTarget ? '' : ''}
                 `}
                 disabled={isDisabled}
                 title={
