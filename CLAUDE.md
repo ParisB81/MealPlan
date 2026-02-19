@@ -11,20 +11,25 @@ This file provides essential context for AI assistants (like Claude) working on 
    curl -s http://localhost:3000/api/health
    curl -s http://localhost:5173
    ```
-2. **Start backend server (if not running):**
+2. **Ensure PostgreSQL is running (required before backend):**
+   ```bash
+   docker compose -f "C:\00 Paris\MealPlan\docker-compose.yml" up -d
+   ```
+3. **Start backend server (if not running):**
    ```bash
    cd "C:\00 Paris\MealPlan\packages\backend"
    "C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" src/server.ts
    ```
-3. **Start frontend dev server (if not running):**
+4. **Start frontend dev server (if not running):**
    ```bash
    cd "C:\00 Paris\MealPlan\packages\frontend"
    "C:\Program Files\nodejs\node.exe" "../../node_modules/vite/bin/vite.js"
    ```
-4. **Verify both are running:**
+5. **Verify both are running:**
    - Backend health check: `curl http://localhost:3000/api/health`
    - Frontend: open http://localhost:5173 in browser
-5. If `dev.db` doesn't exist (first run or after reset):
+   - Also accessible on LAN at http://192.168.1.73:5173 (Vite configured with `host: true`)
+6. If database is empty (first run or after reset):
    ```bash
    cd "C:\00 Paris\MealPlan"
    npm run prisma:migrate
@@ -34,11 +39,15 @@ This file provides essential context for AI assistants (like Claude) working on 
 
 ## Project Overview
 
-MealPlan is a full-stack TypeScript web application for meal planning and cooking. It provides recipe management (including scraping recipes from URLs), weekly meal planning, shopping list generation with intelligent ingredient aggregation, and nutritional tracking.
+MealPlan is a full-stack TypeScript web application for meal planning and cooking. It provides recipe management (including scraping recipes from URLs), weekly meal planning, shopping list generation with intelligent ingredient aggregation, and nutritional tracking. The app is deployed to Railway cloud and accessible as a PWA on Android phones.
 
 **Tech Stack:**
-- **Backend:** Express.js + TypeScript + SQLite (Prisma ORM) + Cheerio (web scraping) + Puppeteer (headless browser for Cloudflare-protected sites: Akis, Argiro)
-- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + React Query + React Hook Form + Lucide Icons
+- **Backend:** Express.js + TypeScript + PostgreSQL (Prisma ORM) + Cheerio (web scraping) + Puppeteer (headless browser for Cloudflare-protected sites: Akis, Argiro)
+- **Frontend:** React 18 + TypeScript + Vite + Tailwind CSS + React Query + React Hook Form + Lucide Icons + vite-plugin-pwa
+- **Database:** PostgreSQL 16 (local via Docker, production on Railway Postgres addon)
+- **Deployment:** Railway (single service — backend serves frontend static files in production)
+- **Auth:** SHA-256 token-based password protection (set via `APP_PASSWORD` env var)
+- **Mobile:** PWA with service worker, installable on Android home screen, mobile-first responsive UI
 - **Monorepo:** npm workspaces structure
 - **Key Libraries:** Zod (validation), Axios (HTTP client), date-fns (dates), react-hot-toast (notifications), xlsx (Excel generation), puppeteer (headless Chrome)
 
@@ -79,14 +88,14 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── unitConversion.ts   # Unit conversion for shopping list aggregation
 │   │   │   │   └── validUnits.ts       # Valid unit definitions
 │   │   │   ├── middleware/
+│   │   │   │   ├── auth.ts             # Password auth: login, check, requireAuth middleware
 │   │   │   │   └── errorHandler.ts     # AppError class + global error handler
-│   │   │   └── server.ts               # Express app entry point
+│   │   │   └── server.ts               # Express app entry point (serves frontend in production)
 │   │   ├── prisma/
-│   │   │   ├── schema.prisma           # Database schema (10 models)
+│   │   │   ├── schema.prisma           # Database schema (10 models, PostgreSQL provider)
 │   │   │   ├── seed.ts                 # Seed data
 │   │   │   └── migrations/
-│   │   ├── dev.db                      # SQLite database file
-│   │   └── .env                        # DATABASE_URL, PORT, FRONTEND_URL
+│   │   └── .env                        # DATABASE_URL, PORT, APP_PASSWORD
 │   ├── frontend/                   # React application
 │   │   ├── src/
 │   │   │   ├── components/
@@ -99,7 +108,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   │   ├── Badge.tsx       # Small label/tag component
 │   │   │   │   │   ├── Select.tsx      # Dropdown selector
 │   │   │   │   │   └── Alert.tsx       # Variants: info/success/error
-│   │   │   │   ├── Navigation.tsx          # Top nav bar (hidden on home page)
+│   │   │   │   ├── Navigation.tsx          # Responsive nav: desktop horizontal, mobile hamburger+drawer
 │   │   │   │   ├── RecipeSelector.tsx      # Recipe selection component
 │   │   │   │   ├── RecipePicker.tsx        # Modal to search/select existing recipe
 │   │   │   │   ├── MealPlanPicker.tsx      # Modal to select a meal plan
@@ -119,6 +128,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── UrlImportPage.tsx       # Scrape recipes from URLs
 │   │   │   │   ├── MealPlansPage.tsx       # List meal plans
 │   │   │   │   ├── MealPlanDetailPage.tsx  # View plan, add/edit/remove meals
+│   │   │   │   ├── LoginPage.tsx            # Password login screen
 │   │   │   │   ├── IngredientsPage.tsx     # Manage ingredient database
 │   │   │   │   ├── ShoppingListsPage.tsx   # List all shopping lists
 │   │   │   │   ├── ShoppingListPage.tsx    # View/edit shopping list with categories
@@ -126,7 +136,10 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── CookingPlanPage.tsx     # Create new or view saved cooking plan
 │   │   │   │   ├── DeveloperPage.tsx       # Developer tools hub
 │   │   │   │   ├── AssetsLibraryPage.tsx   # UI component showcase
-│   │   │   │   └── TagManagerPage.tsx      # Drag-and-drop tag assignment for recipes
+│   │   │   │   ├── TagManagerPage.tsx      # Drag-and-drop tag assignment for recipes
+│   │   │   │   └── IngredientRefinementPage.tsx # Documentation for ingredient cleanup
+│   │   │   ├── contexts/
+│   │   │   │   └── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
 │   │   │   ├── hooks/
 │   │   │   │   ├── useRecipes.ts           # Recipe CRUD + bulk ops + soft delete/restore
 │   │   │   │   ├── useMealPlans.ts         # Meal plan CRUD + meal management + nutrition
@@ -146,9 +159,13 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── mealPlan.ts             # MealPlan, MealPlanRecipe types
 │   │   │   │   ├── shoppingList.ts         # ShoppingList, ShoppingListItem types
 │   │   │   │   └── cookingPlan.ts          # CookingPlan types
-│   │   │   ├── App.tsx                     # Router with all routes
+│   │   │   ├── App.tsx                     # Router with auth wrapper, ScrollToTop
 │   │   │   └── main.tsx                    # React Query setup, app entry
-│   │   └── vite.config.ts                  # Vite + React plugin + API proxy
+│   │   ├── public/
+│   │   │   ├── icon-192.png               # PWA icon 192x192
+│   │   │   ├── icon-512.png               # PWA icon 512x512
+│   │   │   └── favicon.ico                # Browser tab icon
+│   │   └── vite.config.ts                  # Vite + React + PWA + API proxy + LAN host
 │   └── shared/                     # Shared types & utilities
 │       └── src/types/
 ├── process-usda.ts                 # USDA SR Legacy CSV → ingredients Excel/JSON processor
@@ -162,7 +179,9 @@ C:\00 Paris\MealPlan/
 ├── scripts/
 │   └── enrich-source-urls.ts       # Batch update recipes with source URLs from Excel
 ├── source-url-enrichment-report.json # Generated: Report from source URL enrichment
-├── package.json                    # Root workspace config
+├── docker-compose.yml              # Local PostgreSQL for development
+├── railway.toml                    # Railway deployment configuration
+├── package.json                    # Root workspace config (includes production start/postinstall)
 └── tsconfig.base.json              # Base TypeScript config
 ```
 
@@ -186,14 +205,20 @@ cd "C:\00 Paris\MealPlan\packages\frontend"
 "C:\Program Files\nodejs\node.exe" "../../node_modules/vite/bin/vite.js"
 ```
 
-### Database (Prisma)
+### Database (PostgreSQL + Prisma)
 
 ```bash
+# Start local PostgreSQL (Docker required)
+docker compose -f "C:\00 Paris\MealPlan\docker-compose.yml" up -d
+
 # Generate Prisma Client (after schema changes)
 npm run prisma:generate
 
 # Create migration
 npm run prisma:migrate
+
+# Deploy migrations (production — used in start script)
+cd packages/backend && npx prisma migrate deploy
 
 # Run seed script
 cd packages/backend
@@ -556,8 +581,12 @@ Located in `packages/frontend/src/components/ui/`:
 - `POST /bulk-import` - Bulk import with duplicate checking
 - `POST /bulk-delete` - Bulk delete with usage validation
 
+### Auth (`/api/auth`)
+- `POST /login` - Verify password, return token (body: `{ password }`)
+- `GET /check` - Validate existing token (header: `Authorization: Bearer <token>`)
+
 ### Health (`/api/health`)
-- `GET /` - Health check
+- `GET /` - Health check (no auth required)
 
 ## Frontend Routes
 
@@ -598,9 +627,12 @@ Located in `packages/frontend/src/components/ui/`:
 | ShoppingList | shopping_lists | name, mealPlanId (optional), status | Can be linked to meal plan or standalone |
 | ShoppingListItem | shopping_list_items | shoppingListId, ingredientId, quantity, unit, checked | Checked = purchased |
 
-### SQLite Limitations
-- **No JSON type** - `instructions` stored as JSON string, parse/stringify manually
-- **No array types** - `tags` stored as comma-separated string; `mealPlanIds` and `cookDays` in CookingPlan also comma-separated
+### Database Notes (PostgreSQL)
+- **Migrated from SQLite to PostgreSQL** in Feb 2026 for Railway cloud deployment
+- **Local dev:** PostgreSQL 16 via Docker Compose (`docker-compose.yml` at project root)
+- **Production:** Railway Postgres addon (internal URL via `DATABASE_URL` env var)
+- `instructions` stored as JSON string, `tags` as comma-separated string (legacy from SQLite era)
+- `mealPlanIds` and `cookDays` in CookingPlan also comma-separated strings
 - **Quantities** - All limited to 2 decimal places (Float type, rounded in service layer)
 
 ### Default User
@@ -681,6 +713,7 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 | clsx, class-variance-authority, tailwind-merge | CSS utility helpers |
 | react-hot-toast | Toast notifications |
 | date-fns | Date utilities |
+| vite-plugin-pwa | PWA support (service worker, manifest generation) |
 
 ### Root
 | Package | Purpose |
@@ -697,12 +730,126 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 - **Important:** PATH may not include Node.js in Claude sessions - use full paths
 
 ### CORS
-Backend allows multiple frontend ports: 5173-5177 (for when Vite auto-increments ports)
+Backend allows multiple frontend ports: 5173-5177 (for when Vite auto-increments ports), plus LAN IP `192.168.1.73:5173`
 
 ### React Query Defaults
 - Stale time: 5 minutes
 - Retry: 1
 - No refetch on window focus
+
+## Cloud Deployment (Railway)
+
+### Architecture
+Single Railway service: backend Express server serves the built frontend as static files in production. No separate frontend service needed.
+
+- **Railway URL:** `https://mealplan-production-d4cc.up.railway.app`
+- **GitHub repo:** `ParisB81/MealPlan` (auto-deploys on push to `master`)
+- **Railway project:** "protective-vibrancy" with PostgreSQL addon
+
+### How It Works in Production
+1. `npm install` + `npm run build` builds both backend (TypeScript → JS) and frontend (Vite → `packages/frontend/dist/`)
+2. `npm start` runs `prisma migrate deploy` then starts `packages/backend/dist/server.js`
+3. Backend serves API routes at `/api/*`
+4. Backend serves frontend static files from `packages/frontend/dist/`
+5. SPA catch-all: any non-`/api` GET request returns `index.html`
+
+### Key Files
+- **`railway.toml`** — Build command, start command, healthcheck config (120s timeout)
+- **`package.json` (root)** — `"start"` and `"postinstall"` scripts for Railway
+- **`packages/backend/src/server.ts`** — Production static file serving + `0.0.0.0` bind
+- **`packages/frontend/src/services/api.ts`** — API base URL defaults to `/api` (same-origin in production)
+
+### Railway Environment Variables
+| Variable | Value | Notes |
+|----------|-------|-------|
+| `DATABASE_URL` | (auto from Postgres addon) | Internal Railway Postgres URL |
+| `NODE_ENV` | `production` | Enables static file serving |
+| `PORT` | (auto-set by Railway) | Usually 3000 |
+| `APP_PASSWORD` | User's chosen password | **Must be set manually** — protects all API endpoints |
+
+### Deployment Workflow
+```bash
+# Make changes locally, test on http://localhost:5173
+# Commit and push:
+git add <files> && git commit -m "feat: description"
+git push origin master
+# Railway auto-deploys within 2-3 minutes
+```
+
+### Puppeteer on Railway (Linux)
+The recipe scraper uses cross-platform spawning (`os.platform()` detection):
+- **Windows:** `wmic process call create` for fully independent child processes
+- **Linux (Railway):** Standard `spawn()` with `{detached: true}` + `unref()`
+- Puppeteer may need `nixpacks.toml` for Chromium dependencies on Railway
+
+## Authentication System
+
+### Overview
+Simple password-based auth protecting the entire app. Set `APP_PASSWORD` env var to enable (no auth if unset).
+
+### Flow
+1. User visits app → frontend checks `localStorage` for saved token
+2. If token exists → validates via `GET /api/auth/check` with Bearer header
+3. If no token or invalid → shows `LoginPage` with password input
+4. User enters password → `POST /api/auth/login` → server checks against `APP_PASSWORD`
+5. If correct → server returns SHA-256 hash token → frontend stores in `localStorage`
+6. All subsequent API calls include `Authorization: Bearer <token>` via Axios interceptor
+7. `requireAuth` middleware validates token on all `/api/*` routes (except `/api/health`, `/api/auth/*`)
+8. 401 response interceptor auto-logs out and shows login screen
+
+### Key Files
+| File | Purpose |
+|------|---------|
+| `packages/backend/src/middleware/auth.ts` | `loginHandler`, `checkAuthHandler`, `requireAuth` middleware |
+| `packages/frontend/src/contexts/AuthContext.tsx` | `AuthProvider`, `useAuth` hook, Axios interceptors |
+| `packages/frontend/src/pages/LoginPage.tsx` | Password form UI |
+| `packages/frontend/src/App.tsx` | `AuthProvider` wrapper, conditional rendering |
+
+### Token Generation
+```typescript
+// Deterministic — same password always produces same token
+crypto.createHash('sha256').update(password + '_mealplan_auth').digest('hex')
+```
+
+### Auth API Endpoints
+- `POST /api/auth/login` — Body: `{ password }` → Returns: `{ token }` or 401
+- `GET /api/auth/check` — Header: `Authorization: Bearer <token>` → Returns: `{ authenticated: true }` or 401
+
+## Mobile-First UI
+
+### Overview
+All pages use responsive Tailwind breakpoints (`sm:`, `md:`, `lg:`) for mobile-first design. Phone is the primary device.
+
+### Navigation
+- **Mobile (<md):** Top bar with "MealPlan" title + hamburger icon → slide-in drawer from right (w-72)
+- **Desktop (md+):** Horizontal nav bar with all links
+- Drawer closes on: link click, backdrop click, Escape key, route change
+- `sticky top-0 z-40` for persistent nav on scroll
+
+### Key Mobile Patterns
+- **Touch targets:** All interactive elements min 44px (`min-h-[44px]`)
+- **Modals:** Fullscreen on mobile (`h-screen`), windowed on desktop
+- **Page padding:** `py-4 md:py-8` (reduced on mobile)
+- **Headings:** `text-xl md:text-2xl` or `text-2xl md:text-3xl`
+- **Active states:** `active:scale-95` on buttons for touch feedback
+- **Safe areas:** CSS variables for notched phones (`env(safe-area-inset-*)`)
+
+### PWA Configuration
+- **Plugin:** `vite-plugin-pwa` with Workbox GenerateSW strategy
+- **Manifest:** Name "MealPlan", theme color `#2563eb`, standalone display
+- **Service Worker:** Caches static assets, NetworkFirst for API calls
+- **Icons:** 192x192 and 512x512 in `packages/frontend/public/`
+- **Install:** "Add to Home Screen" on Android Chrome
+- **Cache invalidation:** If users see stale content after deploy, clear site data in browser settings
+
+## Backup: mealplanoriginal
+
+A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\`:
+- **Created from:** git commit `86a31bf` (before mobile transformation)
+- **Uses SQLite** (original `dev.db` file)
+- **Non-conflicting ports:** Backend on 3100, Frontend on 5183
+- **Has its own CLAUDE.md** with paths updated to `mealplanoriginal`
+- **Fully independent** — can run alongside the main MealPlan project
 
 ## Project Status
 
@@ -747,13 +894,24 @@ Backend allows multiple frontend ports: 5173-5177 (for when Vite auto-increments
 
 **Auto-Tagging** - Automatic tag assignment on recipe creation via `autoTagger.ts`; adds source site tags from `sourceUrl` + infers Meal, Base, Duration, Country, Store, Method category tags from title/description/ingredients/times; additive-only, conservative for Store/Method
 
+**PostgreSQL Migration** - Migrated from SQLite to PostgreSQL for Railway cloud deployment; Docker Compose for local dev; all data migrated (265 recipes, 3,255 ingredients, meal plans, shopping lists)
+
+**Cloud Deployment (Railway)** - Single-service architecture (backend serves frontend static files); auto-deploy on push to master; Railway Postgres addon; healthcheck with 120s timeout; cross-platform Puppeteer spawning (Windows wmic / Linux spawn)
+
+**Mobile-First UI Overhaul** - Hamburger + drawer navigation on mobile; fullscreen modals; 44px touch targets on all interactive elements; responsive padding/headings; active:scale-95 touch feedback; safe area insets for notched phones
+
+**PWA Support** - vite-plugin-pwa with Workbox; manifest for Android home screen installation; service worker with NavigateFallback for SPA routing; 192x192 and 512x512 app icons
+
+**Password Authentication** - SHA-256 token-based auth via `APP_PASSWORD` env var; login page; Axios interceptors for Bearer token; auto-logout on 401; protects all API endpoints
+
+**Shopping List Second-Pass Merge** - Fixed ingredient duplication (e.g., garlic appearing twice) by adding post-override merge that combines items with same ingredientId + unit after ingredient-specific overrides are applied
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
 - Support for more recipe websites beyond bigrecipe.com, allrecipes.com, akispetretzikis.com, argiro.gr
 - Meal plan templates
 - Print-friendly shopping list layout
-- User authentication (currently single hardcoded user)
 
 ## Troubleshooting
 
@@ -791,13 +949,22 @@ npx prisma generate --no-engine
 This generates TypeScript types without touching the locked DLL. Restart the backend to pick up changes.
 
 ### Database issues / migration conflicts
-1. Delete `packages/backend/dev.db`
-2. Delete `packages/backend/prisma/migrations` folder
-3. Run `npm run prisma:migrate` with name "init"
-4. Run seed script
+1. Delete `packages/backend/prisma/migrations` folder
+2. Run `npm run prisma:migrate` with name "init"
+3. Run seed script
 
-### SQLite "database locked" error
-Check for: multiple server instances, Prisma Studio open, background processes
+### PostgreSQL not running
+If backend fails to start with connection errors:
+```bash
+docker compose -f "C:\00 Paris\MealPlan\docker-compose.yml" up -d
+```
+Check status: `docker ps` should show a `postgres:16-alpine` container.
+
+### Service worker serving stale content
+After deploying fixes, users may see old cached versions:
+1. **Chrome Desktop:** DevTools → Application → Storage → Clear site data
+2. **Android Chrome:** Settings → Site settings → find the URL → Clear & reset
+3. **Dev mode:** Check "Bypass for network" in DevTools → Application → Service Workers
 
 ### Backend must be manually restarted
 After backend code changes, kill and restart the process. Frontend HMR works automatically.
@@ -811,6 +978,15 @@ powershell -Command "Stop-Process -Id <PID> -Force"
 ```
 
 ## Known Issues
+
+### React Rules of Hooks in Production (Resolved)
+**Problem:** Navigation.tsx had `return null` before `useEffect` hooks. This worked in development but caused React Error #310 in production (minified build), making all pages blank when navigating.
+
+**Root Cause:** React's rules of hooks require hooks to be called in the same order every render. Conditional `return` before hooks means hooks are skipped on some renders.
+
+**Fix:** Move all early returns AFTER all hook calls. Always ensure `useEffect`, `useState`, etc. come before any conditional `return`.
+
+**Lesson:** Always test production builds (`vite preview`) before deploying, not just dev mode.
 
 ### Puppeteer Backend Freeze (Resolved)
 
@@ -869,7 +1045,10 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ## Git Workflow
 - **Main branch:** `master`
+- **Remote:** `origin` → `github.com/ParisB81/MealPlan`
 - **Commit messages:** Conventional commits (`feat:`, `fix:`, `docs:`, `refactor:`)
+- **Deployment:** Push to `master` triggers automatic Railway deployment (2-3 min)
+- **Auth:** GitHub CLI (`gh auth setup-git`) configured for credential management
 
 ## Adding New Features (Pattern)
 
@@ -891,6 +1070,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-02-18
-**Project Version:** 1.8.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Direct Import + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort)
+**Last Updated:** 2026-02-19
+**Project Version:** 2.0.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Direct Import + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge**)
