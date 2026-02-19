@@ -273,7 +273,7 @@ export class ShoppingListService {
     });
 
     // Convert from base units back to display-friendly units
-    return Array.from(ingredientMap.values()).map((entry) => {
+    const converted = Array.from(ingredientMap.values()).map((entry) => {
       // First try ingredient-specific override (e.g. garlic→cloves, herbs→bunch)
       const overrideResult = applyIngredientOverride(
         entry.name,
@@ -294,6 +294,24 @@ export class ShoppingListService {
         recipes: entry.recipes,
       };
     });
+
+    // Second pass: merge items that ended up with same ingredientId + unit
+    // (happens when overrides convert different systems to the same unit, e.g. garlic clove+tsp both → clove)
+    const mergedMap = new Map<string, AggregatedIngredient>();
+    for (const item of converted) {
+      const key = `${item.ingredientId}-${item.unit}`;
+      const existing = mergedMap.get(key);
+      if (existing) {
+        existing.quantity += item.quantity;
+        for (const r of item.recipes) {
+          if (!existing.recipes.includes(r)) existing.recipes.push(r);
+        }
+      } else {
+        mergedMap.set(key, { ...item });
+      }
+    }
+
+    return Array.from(mergedMap.values());
   }
 
   // Group shopping list items by category
