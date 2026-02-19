@@ -16,8 +16,6 @@ export default function Navigation() {
   const location = useLocation();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  if (location.pathname === '/') return null;
-
   // Close drawer on route change
   useEffect(() => {
     setIsDrawerOpen(false);
@@ -38,6 +36,9 @@ export default function Navigation() {
     document.body.style.overflow = isDrawerOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isDrawerOpen]);
+
+  // Hide navigation on home page (after all hooks)
+  if (location.pathname === '/') return null;
 
   const isActive = (link: typeof navLinks[0]) =>
     link.match ? location.pathname.startsWith(link.match) : false;
