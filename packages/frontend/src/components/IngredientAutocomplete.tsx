@@ -87,7 +87,7 @@ export default function IngredientAutocomplete({
                 <li
                   key={ingredient.id}
                   onClick={() => handleSelectIngredient(ingredient)}
-                  className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-900"
+                  className="px-4 py-2.5 min-h-[44px] hover:bg-blue-50 active:bg-blue-100 cursor-pointer text-sm text-gray-900"
                 >
                   <div className="font-medium">{ingredient.name}</div>
                   {ingredient.category && (

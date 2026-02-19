@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+/// <reference lib="dom.iterable" />
 /**
  * Puppeteer Worker - Runs in a separate process to isolate browser automation
  * from the main Express server. This process can be killed without affecting
@@ -30,84 +32,6 @@ function writeResult(result: any) {
   } catch (err) {
     // Can't write result, just exit
   }
-}
-
-/**
- * Greek unit abbreviations → English unit names
- */
-const GREEK_UNIT_MAP: Record<string, string> = {
-  'γρ.': 'g', 'γρ': 'g', 'γραμμάρια': 'g',
-  'κιλό': 'kg', 'κιλά': 'kg', 'kg': 'kg', 'g': 'g', 'mg': 'mg',
-  'ml': 'ml', 'λίτρο': 'l', 'λίτρα': 'l', 'lt': 'l', 'l': 'l',
-  'κ.σ.': 'tbsp', 'κ.σ': 'tbsp', 'κουταλιά σούπας': 'tbsp', 'κουταλιές σούπας': 'tbsp',
-  'κ.γ.': 'tsp', 'κ.γ': 'tsp', 'κουταλάκι γλυκού': 'tsp', 'κουταλάκια γλυκού': 'tsp',
-  'φλ.': 'cup', 'φλ': 'cup', 'φλιτζάνι': 'cup', 'φλιτζάνια': 'cup', 'κούπα': 'cup', 'κούπες': 'cup',
-  'σκ.': 'clove', 'σκελ.': 'clove', 'σκελ': 'clove', 'σκελίδα': 'clove', 'σκελίδες': 'clove',
-  'τεμ.': 'piece', 'τεμ': 'piece', 'τεμάχιο': 'piece', 'τεμάχια': 'piece',
-  'φέτα': 'slice', 'φέτες': 'slice', 'φύλλο': 'leaf', 'φύλλα': 'leaf',
-  'κλων.': 'sprig', 'κλων': 'sprig', 'κλωνάρι': 'sprig', 'κλωνάρια': 'sprig',
-  'ματσάκι': 'bunch', 'ματσάκια': 'bunch', 'φιλέτο': 'fillet', 'φιλέτα': 'fillet',
-  'πρέζα': 'pinch', 'πρέζες': 'pinch', 'χούφτα': 'handful', 'χούφτες': 'handful',
-  'πακέτο': 'pack', 'πακέτα': 'pack', 'κουτί': 'piece', 'κουτιά': 'piece',
-  'βάζο': 'piece', 'βάζα': 'piece',
-  'μεγάλο': 'large', 'μεγάλα': 'large', 'μεγάλη': 'large', 'μεγάλες': 'large',
-  'μεσαίο': 'medium', 'μεσαία': 'medium', 'μεσαίες': 'medium',
-  'μικρό': 'small', 'μικρά': 'small', 'μικρή': 'small', 'μικρές': 'small',
-};
-
-const UNIT_NORMALIZATION_MAP: Record<string, string> = {
-  'gram': 'g', 'grams': 'g', 'gr': 'g',
-  'kilogram': 'kg', 'kilograms': 'kg', 'kilo': 'kg', 'kilos': 'kg',
-  'milligram': 'mg', 'milligrams': 'mg',
-  'ounce': 'oz', 'ounces': 'oz', 'pound': 'lb', 'pounds': 'lb', 'lbs': 'lb',
-  'teaspoon': 'tsp', 'teaspoons': 'tsp', 'tablespoon': 'tbsp', 'tablespoons': 'tbsp',
-  'cup': 'cup', 'cups': 'cup',
-  'milliliter': 'ml', 'milliliters': 'ml', 'millilitre': 'ml', 'millilitres': 'ml',
-  'liter': 'l', 'liters': 'l', 'litre': 'l', 'litres': 'l', 'lt': 'l',
-  'clove': 'clove', 'cloves': 'clove', 'piece': 'piece', 'pieces': 'piece',
-  'slice': 'slice', 'slices': 'slice', 'sprig': 'sprig', 'sprigs': 'sprig',
-  'bunch': 'bunch', 'bunches': 'bunch', 'pinch': 'pinch', 'pinches': 'pinch',
-  'small': 'small', 'medium': 'medium', 'large': 'large',
-};
-
-function normalizeUnit(unit: string): string {
-  if (!unit) return unit;
-  let cleaned = unit.replace(/\(s\)$/i, '').trim().toLowerCase();
-  const mapped = UNIT_NORMALIZATION_MAP[cleaned];
-  if (mapped) return mapped;
-  const withoutOf = cleaned.replace(/\s+of\s+.*$/i, '').trim();
-  if (withoutOf !== cleaned) {
-    const mappedWithoutOf = UNIT_NORMALIZATION_MAP[withoutOf];
-    if (mappedWithoutOf) return mappedWithoutOf;
-  }
-  const firstWord = cleaned.split(/\s+/)[0];
-  if (firstWord !== cleaned) {
-    const mappedFirst = UNIT_NORMALIZATION_MAP[firstWord];
-    if (mappedFirst) return mappedFirst;
-  }
-  return cleaned;
-}
-
-function convertFraction(value: string): string {
-  if (value.includes('-')) value = value.split('-')[0].trim();
-  if (value.includes('/')) {
-    const parts = value.split('/');
-    if (parts.length === 2) {
-      const num = parseFloat(parts[0]);
-      const den = parseFloat(parts[1]);
-      if (!isNaN(num) && !isNaN(den) && den !== 0) {
-        return (num / den).toFixed(2).replace(/\.?0+$/, '');
-      }
-    }
-  }
-  const mixedMatch = value.match(/^(\d+)\s+(\d+)\/(\d+)$/);
-  if (mixedMatch) {
-    const whole = parseInt(mixedMatch[1]);
-    const num = parseInt(mixedMatch[2]);
-    const den = parseInt(mixedMatch[3]);
-    return (whole + num / den).toFixed(2).replace(/\.?0+$/, '');
-  }
-  return value;
 }
 
 async function scrapeAkis(browser: any, url: string): Promise<any> {

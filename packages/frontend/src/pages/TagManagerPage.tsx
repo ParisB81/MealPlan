@@ -69,7 +69,7 @@ export default function TagManagerPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         <Link
           to="/developer"
           className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
@@ -78,7 +78,7 @@ export default function TagManagerPage() {
         </Link>
 
         <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Tag Manager</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Tag Manager</h1>
           <p className="text-gray-600">Drag tags onto recipes to apply them. Click × to remove.</p>
         </header>
 

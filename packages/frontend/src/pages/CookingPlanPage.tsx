@@ -253,7 +253,7 @@ export default function CookingPlanPage() {
   // Loading state for saved plan
   if (isViewMode && savedPlanLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
         <p className="text-gray-500">Loading cooking plan...</p>
       </div>
     );
@@ -261,7 +261,7 @@ export default function CookingPlanPage() {
 
   if (isViewMode && !savedPlan && !savedPlanLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
         <Alert variant="error">Cooking plan not found.</Alert>
         <Link
           to="/cooking-plans"
@@ -274,7 +274,7 @@ export default function CookingPlanPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl">
+    <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
       {/* Header */}
       <Link
         to="/cooking-plans"
@@ -286,7 +286,7 @@ export default function CookingPlanPage() {
       <header className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <ChefHat className="w-8 h-8 text-orange-500" />
-          <h1 className="text-4xl font-bold text-gray-900">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
             {isViewMode ? savedPlan?.name || 'Cooking Plan' : 'New Cooking Plan'}
           </h1>
         </div>

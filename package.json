@@ -11,6 +11,8 @@
     "dev:backend": "npm run dev -w backend",
     "dev:frontend": "npm run dev -w frontend",
     "build": "npm run build --workspaces --if-present",
+    "start": "cd packages/backend && npx prisma migrate deploy && node dist/server.js",
+    "postinstall": "npx prisma generate --schema=packages/backend/prisma/schema.prisma",
     "prisma:migrate": "npm run prisma:migrate -w backend",
     "prisma:studio": "npm run prisma:studio -w backend",
     "prisma:generate": "npm run prisma:generate -w backend"
@@ -31,6 +33,7 @@
   },
   "dependencies": {
     "puppeteer": "^24.36.1",
+    "sql.js": "^1.14.0",
     "xlsx": "^0.18.5"
   }
 }

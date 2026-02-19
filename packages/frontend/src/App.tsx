@@ -1,6 +1,15 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import Navigation from './components/Navigation';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 import HomePage from './pages/HomePage';
 import RecipesPage from './pages/RecipesPage';
 import RecipeDetailPage from './pages/RecipeDetailPage';
@@ -22,8 +31,9 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
+        <ScrollToTop />
         <Navigation />
-        <Toaster position="top-right" />
+        <Toaster position="bottom-center" toastOptions={{ className: 'mb-safe' }} />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/recipes" element={<RecipesPage />} />

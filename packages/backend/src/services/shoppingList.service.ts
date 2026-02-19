@@ -2,10 +2,9 @@ import { PrismaClient } from '@prisma/client';
 import {
   convertToBase,
   convertFromBase,
-  getMeasurementSystem,
   applyIngredientOverride,
   MeasurementSystem,
-} from '../utils/unitConversion';
+} from '../utils/unitConversion.js';
 
 const prisma = new PrismaClient();
 

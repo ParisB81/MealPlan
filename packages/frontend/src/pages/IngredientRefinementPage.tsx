@@ -4,7 +4,7 @@ import { Card } from '../components/ui';
 export default function IngredientRefinementPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
         {/* Back Link */}
         <Link
           to="/developer"
@@ -15,7 +15,7 @@ export default function IngredientRefinementPage() {
 
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Ingredient Refinement</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Ingredient Refinement</h1>
           <p className="text-lg text-gray-600">
             Documentation and guidelines for cleaning up and standardizing ingredient data.
           </p>

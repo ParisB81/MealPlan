@@ -143,7 +143,7 @@ export default function MealPlanDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
         <Link
           to="/meal-plans"
           className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
@@ -156,7 +156,7 @@ export default function MealPlanDetailPage() {
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">{mealPlan.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{mealPlan.name}</h1>
                 {mealPlan.status === 'completed' && (
                   <Badge variant="green" size="md">&#x2713; Completed</Badge>
                 )}
@@ -167,7 +167,7 @@ export default function MealPlanDetailPage() {
               </p>
               <p className="text-gray-500 mt-1">{mealPlan.meals.length} meals planned</p>
             </div>
-            <div className="flex gap-3 flex-wrap">
+            <div className="flex gap-2 sm:gap-3 flex-wrap">
               <Button onClick={() => setIsAddRecipeModalOpen(true)}>
                 Add Recipe
               </Button>

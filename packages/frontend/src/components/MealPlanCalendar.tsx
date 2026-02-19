@@ -61,7 +61,8 @@ export default function MealPlanCalendar({
     return result;
   }, [calendarDays]);
 
-  const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const dayNamesFull = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const dayNamesShort = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
   const isInPlanRange = (day: Date) =>
     isWithinInterval(day, { start: planStart, end: planEnd });
@@ -92,7 +93,7 @@ export default function MealPlanCalendar({
         <button
           type="button"
           onClick={handlePrevMonth}
-          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+          className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
           aria-label="Previous month"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -105,7 +106,7 @@ export default function MealPlanCalendar({
         <button
           type="button"
           onClick={handleNextMonth}
-          className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+          className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
           aria-label="Next month"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -116,16 +117,17 @@ export default function MealPlanCalendar({
 
       {/* Day names header */}
       <div className="grid grid-cols-7 mb-1">
-        {dayNames.map((name) => (
+        {dayNamesFull.map((name, i) => (
           <div key={name} className="text-center text-xs font-medium text-gray-400 py-1">
-            {name}
+            <span className="hidden sm:inline">{name}</span>
+            <span className="sm:hidden">{dayNamesShort[i]}</span>
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
       <div className="grid grid-cols-7">
-        {weeks.map((week, weekIdx) =>
+        {weeks.map((week) =>
           week.map((day) => {
             const inCurrentMonth = isSameMonth(day, currentMonth);
             const inPlanRange = isInPlanRange(day);
@@ -140,11 +142,11 @@ export default function MealPlanCalendar({
                 type="button"
                 onClick={() => hasMeals && onDateClick?.(dateKey)}
                 className={`
-                  relative flex flex-col items-center py-1.5 text-xs transition-colors rounded-md
+                  relative flex flex-col items-center py-2 text-xs transition-colors rounded-md min-h-[40px]
                   ${!inCurrentMonth ? 'text-gray-300' : ''}
                   ${inCurrentMonth && !inPlanRange ? 'text-gray-400' : ''}
                   ${inCurrentMonth && inPlanRange && !hasMeals ? 'text-gray-600' : ''}
-                  ${inCurrentMonth && inPlanRange && hasMeals ? 'text-gray-900 font-semibold cursor-pointer hover:bg-blue-50' : ''}
+                  ${inCurrentMonth && inPlanRange && hasMeals ? 'text-gray-900 font-semibold cursor-pointer hover:bg-blue-50 active:bg-blue-100' : ''}
                   ${!hasMeals ? 'cursor-default' : ''}
                   ${isToday ? 'ring-1 ring-blue-400 ring-inset' : ''}
                 `}
@@ -156,7 +158,7 @@ export default function MealPlanCalendar({
                 }
               >
                 <span className={`
-                  w-6 h-6 flex items-center justify-center rounded-full
+                  w-7 h-7 flex items-center justify-center rounded-full text-sm
                   ${inCurrentMonth && inPlanRange && hasMeals ? 'bg-blue-100' : ''}
                   ${inCurrentMonth && inPlanRange && !hasMeals ? 'bg-gray-50' : ''}
                 `}>
@@ -169,7 +171,7 @@ export default function MealPlanCalendar({
                     mealTypes.map((type) => (
                       <span
                         key={type}
-                        className={`w-1.5 h-1.5 rounded-full ${MEAL_TYPE_COLORS[type] || 'bg-gray-400'}`}
+                        className={`w-2 h-2 rounded-full ${MEAL_TYPE_COLORS[type] || 'bg-gray-400'}`}
                         title={type}
                       />
                     ))}

@@ -1,21 +1,16 @@
-# Local PostgreSQL for development
-# Usage: docker-compose up -d
-
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15-alpine
+  db:
+    image: postgres:16-alpine
     container_name: mealplan-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: mealplan
-      POSTGRES_PASSWORD: mealplan_dev_password
+      POSTGRES_PASSWORD: mealplan
       POSTGRES_DB: mealplan
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U mealplan"]
       interval: 10s
@@ -23,4 +18,4 @@ services:
       retries: 5
 
 volumes:
-  postgres_data:
+  pgdata:

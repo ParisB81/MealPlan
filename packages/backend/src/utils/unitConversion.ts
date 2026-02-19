@@ -70,7 +70,7 @@ export function applyIngredientOverride(
   ingredientName: string,
   baseQuantity: number,
   system: MeasurementSystem,
-  originalUnits: string[],
+  _originalUnits: string[],
 ): { quantity: number; unit: string } | null {
   const override = INGREDIENT_UNIT_OVERRIDES[ingredientName.toLowerCase().trim()];
   if (!override) return null;

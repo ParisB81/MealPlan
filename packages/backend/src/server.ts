@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import 'express-async-errors';
 import { config } from 'dotenv';
 import { PrismaClient } from '@prisma/client';
@@ -24,12 +26,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(helmet());
+const isProduction = process.env.NODE_ENV === 'production';
+app.use(helmet({
+  contentSecurityPolicy: isProduction ? false : undefined,
+}));
 
 // CORS configuration to allow multiple frontend ports
 const allowedOrigins = process.env.FRONTEND_URL
   ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:5177'];
+  : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:5176', 'http://localhost:5177', 'http://192.168.1.73:5173'];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -56,13 +61,27 @@ app.use('/api/shopping-lists', shoppingListsRouter);
 app.use('/api/scraper', scraperRouter);
 app.use('/api/cooking-plans', cookingPlansRouter);
 
+// Serve frontend static files in production
+if (isProduction) {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const frontendDist = path.resolve(__dirname, '../../../frontend/dist');
+  app.use(express.static(frontendDist));
+  // SPA fallback: serve index.html for all non-API routes
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDist, 'index.html'));
+  });
+}
+
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
 // Start server
-const server = app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+const host = isProduction ? '0.0.0.0' : 'localhost';
+const server = app.listen(Number(PORT), host, () => {
+  console.log(`Server running on http://${host}:${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 // Increase server timeout to 10 minutes for long-running scraping requests

@@ -10,7 +10,6 @@ import {
   useGenerateFromRecipes,
   useCreateCustomShoppingList,
 } from '../hooks/useShoppingLists';
-import { useMealPlans } from '../hooks/useMealPlans';
 import ShoppingListBuilder from '../components/ShoppingListBuilder';
 import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput } from '../types/shoppingList';
 import { Trash2, X } from 'lucide-react';
@@ -159,21 +158,21 @@ export default function ShoppingListsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Shopping Lists</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Shopping Lists</h1>
             <p className="text-gray-600 mt-1">
               {shoppingLists?.length || 0} shopping list(s)
               {selectedLists.size > 0 && ` • ${selectedLists.size} selected`}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-2 sm:gap-3">
             {activeTab === 'deleted' && !showBulkActions && (
               <button
                 onClick={() => setShowBulkActions(true)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+                className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors flex items-center"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 Select to Delete Forever
@@ -181,7 +180,7 @@ export default function ShoppingListsPage() {
             )}
             <button
               onClick={() => setShowBuilder(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors"
             >
               Create Shopping List
             </button>

@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   useShoppingList,
   useShoppingListById,
   useToggleShoppingListItem,
-  useDeleteShoppingList,
   useAddItemToList,
   useRemoveItemFromList,
   useUpdateShoppingList,
@@ -23,7 +22,6 @@ import toast from 'react-hot-toast';
 
 export default function ShoppingListPage() {
   const { id, mealPlanId } = useParams<{ id?: string; mealPlanId?: string }>();
-  const navigate = useNavigate();
 
   // Support both routes: /shopping-lists/:id and /meal-plans/:mealPlanId/shopping
   const { data: shoppingListById, isLoading: isLoadingById, error: errorById } = useShoppingListById(id);
@@ -36,7 +34,6 @@ export default function ShoppingListPage() {
   const queryClient = useQueryClient();
   const { data: ingredients } = useIngredients();
   const toggleItem = useToggleShoppingListItem();
-  const deleteList = useDeleteShoppingList();
   const addItem = useAddItemToList();
   const removeItem = useRemoveItemFromList();
   const updateShoppingList = useUpdateShoppingList();
@@ -107,14 +104,6 @@ export default function ShoppingListPage() {
     }
 
     removeItem.mutate({ shoppingListId: shoppingList.id, itemId });
-  };
-
-  const handleRegenerateList = () => {
-    if (!shoppingList || !confirm('Regenerate shopping list? All checked items will be reset.')) {
-      return;
-    }
-
-    deleteList.mutate(shoppingList.id);
   };
 
   const handlePrint = () => {
@@ -255,34 +244,34 @@ export default function ShoppingListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         {/* Back Button & Actions */}
-        <div className="flex justify-between items-center mb-6 print:hidden">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 print:hidden">
           <Link to={backUrl} className="text-blue-600 hover:text-blue-700">
             {backText}
           </Link>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setShowAddIngredient(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800"
             >
               Add Ingredient
             </button>
             <button
               onClick={() => setShowRecipePicker(true)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+              className="px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800"
             >
               Add from Recipe
             </button>
             <button
               onClick={() => setShowMealPlanPicker(true)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 active:bg-indigo-800"
             >
               Add from Meal Plan
             </button>
             <button
               onClick={handlePrint}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800"
             >
               Print
             </button>
@@ -323,7 +312,7 @@ export default function ShoppingListPage() {
               </div>
             ) : (
               <div className="flex gap-2 items-center">
-                <h1 className="text-3xl font-bold text-gray-900">{shoppingList.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{shoppingList.name}</h1>
                 <button
                   onClick={handleStartEditingName}
                   className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg print:hidden"
@@ -389,17 +378,17 @@ export default function ShoppingListPage() {
                     <h2 className="text-xl font-bold text-gray-900 mb-4 capitalize">
                       {category}
                     </h2>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       {items.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
                         >
                           <input
                             type="checkbox"
                             checked={item.checked}
                             onChange={() => handleToggleItem(item.id)}
-                            className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                            className="w-6 h-6 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer flex-shrink-0"
                           />
                           <span
                             className={`flex-1 ${
@@ -411,7 +400,7 @@ export default function ShoppingListPage() {
                             {item.ingredient.name}
                           </span>
                           <span
-                            className={`text-sm ${
+                            className={`text-sm whitespace-nowrap ${
                               item.checked ? 'text-gray-400' : 'text-gray-600'
                             }`}
                           >
@@ -419,7 +408,7 @@ export default function ShoppingListPage() {
                           </span>
                           <button
                             onClick={() => handleRemoveIngredient(item.id, item.ingredient.name)}
-                            className="px-2 py-1 text-sm text-red-600 hover:bg-red-50 rounded print:hidden"
+                            className="px-2 py-1.5 min-h-[36px] text-sm text-red-600 hover:bg-red-50 active:bg-red-100 rounded print:hidden"
                             disabled={removeItem.isPending}
                           >
                             Remove

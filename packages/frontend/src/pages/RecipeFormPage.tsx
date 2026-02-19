@@ -282,7 +282,7 @@ export default function RecipeFormPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         <Link
           to="/recipes"
           className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
@@ -291,7 +291,7 @@ export default function RecipeFormPage() {
         </Link>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
             {isEditing ? 'Edit Recipe' : 'Create New Recipe'}
           </h1>
           {!isEditing && (
@@ -356,7 +356,7 @@ export default function RecipeFormPage() {
               rows={3}
             />
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Input
                 label="Servings"
                 type="number"
@@ -439,59 +439,62 @@ export default function RecipeFormPage() {
 
                 return (
                   <div key={index}>
-                    <div className={`flex gap-2 ${hasRowError ? 'ring-2 ring-red-300 rounded-lg p-1 bg-red-50' : ''}`}>
+                    <div className={`flex flex-col sm:flex-row gap-2 ${hasRowError ? 'ring-2 ring-red-300 rounded-lg p-2 bg-red-50' : ''}`}>
                       <IngredientAutocomplete
                         value={ingredient.name}
                         onChange={(value) => updateIngredient(index, 'name', value)}
                         placeholder="Ingredient name *"
                         required
-                        className={`flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        className={`w-full sm:flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                           fieldWithError('name') ? 'border-red-500 bg-red-50' : 'border-gray-300'
                         }`}
                       />
-                      <input
-                        type="number"
-                        step="0.01"
-                        placeholder="Qty *"
-                        value={ingredient.quantity}
-                        onChange={(e) => {
-                          const value = parseFloat(e.target.value);
-                          // Round to 2 decimal places
-                          const rounded = Math.round(value * 100) / 100;
-                          updateIngredient(index, 'quantity', rounded);
-                        }}
-                        required
-                        min="0.01"
-                        className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          fieldWithError('quantity') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                        }`}
-                      />
-                      <UnitAutocomplete
-                        value={ingredient.unit}
-                        onChange={(value) => updateIngredient(index, 'unit', value)}
-                        placeholder="Unit *"
-                        required
-                        className={`w-24 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          fieldWithError('unit') ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                        }`}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Notes"
-                        value={ingredient.notes}
-                        onChange={(e) =>
-                          updateIngredient(index, 'notes', e.target.value)
-                        }
-                        className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => removeIngredient(index)}
-                        type="button"
-                      >
-                        ×
-                      </Button>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          step="0.01"
+                          placeholder="Qty *"
+                          value={ingredient.quantity}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            const rounded = Math.round(value * 100) / 100;
+                            updateIngredient(index, 'quantity', rounded);
+                          }}
+                          required
+                          min="0.01"
+                          className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                            fieldWithError('quantity') ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          }`}
+                        />
+                        <UnitAutocomplete
+                          value={ingredient.unit}
+                          onChange={(value) => updateIngredient(index, 'unit', value)}
+                          placeholder="Unit *"
+                          required
+                          className={`w-24 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                            fieldWithError('unit') ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          }`}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Notes"
+                          value={ingredient.notes}
+                          onChange={(e) =>
+                            updateIngredient(index, 'notes', e.target.value)
+                          }
+                          className="flex-1 sm:w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <Button
+                          variant="danger"
+                          size="sm"
+                          onClick={() => removeIngredient(index)}
+                          type="button"
+                        >
+                          ×
+                        </Button>
+                      </div>
                     </div>
                     {hasRowError && (
                       <div className="ml-1 mt-1 space-y-0.5">

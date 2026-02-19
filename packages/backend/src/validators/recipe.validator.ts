@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isValidUnit } from '../utils/validUnits';
+import { isValidUnit } from '../utils/validUnits.js';
 
 // Ingredient input schema
 export const ingredientInputSchema = z.object({

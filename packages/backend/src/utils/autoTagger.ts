@@ -163,7 +163,7 @@ export function autoTagRecipe(input: AutoTagInput): string[] {
 
 function inferMeal(
   titleLower: string,
-  descLower: string,
+  _descLower: string,
   combined: string,
   existingTags: string[],
   ingredients: string[],
@@ -213,7 +213,7 @@ function inferMeal(
 
 function inferBase(
   titleLower: string,
-  combined: string,
+  _combined: string,
   ingredients: string[],
   existingTags: string[],
 ): string | null {
@@ -347,7 +347,7 @@ function inferCountry(combined: string, existingTags: string[]): string | null {
 function inferStore(
   titleLower: string,
   combined: string,
-  ingredients: string[],
+  _ingredients: string[],
 ): string | null {
   // Soups and stews → Leftovers-friendly
   if (/\b(soup|stew|chili|chilli|casserole|moussaka|pastitsio|lasagna|ragout|ragu|goulash)\b/.test(combined)) {
@@ -379,7 +379,7 @@ function inferStore(
 }
 
 function inferMethod(
-  titleLower: string,
+  _titleLower: string,
   combined: string,
   cookTime: number,
 ): string | null {

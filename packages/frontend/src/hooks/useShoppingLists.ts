@@ -54,7 +54,7 @@ export function useToggleShoppingListItem() {
   return useMutation({
     mutationFn: ({ shoppingListId, itemId }: { shoppingListId: string; itemId: string }) =>
       shoppingListsService.toggleItemChecked(shoppingListId, itemId),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       // Invalidate to refetch
       queryClient.invalidateQueries({ queryKey: [SHOPPING_LISTS_KEY] });
     },
@@ -191,7 +191,7 @@ export function useUpdateShoppingList() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ shoppingListId, name }: { shoppingListId, name: string }) =>
+    mutationFn: ({ shoppingListId, name }: { shoppingListId: string, name: string }) =>
       shoppingListsService.update(shoppingListId, name),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [SHOPPING_LISTS_KEY] });

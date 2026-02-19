@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { recipeScraperService, ScrapedRecipe } from '../services/recipeScraper.service';
+import { recipeScraperService } from '../services/recipeScraper.service.js';
 
 // URL limits to prevent server freezing
 // Puppeteer-based sites (Akis, Argiro) are scraped in isolated child processes (one at a time)

@@ -61,15 +61,6 @@ export default function ShoppingListBuilder({
     );
   };
 
-  const handleAddCustomIngredient = () => {
-    if (ingredients && ingredients.length > 0) {
-      setCustomIngredients(prev => [
-        ...prev,
-        { ingredientId: ingredients[0].id, quantity: 1, unit: 'unit' },
-      ]);
-    }
-  };
-
   const handleRemoveCustomIngredient = (index: number) => {
     setCustomIngredients(prev => prev.filter((_, i) => i !== index));
   };
@@ -148,42 +139,42 @@ export default function ShoppingListBuilder({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+      <div className="bg-white rounded-lg p-4 md:p-6 max-w-2xl w-full mx-4 max-h-[90vh] md:max-h-[90vh] h-full md:h-auto overflow-y-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
           Create Shopping List
         </h2>
 
         {/* Mode Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-1 md:gap-2 mb-6 border-b border-gray-200">
           <button
             onClick={() => setMode('meal-plans')}
-            className={`px-4 py-2 font-medium transition-colors ${
+            className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'meal-plans'
                 ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
             }`}
           >
-            From Meal Plans
+            Meal Plans
           </button>
           <button
             onClick={() => setMode('recipes')}
-            className={`px-4 py-2 font-medium transition-colors ${
+            className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'recipes'
                 ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
             }`}
           >
-            From Recipes
+            Recipes
           </button>
           <button
             onClick={() => setMode('custom')}
-            className={`px-4 py-2 font-medium transition-colors ${
+            className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'custom'
                 ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
+                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
             }`}
           >
-            Custom List
+            Custom
           </button>
         </div>
 

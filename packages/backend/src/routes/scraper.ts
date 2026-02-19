@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { recipeScraperController } from '../controllers/recipeScraper.controller';
+import { recipeScraperController } from '../controllers/recipeScraper.controller.js';
 import { exec } from 'child_process';
-import { forceCleanupBrowser, startPuppeteerJob, getPuppeteerJobStatus } from '../services/recipeScraper.service';
+import { forceCleanupBrowser, startPuppeteerJob, getPuppeteerJobStatus } from '../services/recipeScraper.service.js';
 
 const router = Router();
 
@@ -15,7 +15,7 @@ router.post('/recipes', (req, res) => recipeScraperController.scrapeMultiple(req
 router.post('/generate-template', (req, res) => recipeScraperController.generateTemplate(req, res));
 
 // Health check for scraper - quick ping to verify the server is responsive
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -70,7 +70,7 @@ router.get('/puppeteer-job/:id', (req, res) => {
 });
 
 // Kill any zombie Chrome/Chromium processes that might be stuck
-router.post('/cleanup', async (req, res) => {
+router.post('/cleanup', async (_req, res) => {
   try {
     // First, cleanup tracked browser instance
     await forceCleanupBrowser();

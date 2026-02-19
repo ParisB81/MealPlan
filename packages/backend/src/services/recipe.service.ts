@@ -183,7 +183,7 @@ export class RecipeService {
     }
 
     // Update recipe
-    const recipe = await prisma.recipe.update({
+    await prisma.recipe.update({
       where: { id: recipeId },
       data: updateData,
       include: {

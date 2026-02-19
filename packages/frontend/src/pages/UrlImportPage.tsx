@@ -806,11 +806,11 @@ export default function UrlImportPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Import Recipes from URLs</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Import Recipes from URLs</h1>
             <p className="text-gray-600 mt-1">
               Scrape recipes from supported sites and generate an import template
             </p>

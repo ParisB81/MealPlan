@@ -42,8 +42,7 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# Prisma
-packages/backend/prisma/migrations/
+# Prisma (migrations tracked for deployment)
 
 # TypeScript
 *.tsbuildinfo
@@ -53,6 +52,10 @@ packages/backend/dev.db
 packages/backend/dev.db-journal
 packages/backend/dev.db-shm
 packages/backend/dev.db-wal
+packages/backend/prisma/dev.db
+packages/backend/prisma/dev.db-journal
+packages/backend/prisma/dev.db-shm
+packages/backend/prisma/dev.db-wal
 
 # Large USDA data files
 sr_legacy/
@@ -69,3 +72,16 @@ ingredients-import.xlsx
 nul
 temp_*.json
 C*UsersKatAppDataLocal*
+
+# Migration scripts and data exports
+migrate-to-postgres.ts
+sqlite-export.json
+
+# Excel data files
+*.xlsx
+
+# Docker
+docker-compose.override.yml
+
+# Claude settings
+.claude/

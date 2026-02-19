@@ -15,7 +15,7 @@ export default function AssetsLibraryPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
         {/* Back Link */}
         <Link
           to="/developer"
@@ -26,7 +26,7 @@ export default function AssetsLibraryPage() {
 
         {/* Header */}
         <header className="mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Assets Library</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Assets Library</h1>
           <p className="text-lg text-gray-600">
             Every UI component with all variants, sizes, and states.
           </p>

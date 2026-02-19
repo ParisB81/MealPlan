@@ -112,7 +112,7 @@ export default function UnitAutocomplete({
                   <li
                     key={unit.unit}
                     onClick={() => handleSelectUnit(unit)}
-                    className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm text-gray-900"
+                    className="px-4 py-2.5 min-h-[44px] flex items-center hover:bg-blue-50 active:bg-blue-100 cursor-pointer text-sm text-gray-900"
                   >
                     {unit.unit}
                   </li>

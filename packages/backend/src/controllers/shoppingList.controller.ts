@@ -209,7 +209,7 @@ export class ShoppingListController {
 
   // Remove item from shopping list
   async removeItem(req: Request, res: Response) {
-    const { id, itemId } = req.params;
+    const { itemId } = req.params;
 
     await shoppingListService.removeItemFromList(itemId);
 

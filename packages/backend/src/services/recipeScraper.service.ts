@@ -10,6 +10,42 @@ import { randomUUID } from 'crypto';
 // Track active child processes for cleanup
 const activeProcesses: Set<ChildProcess> = new Set();
 
+/**
+ * Spawn a completely independent child process, cross-platform.
+ * On Windows: uses wmic + batch file (prevents Express event loop blocking).
+ * On Linux/Mac: uses spawn with detached:true + unref().
+ */
+function spawnIndependentProcess(
+  nodePath: string,
+  tsxPath: string,
+  workerScript: string,
+  args: string[],
+  label: string
+): void {
+  if (os.platform() === 'win32') {
+    // Windows: batch file + wmic for full process isolation
+    const batchFile = path.join(os.tmpdir(), `puppeteer-${randomUUID()}.bat`);
+    const quotedArgs = args.map(a => `"${a}"`).join(' ');
+    const batchContent = `@echo off\r\n"${nodePath}" "${tsxPath}" "${workerScript}" ${quotedArgs}\r\n`;
+    fs.writeFileSync(batchFile, batchContent);
+    exec(`wmic process call create "${batchFile}"`, { windowsHide: true }, (error, stdout) => {
+      if (error) {
+        console.error(`[${label}] wmic failed:`, error.message);
+      } else {
+        console.log(`[${label}] wmic output:`, stdout.substring(0, 200));
+      }
+    });
+  } else {
+    // Linux/Mac: standard spawn with detached + unref
+    const child = spawn(nodePath, [tsxPath, workerScript, ...args], {
+      detached: true,
+      stdio: 'ignore',
+    });
+    child.unref();
+    console.log(`[${label}] Spawned detached process PID: ${child.pid}`);
+  }
+}
+
 // ============================================================================
 // JOB-BASED ASYNC SCRAPING
 // ============================================================================
@@ -71,25 +107,9 @@ export function startPuppeteerJob(url: string, siteType: 'akis' | 'argiro'): Pup
   console.log(`[Job ${jobId}] Starting ${siteType} scrape for: ${url}`);
 
   try {
-    // Create a batch file that runs the worker
-    const batchFile = path.join(os.tmpdir(), `puppeteer-worker-${jobId}.bat`);
-    const batchContent = `@echo off\r\n"${nodePath}" "${tsxPath}" "${workerScript}" "${url}" "${siteType}" "${outputFile}"\r\n`;
-    fs.writeFileSync(batchFile, batchContent);
-
-    // Use wmic process call create to spawn a completely independent process
-    // This is the most reliable way to spawn a detached process on Windows
-    exec(`wmic process call create "${batchFile}"`, {
-      windowsHide: true,
-    }, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`[Job ${jobId}] wmic failed:`, error.message);
-      } else {
-        console.log(`[Job ${jobId}] wmic output:`, stdout.substring(0, 200));
-      }
-    });
-
+    spawnIndependentProcess(nodePath, tsxPath, workerScript, [url, siteType, outputFile], `Job ${jobId}`);
     job.status = 'running';
-    console.log(`[Job ${jobId}] Worker launching via wmic: ${batchFile}`);
+    console.log(`[Job ${jobId}] Worker launched for ${siteType}: ${url}`);
   } catch (err: any) {
     console.error(`[Job ${jobId}] Failed to launch worker:`, err.message);
     job.status = 'failed';
@@ -175,22 +195,6 @@ export async function forceCleanupBrowser(): Promise<void> {
 }
 
 /**
- * Kill a process tree by PID (the process and all its children).
- * This is used to clean up the child process and any Chrome instances it spawned.
- */
-async function killProcessTree(pid: number): Promise<void> {
-  return new Promise((resolve) => {
-    if (process.platform === 'win32') {
-      // taskkill /T kills the process tree (parent and all children)
-      exec(`taskkill /F /PID ${pid} /T 2>nul`, () => resolve());
-    } else {
-      // On Linux/Mac, kill the process group
-      exec(`kill -9 -${pid} 2>/dev/null || kill -9 ${pid} 2>/dev/null`, () => resolve());
-    }
-  });
-}
-
-/**
  * Kill only Puppeteer's headless Chromium processes, NOT the user's regular Chrome browser.
  * This is a no-op now since exec with timeout handles cleanup automatically.
  * Kept for API compatibility.
@@ -227,23 +231,8 @@ async function runPuppeteerInChildProcess(
   const nodePath = process.execPath;
 
   return new Promise((resolve) => {
-    // Create a batch file that runs the worker
-    const batchFile = path.join(os.tmpdir(), `puppeteer-batch-${randomUUID()}.bat`);
-    const batchContent = `@echo off\r\n"${nodePath}" "${tsxPath}" "${WORKER_SCRIPT}" "${url}" "${siteType}" "${outputFile}"\r\n`;
-
     try {
-      fs.writeFileSync(batchFile, batchContent);
-
-      // Use wmic to spawn a completely independent process
-      exec(`wmic process call create "${batchFile}"`, {
-        windowsHide: true,
-      }, (error) => {
-        if (error) {
-          console.log(`[Child Process] wmic failed: ${error.message}`);
-        } else {
-          console.log(`[Child Process] wmic launched batch file: ${batchFile}`);
-        }
-      });
+      spawnIndependentProcess(nodePath, tsxPath, WORKER_SCRIPT, [url, siteType, outputFile], 'Child Process');
     } catch (err: any) {
       console.log(`[Child Process] Failed to launch: ${err.message}`);
       resolve({ success: false, error: `Failed to launch worker: ${err.message}` });
@@ -407,7 +396,6 @@ export class RecipeScraperService {
     // Weight
     'γρ.': 'g',
     'γρ': 'g',
-    'γραμμάρια': 'g',
     'γραμμάρια': 'g',
     'κιλό': 'kg',
     'κιλά': 'kg',
@@ -956,7 +944,7 @@ export class RecipeScraperService {
   /**
    * Scrape recipe from HTML elements as fallback
    */
-  private scrapeHtmlElements($: cheerio.CheerioAPI, url: string): Omit<ScrapedRecipe, 'sourceUrl'> {
+  private scrapeHtmlElements($: cheerio.CheerioAPI, _url: string): Omit<ScrapedRecipe, 'sourceUrl'> {
     // Common selectors for recipe sites
     const title = $('h1').first().text().trim() ||
                   $('[class*="title"]').first().text().trim() ||

@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+/// <reference lib="dom.iterable" />
 /**
  * Puppeteer Worker - Runs in a separate process to prevent blocking the main event loop.
  *
