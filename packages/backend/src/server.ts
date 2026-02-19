@@ -71,7 +71,7 @@ app.use('/api/cooking-plans', cookingPlansRouter);
 if (isProduction) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const frontendDist = path.resolve(__dirname, '../../../frontend/dist');
+  const frontendDist = path.resolve(__dirname, '../../frontend/dist');
   app.use(express.static(frontendDist));
   // SPA fallback: serve index.html for all non-API routes
   app.get('*', (req, res, next) => {
