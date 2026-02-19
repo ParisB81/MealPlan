@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import {
   format,
   startOfMonth,
@@ -12,15 +12,26 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
-import { useState } from 'react';
+import { Copy, X } from 'lucide-react';
+import CalendarContextMenu from './CalendarContextMenu';
 
 interface MealPlanCalendarProps {
   startDate: string;
   endDate: string;
   /** Map of 'yyyy-MM-dd' -> array of meal types for that day */
   mealsByDate: Record<string, { mealType: string }[]>;
-  /** Called when user clicks a date that has meals */
+  /** Called when user clicks a date that has meals (normal mode) */
   onDateClick?: (dateKey: string) => void;
+  /** Copy-paste state from parent (null = normal mode) */
+  copyState?: { sourceDate: string; label: string } | null;
+  /** Called when user selects a copy option from context menu */
+  onCopyMeals?: (sourceDate: string, mealType: string | 'all') => void;
+  /** Called when user clicks a target day in paste mode */
+  onPasteMeals?: (targetDate: string) => void;
+  /** Called to exit paste mode */
+  onCancelCopy?: () => void;
+  /** True while paste API calls are in progress */
+  isPasting?: boolean;
 }
 
 const MEAL_TYPE_COLORS: Record<string, string> = {
@@ -37,12 +48,29 @@ export default function MealPlanCalendar({
   endDate,
   mealsByDate,
   onDateClick,
+  copyState,
+  onCopyMeals,
+  onPasteMeals,
+  onCancelCopy,
+  isPasting,
 }: MealPlanCalendarProps) {
   const planStart = new Date(startDate);
   const planEnd = new Date(endDate);
 
   // Start viewing the month of the plan start date
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(planStart));
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    dateKey: string;
+    mealTypes: string[];
+  } | null>(null);
+
+  // Long-press refs for mobile
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressTriggeredRef = useRef(false);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
@@ -86,8 +114,112 @@ export default function MealPlanCalendar({
 
   const today = new Date();
 
+  // Close context menu on Escape, cancel paste mode on Escape
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (contextMenu) {
+          setContextMenu(null);
+        } else if (copyState) {
+          onCancelCopy?.();
+        }
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [contextMenu, copyState, onCancelCopy]);
+
+  // Open context menu handler
+  const openContextMenu = useCallback((x: number, y: number, dateKey: string, mealTypes: string[]) => {
+    setContextMenu({ x, y, dateKey, mealTypes });
+  }, []);
+
+  // Handle day button click
+  const handleDayClick = useCallback((dateKey: string, hasMeals: boolean, inPlanRange: boolean) => {
+    // If long-press just triggered, suppress the click
+    if (longPressTriggeredRef.current) {
+      longPressTriggeredRef.current = false;
+      return;
+    }
+
+    // Paste mode: click to paste
+    if (copyState) {
+      if (inPlanRange && dateKey !== copyState.sourceDate && !isPasting) {
+        onPasteMeals?.(dateKey);
+      }
+      return;
+    }
+
+    // Normal mode: scroll to day card
+    if (hasMeals) {
+      onDateClick?.(dateKey);
+    }
+  }, [copyState, isPasting, onPasteMeals, onDateClick]);
+
+  // Handle right-click
+  const handleContextMenu = useCallback((e: React.MouseEvent, dateKey: string, mealTypes: string[]) => {
+    e.preventDefault();
+    if (mealTypes.length === 0) return;
+    openContextMenu(e.clientX, e.clientY, dateKey, mealTypes);
+  }, [openContextMenu]);
+
+  // Long-press handlers for mobile
+  const handleTouchStart = useCallback((e: React.TouchEvent, dateKey: string, mealTypes: string[]) => {
+    if (mealTypes.length === 0) return;
+    longPressTriggeredRef.current = false;
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTriggeredRef.current = true;
+      const touch = e.touches[0];
+      openContextMenu(touch.clientX, touch.clientY, dateKey, mealTypes);
+      // Haptic feedback
+      if (navigator.vibrate) navigator.vibrate(50);
+    }, 500);
+  }, [openContextMenu]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
+  const handleTouchMove = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
+  // Handle context menu item selection
+  const handleContextMenuSelect = useCallback((mealType: string | 'all') => {
+    if (contextMenu) {
+      onCopyMeals?.(contextMenu.dateKey, mealType);
+      setContextMenu(null);
+    }
+  }, [contextMenu, onCopyMeals]);
+
   return (
     <div className="select-none">
+      {/* Paste mode status banner */}
+      {copyState && (
+        <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+          <div className="flex items-center gap-2 text-sm min-w-0">
+            <Copy size={14} className="text-amber-600 shrink-0" />
+            <span className="text-amber-800 truncate">
+              Copying <strong>{copyState.label}</strong> — click days to paste
+            </span>
+          </div>
+          <button
+            onClick={onCancelCopy}
+            className="flex items-center gap-1 text-xs text-amber-700 hover:text-amber-900 font-medium px-2 py-1.5 rounded hover:bg-amber-100 active:bg-amber-200 shrink-0 ml-2 min-h-[36px]"
+          >
+            <X size={12} />
+            <span className="hidden sm:inline">Cancel</span>
+            <span className="sm:hidden">Esc</span>
+          </button>
+        </div>
+      )}
+
       {/* Month navigation */}
       <div className="flex items-center justify-between mb-3">
         <button
@@ -136,31 +268,54 @@ export default function MealPlanCalendar({
             const isToday = isSameDay(day, today);
             const dateKey = format(day, 'yyyy-MM-dd');
 
+            // Paste mode styling
+            const isSourceDay = copyState?.sourceDate === dateKey;
+            const isValidTarget = copyState && inPlanRange && inCurrentMonth && !isSourceDay;
+            const inPasteMode = !!copyState;
+
+            // Determine if button should be disabled
+            const isDisabled = inPasteMode
+              ? (!inPlanRange || !inCurrentMonth || isSourceDay)
+              : !hasMeals;
+
             return (
               <button
                 key={day.toISOString()}
                 type="button"
-                onClick={() => hasMeals && onDateClick?.(dateKey)}
+                onClick={() => handleDayClick(dateKey, hasMeals, inPlanRange)}
+                onContextMenu={(e) => handleContextMenu(e, dateKey, mealTypes)}
+                onTouchStart={(e) => handleTouchStart(e, dateKey, mealTypes)}
+                onTouchEnd={handleTouchEnd}
+                onTouchMove={handleTouchMove}
                 className={`
                   relative flex flex-col items-center py-2 text-xs transition-colors rounded-md min-h-[40px]
                   ${!inCurrentMonth ? 'text-gray-300' : ''}
                   ${inCurrentMonth && !inPlanRange ? 'text-gray-400' : ''}
-                  ${inCurrentMonth && inPlanRange && !hasMeals ? 'text-gray-600' : ''}
-                  ${inCurrentMonth && inPlanRange && hasMeals ? 'text-gray-900 font-semibold cursor-pointer hover:bg-blue-50 active:bg-blue-100' : ''}
-                  ${!hasMeals ? 'cursor-default' : ''}
+                  ${inCurrentMonth && inPlanRange && !hasMeals && !inPasteMode ? 'text-gray-600' : ''}
+                  ${inCurrentMonth && inPlanRange && hasMeals && !inPasteMode ? 'text-gray-900 font-semibold cursor-pointer hover:bg-blue-50 active:bg-blue-100' : ''}
+                  ${!inPasteMode && !hasMeals ? 'cursor-default' : ''}
                   ${isToday ? 'ring-1 ring-blue-400 ring-inset' : ''}
+                  ${isSourceDay ? 'ring-2 ring-amber-400 bg-amber-50' : ''}
+                  ${isValidTarget ? 'text-gray-900 border-2 border-dashed border-green-300 hover:bg-green-50 active:bg-green-100 cursor-copy' : ''}
+                  ${isValidTarget && isPasting ? 'opacity-50 cursor-wait' : ''}
+                  ${inPasteMode && inCurrentMonth && inPlanRange && !isSourceDay && !isValidTarget ? '' : ''}
                 `}
-                disabled={!hasMeals}
+                disabled={isDisabled}
                 title={
-                  hasMeals
+                  isSourceDay
+                    ? 'Source day (copying from here)'
+                    : isValidTarget
+                    ? 'Click to paste meals here'
+                    : hasMeals
                     ? `${mealTypes.length} meal type${mealTypes.length > 1 ? 's' : ''}: ${mealTypes.join(', ')}`
                     : undefined
                 }
               >
                 <span className={`
                   w-7 h-7 flex items-center justify-center rounded-full text-sm
-                  ${inCurrentMonth && inPlanRange && hasMeals ? 'bg-blue-100' : ''}
-                  ${inCurrentMonth && inPlanRange && !hasMeals ? 'bg-gray-50' : ''}
+                  ${inCurrentMonth && inPlanRange && hasMeals && !isSourceDay ? 'bg-blue-100' : ''}
+                  ${inCurrentMonth && inPlanRange && !hasMeals && !isSourceDay ? 'bg-gray-50' : ''}
+                  ${isSourceDay ? 'bg-amber-200' : ''}
                 `}>
                   {format(day, 'd')}
                 </span>
@@ -191,6 +346,18 @@ export default function MealPlanCalendar({
           </div>
         ))}
       </div>
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <CalendarContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          dateKey={contextMenu.dateKey}
+          mealTypes={contextMenu.mealTypes}
+          onSelect={handleContextMenuSelect}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }

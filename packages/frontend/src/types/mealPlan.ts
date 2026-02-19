@@ -64,3 +64,16 @@ export interface MealPlanNutrition {
   totalFat: number;
   mealsCount: number;
 }
+
+export interface CopyMealData {
+  recipeId: string;
+  mealType: MealType;
+  servings: number;
+  notes?: string;
+}
+
+export interface CopyState {
+  sourceDate: string;
+  meals: CopyMealData[];
+  label: string;
+}
