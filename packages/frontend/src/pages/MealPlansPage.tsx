@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useMealPlans, useCreateMealPlan, useUpdateMealPlanStatus, useDeleteMealPlan } from '../hooks/useMealPlans';
 import { format, addDays } from 'date-fns';
 import type { MealPlanStatus } from '../types/mealPlan';
@@ -13,6 +13,7 @@ export default function MealPlansPage() {
   const deleteMealPlan = useDeleteMealPlan();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
+  const navigate = useNavigate();
 
   const handleCreateWeeklyPlan = () => {
     const today = new Date();
@@ -31,29 +32,25 @@ export default function MealPlansPage() {
     );
   };
 
-  const handleMoveToCompleted = (e: React.MouseEvent, planId: string) => {
-    e.preventDefault();
+  const handleMoveToCompleted = (planId: string) => {
     if (confirm('Mark this meal plan as completed?')) {
       updateStatus.mutate({ id: planId, input: { status: 'completed' } });
     }
   };
 
-  const handleDelete = (e: React.MouseEvent, planId: string) => {
-    e.preventDefault();
+  const handleDelete = (planId: string) => {
     if (confirm('Move this meal plan to deleted?')) {
       updateStatus.mutate({ id: planId, input: { status: 'deleted' } });
     }
   };
 
-  const handlePermanentDelete = (e: React.MouseEvent, planId: string) => {
-    e.preventDefault();
+  const handlePermanentDelete = (planId: string) => {
     if (confirm('Permanently delete this meal plan? This cannot be undone.')) {
       deleteMealPlan.mutate(planId);
     }
   };
 
-  const handleRestoreToActive = (e: React.MouseEvent, planId: string) => {
-    e.preventDefault();
+  const handleRestoreToActive = (planId: string) => {
     updateStatus.mutate({ id: planId, input: { status: 'active' } });
   };
 
@@ -152,9 +149,14 @@ export default function MealPlansPage() {
         {!isLoading && mealPlans && mealPlans.length > 0 && (
           <div className="grid gap-4">
             {mealPlans.map((plan) => (
-              <Card key={plan.id} hoverable>
+              <Card
+                key={plan.id}
+                hoverable
+                className="cursor-pointer"
+                onClick={() => navigate(`/meal-plans/${plan.id}`)}
+              >
                 <div className="flex justify-between items-start gap-4">
-                  <Link to={`/meal-plans/${plan.id}`} className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
                       {plan.name}
                     </h3>
@@ -165,22 +167,19 @@ export default function MealPlansPage() {
                     <p className="text-gray-500 text-sm">
                       {plan.meals.length} meals planned
                     </p>
-                  </Link>
+                  </div>
 
-                  <div className="flex gap-2 flex-shrink-0">
-                    <Link
-                      to={`/meal-plans/${plan.id}`}
-                      className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700"
-                    >
+                  <div className="flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <Button size="sm" onClick={() => navigate(`/meal-plans/${plan.id}`)}>
                       View
-                    </Link>
+                    </Button>
 
                     {activeTab === 'active' && (
                       <>
-                        <Button size="sm" variant="success" onClick={(e) => handleMoveToCompleted(e, plan.id)}>
+                        <Button size="sm" variant="success" onClick={() => handleMoveToCompleted(plan.id)}>
                           Complete
                         </Button>
-                        <Button size="sm" variant="danger" onClick={(e) => handleDelete(e, plan.id)}>
+                        <Button size="sm" variant="danger" onClick={() => handleDelete(plan.id)}>
                           Delete
                         </Button>
                       </>
@@ -188,10 +187,10 @@ export default function MealPlansPage() {
 
                     {activeTab === 'completed' && (
                       <>
-                        <Button size="sm" onClick={(e) => handleRestoreToActive(e, plan.id)}>
+                        <Button size="sm" onClick={() => handleRestoreToActive(plan.id)}>
                           Restore
                         </Button>
-                        <Button size="sm" variant="danger" onClick={(e) => handleDelete(e, plan.id)}>
+                        <Button size="sm" variant="danger" onClick={() => handleDelete(plan.id)}>
                           Delete
                         </Button>
                       </>
@@ -199,10 +198,10 @@ export default function MealPlansPage() {
 
                     {activeTab === 'deleted' && (
                       <>
-                        <Button size="sm" onClick={(e) => handleRestoreToActive(e, plan.id)}>
+                        <Button size="sm" onClick={() => handleRestoreToActive(plan.id)}>
                           Restore
                         </Button>
-                        <Button size="sm" variant="danger" onClick={(e) => handlePermanentDelete(e, plan.id)}>
+                        <Button size="sm" variant="danger" onClick={() => handlePermanentDelete(plan.id)}>
                           Permanent Delete
                         </Button>
                       </>
