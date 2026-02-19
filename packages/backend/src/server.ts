@@ -18,6 +18,12 @@ import cookingPlansRouter from './routes/cookingPlans.js';
 // Load environment variables
 config();
 
+// Startup logging
+console.log('Starting MealPlan server...');
+console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`PORT: ${process.env.PORT || '3000 (default)'}`);
+console.log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'set' : 'NOT SET'}`);
+
 // Initialize Prisma Client
 export const prisma = new PrismaClient();
 
