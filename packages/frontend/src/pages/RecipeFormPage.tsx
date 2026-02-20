@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useRecipe, useCreateRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 import type { CreateRecipeInput, Recipe } from '../types/recipe';
 import type { ApiError } from '../services/api';
 import RecipePicker from '../components/RecipePicker';
 import IngredientAutocomplete from '../components/IngredientAutocomplete';
 import UnitAutocomplete from '../components/UnitAutocomplete';
+import TagAutocomplete from '../components/TagAutocomplete';
+import { getCategoryForTag } from '../data/tagDefinitions';
 import { Button, Card, Input, TextArea, Badge, Alert } from '../components/ui';
 
 /**
@@ -53,6 +55,7 @@ function formatErrorPath(path: string): string {
 export default function RecipeFormPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const isEditing = id !== 'new' && !!id;
 
   const { data: recipe } = useRecipe(isEditing ? id : undefined);
@@ -74,6 +77,18 @@ export default function RecipeFormPage() {
   const [tagInput, setTagInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showRecipePicker, setShowRecipePicker] = useState(false);
+  const [isPrefilled, setIsPrefilled] = useState(false);
+
+  // Prefill form from URL import (via React Router location state)
+  useEffect(() => {
+    if (!isEditing && location.state?.prefill) {
+      const prefill = location.state.prefill as CreateRecipeInput;
+      setFormData(prefill);
+      setIsPrefilled(true);
+      // Clear location state to prevent re-fill on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [isEditing, location.state]);
 
   // Load recipe data when editing
   useEffect(() => {
@@ -304,6 +319,13 @@ export default function RecipeFormPage() {
           )}
         </div>
 
+        {/* Prefill info banner */}
+        {isPrefilled && (
+          <Alert variant="info" className="mb-6" onDismiss={() => setIsPrefilled(false)}>
+            Imported from URL — review and edit before saving.
+          </Alert>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* General Error Message */}
           {Object.keys(errors).length > 0 && (() => {
@@ -392,23 +414,33 @@ export default function RecipeFormPage() {
                 Tags
               </label>
               <div className="flex gap-2 mb-2">
-                <Input
+                <TagAutocomplete
                   value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                  onChange={setTagInput}
+                  onSelectTag={(tag) => {
+                    if (!formData.tags.includes(tag)) {
+                      setFormData({ ...formData, tags: [...formData.tags, tag] });
+                    }
+                    setTagInput('');
+                  }}
+                  onAddCustomTag={addTag}
+                  existingTags={formData.tags}
                   placeholder="Add a tag..."
-                  className="flex-1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
                 <Button variant="secondary" onClick={addTag} type="button">
                   Add
                 </Button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {formData.tags.map((tag) => (
-                  <Badge key={tag} variant="blue" size="md" removable onRemove={() => removeTag(tag)}>
-                    {tag}
-                  </Badge>
-                ))}
+                {formData.tags.map((tag) => {
+                  const category = getCategoryForTag(tag);
+                  return (
+                    <Badge key={tag} variant={category?.color || 'blue'} size="md" removable onRemove={() => removeTag(tag)}>
+                      {tag}
+                    </Badge>
+                  );
+                })}
               </div>
             </div>
           </Card>

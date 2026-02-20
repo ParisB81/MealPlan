@@ -5,7 +5,7 @@ import { scraperService, ScrapedRecipeTemplate } from '../services/scraper.servi
 import { useBulkImportRecipes } from '../hooks/useRecipes';
 import { CreateRecipeInput } from '../types/recipe';
 import { Button, Card, TextArea, Alert } from '../components/ui';
-import { Upload, Download, Import } from 'lucide-react';
+import { Upload, Download, Import, Pencil } from 'lucide-react';
 
 type ImportStatus = 'idle' | 'loading' | 'success' | 'error' | 'stuck';
 
@@ -1123,21 +1123,36 @@ export default function UrlImportPage() {
                       : 'bg-green-50 border-green-200'
                   }`}
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="min-w-0 flex-1">
                       <h3 className="font-medium">
                         {recipe.Title || 'Failed to scrape'}
                       </h3>
-                      <p className="text-sm text-gray-600 truncate max-w-md">
+                      <p className="text-sm text-gray-600 truncate">
                         {recipe.SourceUrl}
                       </p>
                     </div>
                     {recipe.Error ? (
-                      <span className="text-sm text-red-600">{recipe.Error}</span>
+                      <span className="text-sm text-red-600 flex-shrink-0">{recipe.Error}</span>
                     ) : (
-                      <span className="text-sm text-green-600">
-                        {recipe.Servings} servings | {recipe.Ingredients.split(';').length} ingredients
-                      </span>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <span className="text-sm text-green-600">
+                          {recipe.Servings} servings | {recipe.Ingredients.split(';').length} ingredients
+                        </span>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => {
+                            const recipeInput = convertToRecipeInput(recipe);
+                            if (recipeInput) {
+                              navigate('/recipes/new', { state: { prefill: recipeInput } });
+                            }
+                          }}
+                        >
+                          <Pencil className="w-3.5 h-3.5 mr-1" />
+                          Review & Edit
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
