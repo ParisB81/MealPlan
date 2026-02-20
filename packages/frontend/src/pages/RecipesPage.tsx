@@ -689,9 +689,32 @@ export default function RecipesPage() {
                     </div>
                     {recipe.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-4">
-                        {recipe.tags.slice(0, 3).map((tag) => (
-                          <Badge key={tag} variant="blue">{tag}</Badge>
-                        ))}
+                        {(() => {
+                          // When searching, ensure the matched tag is visible in the first 3 shown
+                          const searchLower = search.toLowerCase().trim();
+                          if (searchLower && !hasComma) {
+                            const matchIdx = recipe.tags.findIndex(t => t.toLowerCase().includes(searchLower));
+                            if (matchIdx >= 3) {
+                              // Move matched tag into the visible set
+                              const reordered = [...recipe.tags];
+                              const [matched] = reordered.splice(matchIdx, 1);
+                              reordered.splice(2, 0, matched); // Insert at position 3 (index 2)
+                              return reordered.slice(0, 3).map((tag) => (
+                                <Badge key={tag} variant={tag.toLowerCase().includes(searchLower) ? 'green' : 'blue'}>{tag}</Badge>
+                              ));
+                            }
+                            // Matched tag is already in first 3 — highlight it
+                            return recipe.tags.slice(0, 3).map((tag) => (
+                              <Badge key={tag} variant={tag.toLowerCase().includes(searchLower) ? 'green' : 'blue'}>{tag}</Badge>
+                            ));
+                          }
+                          return recipe.tags.slice(0, 3).map((tag) => (
+                            <Badge key={tag} variant="blue">{tag}</Badge>
+                          ));
+                        })()}
+                        {recipe.tags.length > 3 && (
+                          <span className="text-xs text-gray-400 self-center">+{recipe.tags.length - 3}</span>
+                        )}
                       </div>
                     )}
                   </Link>
