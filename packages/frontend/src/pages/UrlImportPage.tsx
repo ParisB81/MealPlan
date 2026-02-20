@@ -2,10 +2,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { scraperService, ScrapedRecipeTemplate } from '../services/scraper.service';
-import { useBulkImportRecipes } from '../hooks/useRecipes';
 import { CreateRecipeInput } from '../types/recipe';
 import { Button, Card, TextArea, Alert } from '../components/ui';
-import { Upload, Download, Import, Pencil } from 'lucide-react';
+import { Upload, Download, Pencil } from 'lucide-react';
 
 type ImportStatus = 'idle' | 'loading' | 'success' | 'error' | 'stuck';
 
@@ -52,7 +51,6 @@ const SOURCES: SourceBox[] = [
 
 export default function UrlImportPage() {
   const navigate = useNavigate();
-  const bulkImport = useBulkImportRecipes();
 
   // Per-source URL lists
   const [sourceUrls, setSourceUrls] = useState<Record<string, string[]>>(
@@ -760,31 +758,6 @@ export default function UrlImportPage() {
     };
   };
 
-  // Import recipes directly into the app
-  const handleDirectImport = () => {
-    const successfulRecipes = results.filter((r) => !r.Error);
-    if (successfulRecipes.length === 0) {
-      setError('No successful recipes to import');
-      return;
-    }
-
-    const recipesToImport = successfulRecipes
-      .map(convertToRecipeInput)
-      .filter((r): r is CreateRecipeInput => r !== null);
-
-    if (recipesToImport.length === 0) {
-      setError('Failed to convert recipes for import');
-      return;
-    }
-
-    bulkImport.mutate(recipesToImport, {
-      onSuccess: () => {
-        // Navigate to recipes page after successful import
-        navigate('/recipes');
-      },
-    });
-  };
-
   const handleClearSource = (hostname: string) => {
     setSourceUrls((prev) => ({ ...prev, [hostname]: [] }));
     setResults([]);
@@ -1078,23 +1051,14 @@ export default function UrlImportPage() {
           <Card>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Results</h2>
-              <div className="flex gap-3">
-                <Button onClick={handleDownload} variant="secondary" size="lg">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download Excel
-                </Button>
-                <Button
-                  onClick={handleDirectImport}
-                  variant="primary"
-                  size="lg"
-                  loading={bulkImport.isPending}
-                  disabled={successCount === 0}
-                >
-                  <Import className="w-4 h-4 mr-2" />
-                  Import {successCount} Recipe{successCount !== 1 ? 's' : ''} Directly
-                </Button>
-              </div>
+              <Button onClick={handleDownload} variant="ghost" size="sm">
+                <Download className="w-4 h-4 mr-1" />
+                Download Excel
+              </Button>
             </div>
+            <Alert variant="info" className="mb-4">
+              Review each recipe before importing — scraped data often needs corrections to tags, ingredients, and units.
+            </Alert>
 
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4 mb-6">
@@ -1136,11 +1100,11 @@ export default function UrlImportPage() {
                       <span className="text-sm text-red-600 flex-shrink-0">{recipe.Error}</span>
                     ) : (
                       <div className="flex items-center gap-3 flex-shrink-0">
-                        <span className="text-sm text-green-600">
+                        <span className="text-sm text-green-600 hidden sm:inline">
                           {recipe.Servings} servings | {recipe.Ingredients.split(';').length} ingredients
                         </span>
                         <Button
-                          variant="secondary"
+                          variant="primary"
                           size="sm"
                           onClick={() => {
                             const recipeInput = convertToRecipeInput(recipe);
@@ -1150,7 +1114,7 @@ export default function UrlImportPage() {
                           }}
                         >
                           <Pencil className="w-3.5 h-3.5 mr-1" />
-                          Review & Edit
+                          Review & Import
                         </Button>
                       </div>
                     )}
