@@ -548,6 +548,41 @@ export class ShoppingListService {
     return { added: aggregated.length };
   }
 
+  // Add all ingredients from recipes to an existing shopping list (with proper unit aggregation)
+  async addFromRecipes(shoppingListId: string, recipeIds: string[]) {
+    // Verify shopping list exists
+    const shoppingList = await prisma.shoppingList.findUnique({ where: { id: shoppingListId } });
+    if (!shoppingList) return null;
+
+    // Fetch recipes with ingredients
+    const recipes = await prisma.recipe.findMany({
+      where: { id: { in: recipeIds } },
+      include: {
+        ingredients: {
+          include: { ingredient: true },
+        },
+      },
+    });
+
+    if (recipes.length === 0) return { added: 0 };
+
+    // Create mock meal plan recipes for aggregation (1:1 servings)
+    const mockMealPlanRecipes = recipes.map((recipe) => ({
+      servings: recipe.servings,
+      recipe,
+    }));
+
+    // Aggregate using the same unit-conversion logic
+    const aggregated = this.aggregateIngredients(mockMealPlanRecipes);
+
+    // Add each aggregated item to the existing list
+    for (const item of aggregated) {
+      await this.addItemToList(shoppingListId, item.ingredientId, item.quantity, item.unit);
+    }
+
+    return { added: aggregated.length };
+  }
+
   // Add item to existing shopping list
   async addItemToList(shoppingListId: string, ingredientId: string, quantity: number, unit: string) {
     // Check if item already exists

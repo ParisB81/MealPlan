@@ -73,6 +73,12 @@ export const shoppingListsService = {
     return data.data;
   },
 
+  // Add all ingredients from recipes to an existing shopping list (with unit conversion)
+  async addFromRecipes(shoppingListId: string, recipeIds: string[]): Promise<{ added: number }> {
+    const { data } = await api.post(`/shopping-lists/${shoppingListId}/add-from-recipes`, { recipeIds });
+    return data.data;
+  },
+
   // Add item to shopping list
   async addItem(shoppingListId: string, item: AddItemToListInput) {
     const { data } = await api.post(`/shopping-lists/${shoppingListId}/items`, item);

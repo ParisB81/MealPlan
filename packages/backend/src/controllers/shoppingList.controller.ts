@@ -186,6 +186,24 @@ export class ShoppingListController {
     res.json({ status: 'success', data: result });
   }
 
+  // Add all ingredients from recipes to an existing shopping list (with unit conversion)
+  async addFromRecipes(req: Request, res: Response) {
+    const { id } = req.params;
+    const { recipeIds } = req.body;
+
+    if (!recipeIds || !Array.isArray(recipeIds) || recipeIds.length === 0) {
+      throw new AppError(400, 'recipeIds array is required');
+    }
+
+    const result = await shoppingListService.addFromRecipes(id, recipeIds);
+
+    if (!result) {
+      throw new AppError(404, 'Shopping list not found');
+    }
+
+    res.json({ status: 'success', data: result });
+  }
+
   // Add item to shopping list
   async addItem(req: Request, res: Response) {
     const { id } = req.params;

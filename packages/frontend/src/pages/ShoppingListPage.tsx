@@ -144,38 +144,18 @@ export default function ShoppingListPage() {
 
     setShowRecipePicker(false);
 
-    // Add all ingredients from the recipe to the shopping list
-    const ingredientsToAdd = recipe.ingredients || [];
+    try {
+      const result = await shoppingListsService.addFromRecipes(shoppingList.id, [recipe.id]);
 
-    if (ingredientsToAdd.length === 0) {
-      toast.error('This recipe has no ingredients to add');
-      return;
-    }
-
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const recipeIngredient of ingredientsToAdd) {
-      try {
-        const item: AddItemToListInput = {
-          ingredientId: recipeIngredient.ingredient.id,
-          quantity: Math.round(recipeIngredient.quantity * 100) / 100,
-          unit: recipeIngredient.unit,
-        };
-
-        await addItem.mutateAsync({ shoppingListId: shoppingList.id, item });
-        successCount++;
-      } catch (error) {
-        errorCount++;
-        console.error('Failed to add ingredient:', error);
+      if (result.added === 0) {
+        toast.error('This recipe has no ingredients to add');
+      } else {
+        toast.success(`Added ${result.added} ingredient(s) from "${recipe.title}"`);
+        queryClient.invalidateQueries({ queryKey: ['shoppingLists'] });
       }
-    }
-
-    if (successCount > 0) {
-      toast.success(`Added ${successCount} ingredient(s) from "${recipe.title}"`);
-    }
-    if (errorCount > 0) {
-      toast.error(`Failed to add ${errorCount} ingredient(s)`);
+    } catch (error: any) {
+      console.error('Failed to add from recipe:', error);
+      toast.error(error?.response?.data?.message || 'Failed to add ingredients from recipe');
     }
   };
 

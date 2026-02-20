@@ -33,6 +33,9 @@ router.post('/:id/restore', (req, res) => shoppingListController.restore(req, re
 // Add all ingredients from a meal plan to an existing shopping list
 router.post('/:id/add-from-meal-plan', (req, res) => shoppingListController.addFromMealPlan(req, res));
 
+// Add all ingredients from recipes to an existing shopping list (with unit conversion)
+router.post('/:id/add-from-recipes', (req, res) => shoppingListController.addFromRecipes(req, res));
+
 // Add item to shopping list
 router.post('/:id/items', (req, res) => shoppingListController.addItem(req, res));
 
