@@ -117,9 +117,10 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── AddToMealPlanModal.tsx # Modal to add recipe to any meal plan (from RecipesPage/RecipeDetailPage)
 │   │   │   │   ├── IngredientAutocomplete.tsx  # Autocomplete for ingredient names
 │   │   │   │   ├── UnitAutocomplete.tsx    # Autocomplete for measurement units
+│   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
 │   │   │   │   └── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom)
 │   │   │   ├── data/
-│   │   │   │   └── tagDefinitions.ts       # 80+ predefined tags in 6 categories
+│   │   │   │   └── tagDefinitions.ts       # 97 predefined tags in 6 categories
 │   │   │   ├── pages/
 │   │   │   │   ├── HomePage.tsx            # Landing page with quick links
 │   │   │   │   ├── RecipesPage.tsx         # Browse/search recipes
@@ -277,8 +278,9 @@ cd "C:\00 Paris\MealPlan"
 
 ### 1. Recipe Management (Phase 1 - Complete)
 - Full CRUD with soft delete + restore + permanent delete
-- Search by title, description, tags, status
+- **Search:** Case-insensitive search across title, description, tags, and ingredient names (PostgreSQL `mode: 'insensitive'`)
 - **Tag filtering:** Single tag via search bar, or multi-tag AND filter with comma-separated tags
+- **Tag highlighting:** Matched tags shown with colored badges on recipe cards; `+N more` counter for remaining tags
 - Pagination (backend caps `limit` at 100; frontend `useRecipes` hook auto-paginates to fetch ALL recipes)
 - **Export Recipes:** Button on RecipesPage exports all active recipes (ID, Name, Tags) to Excel
 - **Add to Meal Plan:** Button on each recipe card and RecipeDetailPage to add recipe to any active meal plan
@@ -291,6 +293,8 @@ cd "C:\00 Paris\MealPlan"
   - Per-row error messages displayed below the affected ingredient
   - `formatErrorPath()` helper converts Zod paths like `ingredients.0.unit` to readable labels
 - "Start from existing recipe" feature (copies recipe data into new form)
+- **Prefill from URL import:** RecipeFormPage accepts `location.state.prefill` data from React Router navigation, pre-populating all form fields for review before saving; shows info banner "Imported from URL — review and edit before saving"
+- **Tag autocomplete:** `TagAutocomplete` component on recipe form with grouped dropdown (6 categories: Meal, Base, Duration, Country, Store, Method), color-coded suggestions, keyboard navigation (Enter selects first match), and existing tag exclusion
 - Bulk import/delete operations
 - Ingredient deduplication (combines duplicates within a recipe, sums quantities if same unit)
 - **Source URL tracking:** Scraped recipes store their original URL in `sourceUrl` field, displayed as "View Original Recipe" link on RecipeDetailPage
@@ -341,7 +345,7 @@ cd "C:\00 Paris\MealPlan"
   - Manual URL entry
   - Preview scraped results before importing
   - Download results as Excel with error reporting
-  - **Direct import button:** "Import N Recipes Directly" button converts scraped results to `CreateRecipeInput` format and calls `POST /api/recipes/bulk-import` — bypasses Excel template download entirely
+  - **Review & Import flow (mandatory):** Each scraped recipe has a "Review & Import" button that navigates to `/recipes/new` with prefilled data via `location.state` — user reviews/edits all fields before saving. Bulk direct import was intentionally removed to prevent bad data from entering the database.
   - Async job system with polling for Akis URLs (prevents frontend from hanging)
 
 ### 3. Nutritional Information (Phase 2 - Complete)
@@ -380,6 +384,7 @@ cd "C:\00 Paris\MealPlan"
 - **Category grouping:** Items organized by ingredient category (produce, dairy, meat, pantry, etc.)
 - **Check-off functionality:** Toggle items as purchased
 - **Item management:** Add, remove, update quantity on items
+- **Add from recipes (with conversion):** `POST /:id/add-from-recipes` endpoint runs recipes through `aggregateIngredients()` pipeline before adding to an existing list — ensures imperial→metric conversion and ingredient-specific overrides are applied (e.g., `1.5 lb` → `680.39 g`)
 - **Status management:** active / completed / deleted with restore
 
 ### 6. Unit Conversion System
@@ -556,6 +561,7 @@ Located in `packages/frontend/src/components/ui/`:
 - `PUT /:id` - Update shopping list name
 - `POST /:id/complete` - Mark as completed
 - `POST /:id/restore` - Restore to active
+- `POST /:id/add-from-recipes` - Add ingredients from recipes with full unit conversion (body: `{ recipeIds: string[] }`)
 - `POST /:id/items` - Add item (merges if same ingredient+unit)
 - `POST /:id/items/:itemId/toggle` - Toggle item checked status
 - `PUT /:id/items/:itemId` - Update item quantity
@@ -595,7 +601,7 @@ Located in `packages/frontend/src/components/ui/`:
 | `/` | HomePage | Landing page with quick links to all features |
 | `/recipes` | RecipesPage | Browse, search, filter recipes |
 | `/recipes/new` | RecipeFormPage | Create new recipe |
-| `/recipes/import-urls` | UrlImportPage | Scrape recipes from URLs, generate Excel |
+| `/recipes/import-urls` | UrlImportPage | Scrape recipes from URLs, review & import individually |
 | `/recipes/:id` | RecipeDetailPage | View recipe details |
 | `/recipes/:id/edit` | RecipeFormPage | Edit existing recipe |
 | `/meal-plans` | MealPlansPage | List all meal plans |
@@ -865,7 +871,7 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Phase 4: Shopping List Generation** - Generate from meal plans/recipes/custom, intelligent ingredient aggregation via unified unit conversion (metric+imperial merged, always displays metric), category grouping, check-off functionality, item add/remove/update
 
-**Recipe Scraper & URL Import** - Scrape from bigrecipe.com, allrecipes.com, akispetretzikis.com, and argiro.gr; JSON-LD + HTML fallback + Puppeteer for Cloudflare-protected sites; Greek-to-English unit mapping (75+ entries); unit normalization pipeline (~80 entries); Windows `start` command for isolated child processes (solves backend freeze); async job system with frontend polling; Excel template generation; direct import button; sodium auto-normalized to mg
+**Recipe Scraper & URL Import** - Scrape from bigrecipe.com, allrecipes.com, akispetretzikis.com, and argiro.gr; JSON-LD + HTML fallback + Puppeteer for Cloudflare-protected sites; Greek-to-English unit mapping (75+ entries); unit normalization pipeline (~80 entries); Windows `start` command for isolated child processes (solves backend freeze); async job system with frontend polling; Excel template generation; mandatory Review & Import flow (bulk direct import removed); sodium auto-normalized to mg
 
 **UI Component Library** - Button, Card, Input, TextArea, Modal, Badge, Select, Alert components
 
@@ -905,6 +911,18 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 **Password Authentication** - SHA-256 token-based auth via `APP_PASSWORD` env var; login page; Axios interceptors for Bearer token; auto-logout on 401; protects all API endpoints
 
 **Shopping List Second-Pass Merge** - Fixed ingredient duplication (e.g., garlic appearing twice) by adding post-override merge that combines items with same ingredientId + unit after ingredient-specific overrides are applied
+
+**Tag Autocomplete** - `TagAutocomplete` component on recipe form with grouped dropdown (6 categories), color-coded suggestions from 97-tag library, keyboard navigation, existing tag exclusion; replaces plain text input; color-coded tag badges on form via `getCategoryForTag()`
+
+**Review & Import Flow** - Removed bulk direct import from UrlImportPage; each scraped recipe now requires individual review via "Review & Import" button that navigates to RecipeFormPage with prefilled data via `location.state`; RecipeFormPage detects prefill, populates all fields, shows info banner
+
+**Case-Insensitive Recipe Search** - Fixed PostgreSQL case-sensitive `contains` by adding Prisma `mode: 'insensitive'` to all search fields (title, description, tags); also added ingredient name search so searching "chicken" finds recipes containing that ingredient
+
+**Recipe Card Tag Highlighting** - Search results show matched tag as a colored badge (using `getCategoryForTag()`) with `+N more` counter for remaining tags; helps users see why a recipe matched their search
+
+**Shopping List Add-from-Recipes Fix** - Adding a recipe to an existing shopping list previously bypassed the unit conversion pipeline (stored raw recipe units like `lb` instead of converting to metric). Fixed by adding `POST /api/shopping-lists/:id/add-from-recipes` endpoint that runs recipes through `aggregateIngredients()` before adding items, ensuring imperial→metric conversion and ingredient-specific overrides
+
+**Clickable Meal Plan Cards** - MealPlansPage cards are fully clickable on mobile (entire card navigates to detail page, not just the title link)
 
 ### Future Enhancements
 - Drag-and-drop meal plan interface
@@ -1026,6 +1044,16 @@ The `wmic process call create` command spawns a process that is completely indep
 - `packages/backend/src/routes/scraper.ts` - API endpoints including async job system
 - `packages/frontend/src/pages/UrlImportPage.tsx` - Frontend with job polling
 
+### Shopping List Add-from-Recipe Unit Conversion Bypass (Resolved)
+
+**Problem:** When adding a recipe to an existing shopping list via the "Add from Recipe" picker on `ShoppingListPage`, ingredients were stored with their raw recipe units (e.g., `1.5 lb` ground lamb) instead of being converted to metric (e.g., `680.39 g`). This also caused duplicate entries when the same ingredient appeared in different unit systems (e.g., garlic as cloves, tsp, and tbsp — all stored separately).
+
+**Root Cause:** `handleAddFromRecipe` in `ShoppingListPage.tsx` looped through each recipe ingredient and called `addItem.mutateAsync()` individually, which sent each ingredient to `POST /api/shopping-lists/:id/items` with the raw recipe unit. The `addItemToList` backend method stores whatever unit it receives — no conversion pipeline.
+
+**Fix:** Added `POST /api/shopping-lists/:id/add-from-recipes` endpoint that runs recipes through the full `aggregateIngredients()` pipeline (convertToBase → applyIngredientOverride → convertFromBase → second-pass merge) before adding items. Frontend `handleAddFromRecipe` now calls this single endpoint instead of looping per-ingredient.
+
+**Files:** `shoppingList.service.ts` (new `addFromRecipes` method), `shoppingList.controller.ts`, `shoppingLists.ts` (route), `shoppingLists.service.ts` (frontend), `ShoppingListPage.tsx`
+
 ## Bulk DB Operations (Data Cleanup / Refinement)
 
 ### Use Prisma scripts directly — never loop rapid API calls
@@ -1070,6 +1098,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-02-19
+**Last Updated:** 2026-02-20
 **Project Version:** 2.0.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Direct Import + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge**)
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix**)

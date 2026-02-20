@@ -3,6 +3,7 @@ import {
   convertToBase,
   convertFromBase,
   applyIngredientOverride,
+  getCountSubKey,
   MeasurementSystem,
 } from '../utils/unitConversion.js';
 
@@ -243,8 +244,13 @@ export class ShoppingListService {
         // Convert to base unit for the measurement system
         const { quantity: baseQuantity, system } = convertToBase(adjustedQuantity, unit);
 
-        // Key is ingredient ID + measurement system (allows combining convertible units)
-        const key = `${recipeIngredient.ingredientId}-${system}`;
+        // For count-system units of overridden ingredients (e.g. garlic),
+        // separate "clove" from "head"/"piece" so they don't get mixed
+        // before the override can apply fromSize correctly.
+        const countSub = getCountSubKey(recipeIngredient.ingredient.name, unit, system);
+        const key = countSub
+          ? `${recipeIngredient.ingredientId}-${system}-${countSub}`
+          : `${recipeIngredient.ingredientId}-${system}`;
         const existingItem = ingredientMap.get(key);
 
         if (existingItem) {

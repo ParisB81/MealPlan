@@ -86,8 +86,24 @@ export function applyIngredientOverride(
     // baseQuantity is in g
     rawQuantity = baseQuantity / fromWeight_g;
   } else if ((system === 'count' || system === 'size') && fromSize !== undefined) {
-    // baseQuantity is in "pieces" equivalent — each piece = fromSize toUnits
-    rawQuantity = baseQuantity * fromSize;
+    // Check if ALL original units are already the target unit (e.g. only "clove"s)
+    // If so, don't multiply by fromSize — just pass through as-is.
+    // IMPORTANT: This check uses _originalUnits which is set per aggregation bucket.
+    // The aggregation function must separate target-unit entries from non-target-unit
+    // entries using getCountSubKey() to prevent mixing clove + head in the same bucket.
+    const targetUnitLower = toUnit.toLowerCase();
+    const allAreTargetUnit = _originalUnits.every(u =>
+      u.toLowerCase().trim() === targetUnitLower ||
+      u.toLowerCase().trim() === targetUnitLower + 's'
+    );
+    if (allAreTargetUnit) {
+      // Already in the target unit — just relabel (e.g. 4 clove garlic → 4 clove)
+      rawQuantity = baseQuantity;
+    } else {
+      // Converting from a generic count (head, piece, unit) — multiply by fromSize
+      // e.g. 1 head garlic → 10 cloves
+      rawQuantity = baseQuantity * fromSize;
+    }
   } else if (system === 'count' || system === 'size') {
     // No fromSize defined but it's already a count — just relabel
     rawQuantity = baseQuantity;
@@ -341,6 +357,30 @@ export function canCombineUnits(unit1: string, unit2: string): boolean {
 export function getAggregationKey(ingredientId: string, unit: string): string {
   const system = getMeasurementSystem(unit);
   return `${ingredientId}-${system}`;
+}
+
+/**
+ * For count-system units of overridden ingredients, return a sub-key that
+ * separates units already in the target unit (e.g. "clove" for garlic) from
+ * units that need fromSize multiplication (e.g. "head", "piece").
+ * This prevents 4 clove + 1 head from being summed as 5 pieces.
+ *
+ * Returns 'target' if the unit matches the override's toUnit, 'other' if not,
+ * or null if no override applies or the system isn't count/size.
+ */
+export function getCountSubKey(ingredientName: string, unit: string, system: MeasurementSystem): string | null {
+  if (system !== 'count' && system !== 'size') return null;
+
+  const override = INGREDIENT_UNIT_OVERRIDES[ingredientName.toLowerCase().trim()];
+  if (!override || override.fromSize === undefined) return null;
+
+  const unitLower = unit.toLowerCase().trim();
+  const targetLower = override.toUnit.toLowerCase();
+
+  if (unitLower === targetLower || unitLower === targetLower + 's') {
+    return 'target';
+  }
+  return 'other';
 }
 
 /**
