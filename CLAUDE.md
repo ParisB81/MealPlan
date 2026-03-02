@@ -691,6 +691,7 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 - **Forms** use react-hook-form with Zod resolvers
 - **Notifications** via react-hot-toast
 - **Icons** from lucide-react
+- **Theme-aware form elements:** Raw `<input>`/`<select>`/`<textarea>` must include `text-text-primary bg-surface` for dark theme visibility. Prefer using the UI library components (`Input`, `Select`, `TextArea`) which already have this. If using raw elements (e.g., quick-add inline forms), always add these classes.
 
 ### File Naming
 - **Backend:** camelCase (e.g., `recipe.service.ts`, `unitConversion.ts`)
@@ -1012,6 +1013,9 @@ After deploying fixes, users may see old cached versions:
 1. **Chrome Desktop:** DevTools → Application → Storage → Clear site data
 2. **Android Chrome:** Settings → Site settings → find the URL → Clear & reset
 3. **Dev mode:** Check "Bypass for network" in DevTools → Application → Service Workers
+
+### Dark theme: raw form inputs need explicit text color
+Raw `<input>`, `<select>`, `<textarea>` elements default to browser dark text — invisible on dark custom themes. Always add `text-text-primary bg-surface` to raw form elements. The UI library components (`Input.tsx`, `Select.tsx`) already have this. When adding new raw form elements, test against a dark custom theme before committing.
 
 ### Backend must be manually restarted
 After backend code changes, kill and restart the process. Frontend HMR works automatically.
