@@ -192,7 +192,7 @@ export default function IngredientsPage() {
             placeholder="Search ingredients by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-3 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+            className="flex-1 px-4 py-3 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
           />
           <select
             value={categoryFilter}
@@ -311,7 +311,7 @@ export default function IngredientsPage() {
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                            className="w-full px-2 py-1 border border-border-strong rounded text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                             autoFocus
                           />
                         ) : (
@@ -337,7 +337,7 @@ export default function IngredientsPage() {
                             onChange={(e) => setEditCategory(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                             placeholder="Category"
-                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                            className="w-full px-2 py-1 border border-border-strong rounded text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                           />
                         ) : ingredient.category ? (
                           <span className="px-2 py-1 bg-hover-bg text-text-primary rounded-full text-xs">
@@ -355,7 +355,7 @@ export default function IngredientsPage() {
                             onChange={(e) => setEditTags(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                             placeholder="Tags (comma-separated)"
-                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                            className="w-full px-2 py-1 border border-border-strong rounded text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                           />
                         ) : ingredient.tags && ingredient.tags.trim() ? (
                           <div className="flex flex-wrap gap-1">

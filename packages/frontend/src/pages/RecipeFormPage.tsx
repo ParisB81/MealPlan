@@ -477,7 +477,7 @@ export default function RecipeFormPage() {
                         onChange={(value) => updateIngredient(index, 'name', value)}
                         placeholder="Ingredient name *"
                         required
-                        className={`w-full sm:flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                        className={`w-full sm:flex-1 px-3 py-2 border rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring ${
                           fieldWithError('name') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                         }`}
                       />
@@ -494,7 +494,7 @@ export default function RecipeFormPage() {
                           }}
                           required
                           min="0.01"
-                          className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                          className={`w-20 px-3 py-2 border rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring ${
                             fieldWithError('quantity') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                           }`}
                         />
@@ -503,7 +503,7 @@ export default function RecipeFormPage() {
                           onChange={(value) => updateIngredient(index, 'unit', value)}
                           placeholder="Unit *"
                           required
-                          className={`w-24 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                          className={`w-24 px-3 py-2 border rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring ${
                             fieldWithError('unit') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                           }`}
                         />
@@ -516,7 +516,7 @@ export default function RecipeFormPage() {
                           onChange={(e) =>
                             updateIngredient(index, 'notes', e.target.value)
                           }
-                          className="flex-1 sm:w-32 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                          className="flex-1 sm:w-32 px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                         />
                         <Button
                           variant="danger"

@@ -195,7 +195,7 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="My Shopping List"
-                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -246,7 +246,7 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="My Shopping List"
-                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -257,7 +257,7 @@ export default function ShoppingListBuilder({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search recipes..."
-                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -308,7 +308,7 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="Weekend BBQ Shopping"
-                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -319,7 +319,7 @@ export default function ShoppingListBuilder({
                 placeholder="Search ingredients by name..."
                 value={ingredientSearch}
                 onChange={(e) => setIngredientSearch(e.target.value)}
-                className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
+                className="flex-1 px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
               />
               <select
                 value={ingredientCategory}
@@ -390,7 +390,7 @@ export default function ShoppingListBuilder({
                             const rounded = Math.round(value * 100) / 100;
                             handleUpdateCustomIngredient(index, 'quantity', rounded);
                           }}
-                          className="w-20 px-2 py-1 border border-border-strong rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                          className="w-20 px-2 py-1 border border-border-strong rounded text-sm text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                         />
                         <UnitAutocomplete
                           value={item.unit}

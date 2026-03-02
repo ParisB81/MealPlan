@@ -48,7 +48,7 @@ export default function MealPlanPicker({ isOpen, onClose, onSelectMealPlan }: Me
             placeholder="Search meal plans..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+            className="w-full px-4 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
           />
         </div>
 

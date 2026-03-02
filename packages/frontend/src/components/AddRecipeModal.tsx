@@ -38,7 +38,7 @@ function DateStepper({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 min-w-0 border border-border-strong rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
+        className="flex-1 min-w-0 border border-border-strong rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm text-text-primary bg-surface"
         required
       />
       <button
@@ -259,7 +259,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                     {isQuickAdding ? (
                       <form
                         onSubmit={handleQuickAddSubmit}
-                        className="px-3 pb-3 pt-1 border-t border-border-default bg-green-50 flex flex-col gap-2"
+                        className="px-3 pb-3 pt-1 border-t border-border-default bg-surface-alt flex flex-col gap-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DateStepper
@@ -274,7 +274,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                               mealType: e.target.value as QuickAddState['mealType'],
                             })
                           }
-                          className="w-full text-xs border border-border-strong rounded px-2 py-1"
+                          className="w-full text-xs border border-border-strong rounded px-2 py-1 text-text-primary bg-surface"
                         >
                           <option value="breakfast">Breakfast</option>
                           <option value="lunch">Lunch</option>
@@ -293,7 +293,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                               })
                             }
                             min={1}
-                            className="w-16 text-xs border border-border-strong rounded px-2 py-1"
+                            className="w-16 text-xs border border-border-strong rounded px-2 py-1 text-text-primary bg-surface"
                           />
                         </div>
                         <div className="flex gap-2">

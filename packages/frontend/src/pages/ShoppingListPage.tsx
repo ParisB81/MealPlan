@@ -268,7 +268,7 @@ export default function ShoppingListPage() {
                   type="text"
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring text-2xl font-bold"
+                  className="flex-1 px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring text-2xl font-bold"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSaveName();
@@ -425,7 +425,7 @@ export default function ShoppingListPage() {
                       <select
                         value={selectedIngredientId}
                         onChange={(e) => setSelectedIngredientId(e.target.value)}
-                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       >
                         {ingredients.map((ing) => (
                           <option key={ing.id} value={ing.id}>
@@ -450,7 +450,7 @@ export default function ShoppingListPage() {
                           const rounded = Math.round(value * 100) / 100;
                           setQuantity(rounded);
                         }}
-                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       />
                     </div>
 
@@ -463,7 +463,7 @@ export default function ShoppingListPage() {
                         value={unit}
                         onChange={(value) => setUnit(value)}
                         placeholder="e.g., grams, cups, pieces"
-                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       />
                     </div>
                   </div>
