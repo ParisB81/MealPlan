@@ -1,10 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useRecipes, useBulkImportRecipes, useBulkDeleteRecipes, useRestoreRecipe, usePermanentDeleteRecipe } from '../hooks/useRecipes';
-import * as XLSX from 'xlsx';
-import type { CreateRecipeInput } from '../types/recipe';
+import { useRecipes, useBulkDeleteRecipes, useRestoreRecipe, usePermanentDeleteRecipe } from '../hooks/useRecipes';
 import { Button, Input, Badge, Alert } from '../components/ui';
-import { recipesService } from '../services/recipes.service';
 import { Download, CalendarPlus, Trash2, X } from 'lucide-react';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 
@@ -16,7 +13,6 @@ export default function RecipesPage() {
   const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [addToMealPlan, setAddToMealPlan] = useState<{ id: string; title: string } | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // If the search contains commas, treat each part as a tag filter (AND logic)
   // Otherwise, use it as a general search (title, description, or tags)
@@ -26,7 +22,6 @@ export default function RecipesPage() {
     tags: hasComma ? search : undefined,
     status: activeTab
   });
-  const bulkImport = useBulkImportRecipes();
   const bulkDelete = useBulkDeleteRecipes();
   const restoreRecipe = useRestoreRecipe();
   const permanentDeleteRecipe = usePermanentDeleteRecipe();
@@ -101,409 +96,25 @@ export default function RecipesPage() {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-
-      // Look for 'Recipes' sheet, fallback to first sheet if not found
-      const sheetName = workbook.SheetNames.find(name => name.toLowerCase() === 'recipes') || workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      // Filter out instruction rows and empty rows
-      const validRows = jsonData.filter((row: any) => {
-        const title = row.Title || row.title || '';
-        return title &&
-               !title.includes('INSTRUCTIONS') &&
-               !title.includes('READ THIS FIRST') &&
-               typeof (row.Servings || row.servings) !== 'string';
-      });
-
-      if (validRows.length === 0) {
-        alert('No valid recipes found in the file. Please check the format.');
-        return;
-      }
-
-      const recipes: CreateRecipeInput[] = validRows.map((row: any) => {
-        // Parse nutrition fields
-        const nutrition = parseNutrition(row);
-
-        return {
-          title: row.Title || row.title || '',
-          description: row.Description || row.description || '',
-          servings: parseInt(row.Servings || row.servings) || 4,
-          prepTime: parseInt(row.PrepTime || row.prepTime || row['Prep Time']) || 0,
-          cookTime: parseInt(row.CookTime || row.cookTime || row['Cook Time']) || 0,
-          imageUrl: row.ImageUrl || row.imageUrl || row['Image URL'] || undefined,
-          instructions: (row.Instructions || row.instructions || '').split('\n').filter((i: string) => i.trim()),
-          tags: (row.Tags || row.tags || '').split(',').map((t: string) => t.trim()).filter((t: string) => t),
-          ingredients: parseIngredients(row.Ingredients || row.ingredients || ''),
-          nutrition: nutrition,
-        };
-      });
-
-      bulkImport.mutate(recipes, {
-        onSuccess: () => {
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        },
-      });
-    } catch (error) {
-      alert('Failed to parse Excel file. Please check the format and ensure all required fields are filled.');
-      console.error(error);
-    }
-  };
-
-  const parseIngredients = (ingredientsStr: string) => {
-    // Expected format: "2 cups flour; 1 tsp salt; 3 eggs"
-    if (!ingredientsStr) return [];
-
-    return ingredientsStr.split(';').map((ing: string) => {
-      const parts = ing.trim().split(' ');
-      if (parts.length < 3) return null;
-
-      const quantity = parseFloat(parts[0]) || 1;
-      const unit = parts[1];
-      const name = parts.slice(2).join(' ');
-
-      return { name, quantity, unit, notes: '' };
-    }).filter((item): item is { name: string; quantity: number; unit: string; notes: string } => item !== null);
-  };
-
-  const parseNutrition = (row: any) => {
-    const calories = parseFloat(row.Calories || row.calories || '');
-    const protein = parseFloat(row.Protein || row.protein || '');
-    const carbs = parseFloat(row.Carbs || row.carbs || '');
-    const fat = parseFloat(row.Fat || row.fat || '');
-    const fiber = parseFloat(row.Fiber || row.fiber || '');
-    const sugar = parseFloat(row.Sugar || row.sugar || '');
-    const sodium = parseFloat(row.Sodium || row.sodium || '');
-
-    // Only return nutrition object if at least one field has a valid value
-    const hasNutrition = !isNaN(calories) || !isNaN(protein) || !isNaN(carbs) ||
-                         !isNaN(fat) || !isNaN(fiber) || !isNaN(sugar) || !isNaN(sodium);
-
-    if (!hasNutrition) return undefined;
-
-    return {
-      calories: !isNaN(calories) ? calories : undefined,
-      protein: !isNaN(protein) ? protein : undefined,
-      carbs: !isNaN(carbs) ? carbs : undefined,
-      fat: !isNaN(fat) ? fat : undefined,
-      fiber: !isNaN(fiber) ? fiber : undefined,
-      sugar: !isNaN(sugar) ? sugar : undefined,
-      sodium: !isNaN(sodium) ? sodium : undefined,
-    };
-  };
-
-  const handleExportRecipes = async () => {
-    try {
-      // Fetch all active recipes by paginating (backend caps limit at 100)
-      const allRecipes: typeof recipes = [];
-      let offset = 0;
-      const limit = 100;
-
-      while (true) {
-        const result = await recipesService.list({ status: 'active', limit, offset });
-        allRecipes.push(...result.recipes);
-        if (allRecipes.length >= result.pagination.total) break;
-        offset += limit;
-      }
-
-      if (allRecipes.length === 0) {
-        alert('No recipes to export.');
-        return;
-      }
-
-      // Map to the same format as the import template
-      const exportData = allRecipes.map((recipe) => ({
-        Title: recipe.title,
-        Description: recipe.description || '',
-        Servings: recipe.servings,
-        PrepTime: recipe.prepTime || 0,
-        CookTime: recipe.cookTime || 0,
-        ImageUrl: recipe.imageUrl || '',
-        Instructions: Array.isArray(recipe.instructions)
-          ? recipe.instructions.join('\n')
-          : (recipe.instructions || ''),
-        Tags: recipe.tags.join(', '),
-        Ingredients: (recipe.ingredients || [])
-          .map((ri) => `${ri.quantity} ${ri.unit} ${ri.ingredient.name}`)
-          .join('; '),
-        Calories: recipe.nutrition?.calories ?? '',
-        Protein: recipe.nutrition?.protein ?? '',
-        Carbs: recipe.nutrition?.carbs ?? '',
-        Fat: recipe.nutrition?.fat ?? '',
-        Fiber: recipe.nutrition?.fiber ?? '',
-        Sugar: recipe.nutrition?.sugar ?? '',
-        Sodium: recipe.nutrition?.sodium ?? '',
-      }));
-
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(exportData);
-      ws['!cols'] = [
-        { wch: 25 },  // Title
-        { wch: 40 },  // Description
-        { wch: 10 },  // Servings
-        { wch: 10 },  // PrepTime
-        { wch: 10 },  // CookTime
-        { wch: 40 },  // ImageUrl
-        { wch: 50 },  // Instructions
-        { wch: 30 },  // Tags
-        { wch: 80 },  // Ingredients
-        { wch: 10 },  // Calories
-        { wch: 10 },  // Protein
-        { wch: 10 },  // Carbs
-        { wch: 10 },  // Fat
-        { wch: 10 },  // Fiber
-        { wch: 10 },  // Sugar
-        { wch: 10 },  // Sodium
-      ];
-      XLSX.utils.book_append_sheet(wb, ws, 'Recipes');
-
-      const timestamp = new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(wb, `recipes_export_${timestamp}.xlsx`);
-    } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to export recipes. Please try again.');
-    }
-  };
-
-  const downloadTemplate = () => {
-    // Recipe data sheet
-    const template = [
-      {
-        Title: 'Spaghetti Carbonara',
-        Description: 'Classic Italian pasta dish with eggs, cheese, and bacon',
-        Servings: 4,
-        PrepTime: 10,
-        CookTime: 20,
-        ImageUrl: '',
-        Instructions: 'Step 1: Cook pasta in salted boiling water\nStep 2: Fry bacon until crispy\nStep 3: Mix eggs and cheese\nStep 4: Combine all ingredients off heat',
-        Tags: 'Italian, pasta, dinner, quick',
-        Ingredients: '400 grams spaghetti; 200 grams bacon; 4 large eggs; 100 grams parmesan cheese; 2 cloves garlic; 1 pinch black pepper',
-        Calories: 650,
-        Protein: 25,
-        Carbs: 75,
-        Fat: 28,
-        Fiber: 3,
-        Sugar: 2,
-        Sodium: 890
-      },
-      {
-        Title: 'Chocolate Chip Cookies',
-        Description: 'Soft and chewy homemade cookies',
-        Servings: 24,
-        PrepTime: 15,
-        CookTime: 12,
-        ImageUrl: '',
-        Instructions: 'Step 1: Mix butter and sugars\nStep 2: Add eggs and vanilla\nStep 3: Combine dry ingredients\nStep 4: Fold in chocolate chips\nStep 5: Bake at 180C',
-        Tags: 'dessert, baking, cookies, sweet',
-        Ingredients: '2 cups flour; 1 tsp baking soda; 1 cup butter; 1 cup sugar; 2 large eggs; 2 cups chocolate chips; 1 pinch salt',
-        Calories: 150,
-        Protein: 2,
-        Carbs: 20,
-        Fat: 7,
-        Fiber: 1,
-        Sugar: 12,
-        Sodium: 95
-      }
-    ];
-
-    // Instructions sheet
-    const instructions = [
-      {
-        Section: 'GENERAL INSTRUCTIONS',
-        Details: 'Fill in the Recipes sheet with your recipe data. Delete the example recipes before importing.'
-      },
-      { Section: '', Details: '' },
-      {
-        Section: 'BASIC FIELDS',
-        Details: ''
-      },
-      {
-        Section: 'Title',
-        Details: 'Text (Required) - Name of the recipe (e.g., "Spaghetti Carbonara")'
-      },
-      {
-        Section: 'Description',
-        Details: 'Text - Brief description of the recipe (e.g., "Classic Italian pasta dish")'
-      },
-      {
-        Section: 'Servings',
-        Details: 'Number - How many servings the recipe makes (e.g., 4). Defaults to 4 if not specified.'
-      },
-      {
-        Section: 'PrepTime',
-        Details: 'Number - Preparation time in minutes (e.g., 15)'
-      },
-      {
-        Section: 'CookTime',
-        Details: 'Number - Cooking time in minutes (e.g., 30)'
-      },
-      {
-        Section: 'ImageUrl',
-        Details: 'Text - URL to an image of the recipe (e.g., "https://example.com/pasta.jpg"). Leave empty if no image.'
-      },
-      {
-        Section: 'Instructions',
-        Details: 'Text - Separate each step with \\n (e.g., "Step 1: Do this\\nStep 2: Do that")'
-      },
-      {
-        Section: 'Tags',
-        Details: 'Text - Comma-separated tags (e.g., "dinner, easy, quick")'
-      },
-      { Section: '', Details: '' },
-      {
-        Section: 'NUTRITION FIELDS (per serving)',
-        Details: 'All nutrition fields are optional. Leave empty if unknown.'
-      },
-      {
-        Section: 'Calories',
-        Details: 'Number - Calories per serving (e.g., 650)'
-      },
-      {
-        Section: 'Protein',
-        Details: 'Number - Protein in grams per serving (e.g., 25)'
-      },
-      {
-        Section: 'Carbs',
-        Details: 'Number - Carbohydrates in grams per serving (e.g., 75)'
-      },
-      {
-        Section: 'Fat',
-        Details: 'Number - Fat in grams per serving (e.g., 28)'
-      },
-      {
-        Section: 'Fiber',
-        Details: 'Number - Fiber in grams per serving (e.g., 3)'
-      },
-      {
-        Section: 'Sugar',
-        Details: 'Number - Sugar in grams per serving (e.g., 2)'
-      },
-      {
-        Section: 'Sodium',
-        Details: 'Number - Sodium in milligrams per serving (e.g., 890)'
-      },
-      { Section: '', Details: '' },
-      {
-        Section: 'INGREDIENTS FORMAT - IMPORTANT!',
-        Details: ''
-      },
-      {
-        Section: 'Pattern',
-        Details: '[quantity] [unit] [name]; [quantity] [unit] [name]; ...'
-      },
-      {
-        Section: 'Separator',
-        Details: 'Use semicolon (;) to separate each ingredient'
-      },
-      {
-        Section: 'Quantity',
-        Details: 'Number - Can be whole (2) or decimal (1.5, 0.25). Limited to 2 decimal places.'
-      },
-      {
-        Section: 'Unit',
-        Details: 'Text - Measurement unit (cups, tbsp, tsp, grams, kg, large, medium, small, pinch, dash, etc.)'
-      },
-      {
-        Section: 'Name',
-        Details: 'Text - The ingredient name, including any descriptors (e.g., "all-purpose flour", "extra virgin olive oil", "boneless chicken breast")'
-      },
-      { Section: '', Details: '' },
-      {
-        Section: 'INGREDIENT EXAMPLES',
-        Details: ''
-      },
-      {
-        Section: 'Example 1',
-        Details: '2 cups all-purpose flour; 1.5 tsp salt; 200 grams chicken breast'
-      },
-      {
-        Section: 'Example 2',
-        Details: '3 large eggs; 1 pinch black pepper; 0.5 cup olive oil'
-      },
-      {
-        Section: 'Example 3',
-        Details: '400 grams spaghetti; 100 grams parmesan cheese; 2 cloves garlic'
-      },
-      { Section: '', Details: '' },
-      {
-        Section: 'COMMON MISTAKES',
-        Details: ''
-      },
-      {
-        Section: '❌ Wrong',
-        Details: 'flour (missing quantity and unit)'
-      },
-      {
-        Section: '❌ Wrong',
-        Details: '2 flour (missing unit)'
-      },
-      {
-        Section: '❌ Wrong',
-        Details: 'cups flour (missing quantity)'
-      },
-      {
-        Section: '✓ Correct',
-        Details: '2 cups flour'
-      }
-    ];
-
-    const wb = XLSX.utils.book_new();
-
-    // Add Instructions sheet first
-    const wsInstructions = XLSX.utils.json_to_sheet(instructions);
-    wsInstructions['!cols'] = [
-      { wch: 30 }, // Section
-      { wch: 100 } // Details
-    ];
-    XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions');
-
-    // Add Recipes sheet
-    const wsRecipes = XLSX.utils.json_to_sheet(template);
-    wsRecipes['!cols'] = [
-      { wch: 25 }, // Title
-      { wch: 40 }, // Description
-      { wch: 10 }, // Servings
-      { wch: 10 }, // PrepTime
-      { wch: 10 }, // CookTime
-      { wch: 40 }, // ImageUrl
-      { wch: 50 }, // Instructions
-      { wch: 30 }, // Tags
-      { wch: 80 }, // Ingredients
-      { wch: 10 }, // Calories
-      { wch: 10 }, // Protein
-      { wch: 10 }, // Carbs
-      { wch: 10 }, // Fat
-      { wch: 10 }, // Fiber
-      { wch: 10 }, // Sugar
-      { wch: 10 }  // Sodium
-    ];
-    XLSX.utils.book_append_sheet(wb, wsRecipes, 'Recipes');
-
-    XLSX.writeFile(wb, 'recipe_import_template.xlsx');
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Recipes</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Recipes</h1>
+            <p className="text-text-secondary mt-1">
               {data?.pagination.total || 0} recipes total
               {selectedRecipes.size > 0 && ` • ${selectedRecipes.size} selected`}
             </p>
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
+            <Link
+              to="/recipes/new"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-btn-primary text-white hover:bg-btn-primary-hover"
+            >
+              + Create Recipe
+            </Link>
             {!showBulkActions && (
               <Button
                 variant="danger"
@@ -513,47 +124,30 @@ export default function RecipesPage() {
                 {activeTab === 'deleted' ? 'Select to Delete Forever' : 'Select to Delete'}
               </Button>
             )}
-            <Button variant="secondary" onClick={handleExportRecipes}>
+            <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
               <Download className="w-4 h-4 mr-1 inline" />
               Export Recipes
-            </Button>
-            <Button variant="success" onClick={downloadTemplate}>
+            </span>
+            <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
               Download Template
-            </Button>
-            <label className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-purple-600 text-white hover:bg-purple-700 cursor-pointer">
+            </span>
+            <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
               Import Excel
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={bulkImport.isPending}
-              />
-            </label>
-            <Link
-              to="/recipes/import-urls"
-              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-orange-600 text-white hover:bg-orange-700"
-            >
+            </span>
+            <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
               Import from URLs
-            </Link>
-            <Link
-              to="/recipes/new"
-              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700"
-            >
-              + Create Recipe
-            </Link>
+            </span>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-2 mb-6 border-b border-border-default">
           <button
             onClick={() => handleTabChange('active')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'active'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             Active Recipes
@@ -562,8 +156,8 @@ export default function RecipesPage() {
             onClick={() => handleTabChange('deleted')}
             className={`px-6 py-3 font-medium transition-colors ${
               activeTab === 'deleted'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             Deleted Recipes
@@ -578,7 +172,7 @@ export default function RecipesPage() {
                 <Button variant="ghost" size="sm" onClick={handleSelectAll}>
                   {selectedRecipes.size === recipes.length ? 'Deselect All' : 'Select All'}
                 </Button>
-                <span className="text-sm text-gray-700 font-medium">
+                <span className="text-sm text-text-primary font-medium">
                   {selectedRecipes.size} of {recipes.length} selected
                 </span>
               </div>
@@ -636,20 +230,20 @@ export default function RecipesPage() {
           {isLoading ? (
             <div className="col-span-full text-center py-12">
               <div className="text-4xl mb-4">⏳</div>
-              <p className="text-gray-600">Loading recipes...</p>
+              <p className="text-text-secondary">Loading recipes...</p>
             </div>
           ) : recipes.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <div className="text-6xl mb-4">🍽️</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <h3 className="text-xl font-semibold text-text-primary mb-2">
                 No recipes found
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-text-secondary mb-6">
                 {search ? 'Try a different search term' : 'Get started by creating your first recipe'}
               </p>
               <Link
                 to="/recipes/new"
-                className="inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 px-6 py-3 text-base bg-blue-600 text-white hover:bg-blue-700"
+                className="inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-ring px-6 py-3 text-base bg-btn-primary text-white hover:bg-btn-primary-hover"
               >
                 Create Recipe
               </Link>
@@ -658,13 +252,13 @@ export default function RecipesPage() {
             recipes.map((recipe) => (
               <div
                 key={recipe.id}
-                className={`bg-white rounded-lg shadow hover:shadow-lg transition-shadow ${
+                className={`bg-card-recipes border border-card-recipes-border rounded-lg shadow hover:shadow-lg transition-shadow ${
                   showBulkActions ? 'cursor-pointer' : ''
-                } ${selectedRecipes.has(recipe.id) ? 'ring-2 ring-blue-500' : ''}`}
+                } ${selectedRecipes.has(recipe.id) ? 'ring-2 ring-accent-ring' : ''}`}
                 onClick={() => showBulkActions && handleSelectRecipe(recipe.id)}
               >
                 {showBulkActions && (
-                  <div className="p-2 border-b border-gray-200">
+                  <div className="p-2 border-b border-border-default">
                     <input
                       type="checkbox"
                       checked={selectedRecipes.has(recipe.id)}
@@ -675,15 +269,15 @@ export default function RecipesPage() {
                 )}
                 <div className="p-6">
                   <Link to={`/recipes/${recipe.id}`} className="block">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">
                       {recipe.title}
                     </h3>
                     {recipe.description && (
-                      <p className="text-gray-600 mb-4 line-clamp-2">
+                      <p className="text-text-secondary mb-4 line-clamp-2">
                         {recipe.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <div className="flex items-center gap-4 text-sm text-text-muted">
                       <span>🍽️ {recipe.servings} servings</span>
                       {(recipe.prepTime ?? 0) > 0 && <span>⏱️ {(recipe.prepTime ?? 0) + (recipe.cookTime ?? 0)} min</span>}
                     </div>
@@ -713,7 +307,7 @@ export default function RecipesPage() {
                           ));
                         })()}
                         {recipe.tags.length > 3 && (
-                          <span className="text-xs text-gray-400 self-center">+{recipe.tags.length - 3}</span>
+                          <span className="text-xs text-text-muted self-center">+{recipe.tags.length - 3}</span>
                         )}
                       </div>
                     )}
@@ -721,9 +315,9 @@ export default function RecipesPage() {
 
                   {/* Add to Meal Plan button (active recipes only) */}
                   {activeTab === 'active' && !showBulkActions && (
-                    <div className="mt-4 pt-4 border-t border-gray-200">
+                    <div className="mt-4 pt-4 border-t border-card-recipes-border">
                       <Button
-                        variant="ghost"
+                        variant="success"
                         size="sm"
                         fullWidth
                         onClick={(e) => {
@@ -739,7 +333,7 @@ export default function RecipesPage() {
 
                   {/* Deleted Recipe Actions */}
                   {activeTab === 'deleted' && !showBulkActions && (
-                    <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex gap-2 mt-4 pt-4 border-t border-border-default">
                       <Button
                         variant="success"
                         fullWidth

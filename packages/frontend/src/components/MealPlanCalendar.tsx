@@ -229,20 +229,20 @@ export default function MealPlanCalendar({
         <button
           type="button"
           onClick={handlePrevMonth}
-          className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+          className="p-2.5 rounded-lg hover:bg-hover-bg active:bg-border-default text-text-muted hover:text-text-secondary transition-colors"
           aria-label="Previous month"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
         </button>
-        <h3 className="text-sm font-semibold text-gray-900">
+        <h3 className="text-sm font-semibold text-text-primary">
           {format(currentMonth, 'MMMM yyyy')}
         </h3>
         <button
           type="button"
           onClick={handleNextMonth}
-          className="p-2.5 rounded-lg hover:bg-gray-100 active:bg-gray-200 text-gray-500 hover:text-gray-700 transition-colors"
+          className="p-2.5 rounded-lg hover:bg-hover-bg active:bg-border-default text-text-muted hover:text-text-secondary transition-colors"
           aria-label="Next month"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -254,7 +254,7 @@ export default function MealPlanCalendar({
       {/* Day names header */}
       <div className="grid grid-cols-7 mb-1">
         {dayNamesFull.map((name, i) => (
-          <div key={name} className="text-center text-xs font-medium text-gray-400 py-1">
+          <div key={name} className="text-center text-xs font-medium text-text-muted py-1">
             <span className="hidden sm:inline">{name}</span>
             <span className="sm:hidden">{dayNamesShort[i]}</span>
           </div>
@@ -299,14 +299,14 @@ export default function MealPlanCalendar({
                 onTouchMove={handleTouchMove}
                 className={`
                   relative flex flex-col items-center py-2 text-xs transition-colors rounded-md min-h-[40px]
-                  ${!inCurrentMonth ? 'text-gray-300' : ''}
-                  ${inCurrentMonth && !inPlanRange ? 'text-gray-400' : ''}
-                  ${inCurrentMonth && inPlanRange && !hasMeals && !inPasteMode ? 'text-gray-600' : ''}
-                  ${inCurrentMonth && inPlanRange && hasMeals && !inPasteMode ? 'text-gray-900 font-semibold cursor-pointer hover:bg-blue-50 active:bg-blue-100' : ''}
+                  ${!inCurrentMonth ? 'text-text-muted' : ''}
+                  ${inCurrentMonth && !inPlanRange ? 'text-text-muted' : ''}
+                  ${inCurrentMonth && inPlanRange && !hasMeals && !inPasteMode ? 'text-text-secondary' : ''}
+                  ${inCurrentMonth && inPlanRange && hasMeals && !inPasteMode ? 'text-text-primary font-semibold cursor-pointer hover:bg-accent-light active:bg-accent-light' : ''}
                   ${!inPasteMode && !hasMeals ? 'cursor-default' : ''}
-                  ${isToday ? 'ring-1 ring-blue-400 ring-inset' : ''}
+                  ${isToday ? 'ring-1 ring-accent-ring ring-inset' : ''}
                   ${isSourceDay ? 'ring-2 ring-amber-400 bg-amber-50' : ''}
-                  ${isValidTarget ? 'text-gray-900 border-2 border-dashed border-green-300 hover:bg-green-50 active:bg-green-100 cursor-copy' : ''}
+                  ${isValidTarget ? 'text-text-primary border-2 border-dashed border-green-300 hover:bg-green-50 active:bg-green-100 cursor-copy' : ''}
                   ${isValidTarget && isPasting ? 'opacity-50 cursor-wait' : ''}
                   ${inPasteMode && inCurrentMonth && inPasteRange && !isSourceDay && !isValidTarget ? '' : ''}
                 `}
@@ -323,8 +323,8 @@ export default function MealPlanCalendar({
               >
                 <span className={`
                   w-7 h-7 flex items-center justify-center rounded-full text-sm
-                  ${inCurrentMonth && inPlanRange && hasMeals && !isSourceDay ? 'bg-blue-100' : ''}
-                  ${inCurrentMonth && inPlanRange && !hasMeals && !isSourceDay ? 'bg-gray-50' : ''}
+                  ${inCurrentMonth && inPlanRange && hasMeals && !isSourceDay ? 'bg-accent-light' : ''}
+                  ${inCurrentMonth && inPlanRange && !hasMeals && !isSourceDay ? 'bg-page-bg' : ''}
                   ${isSourceDay ? 'bg-amber-200' : ''}
                 `}>
                   {format(day, 'd')}
@@ -348,11 +348,11 @@ export default function MealPlanCalendar({
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-gray-100">
+      <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border-default">
         {MEAL_TYPE_ORDER.map((type) => (
           <div key={type} className="flex items-center gap-1.5">
             <span className={`w-2 h-2 rounded-full ${MEAL_TYPE_COLORS[type]}`} />
-            <span className="text-xs text-gray-500 capitalize">{type}</span>
+            <span className="text-xs text-text-muted capitalize">{type}</span>
           </div>
         ))}
       </div>

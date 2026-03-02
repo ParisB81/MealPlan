@@ -1,9 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useIngredients, useIngredientRecipes, useUpdateIngredient, useDeleteIngredient, useBulkImportIngredients, useBulkDeleteIngredients } from '../hooks/useIngredients';
-import * as XLSX from 'xlsx';
-import type { CreateIngredientInput } from '../services/ingredients.service';
-import { ingredientsService } from '../services/ingredients.service';
+import { useIngredients, useIngredientRecipes, useUpdateIngredient, useDeleteIngredient, useBulkDeleteIngredients } from '../hooks/useIngredients';
 import type { Ingredient } from '../types/recipe';
 import { Download } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -19,7 +16,6 @@ export default function IngredientsPage() {
   const [editName, setEditName] = useState('');
   const [editCategory, setEditCategory] = useState('');
   const [editTags, setEditTags] = useState('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [replaceModalState, setReplaceModalState] = useState<{
     ingredientId: string;
     ingredientName: string;
@@ -35,7 +31,6 @@ export default function IngredientsPage() {
   const { data: ingredientRecipes, isLoading: recipesLoading } = useIngredientRecipes(selectedIngredientForRecipes?.id);
   const updateIngredient = useUpdateIngredient();
   const deleteIngredient = useDeleteIngredient();
-  const bulkImport = useBulkImportIngredients();
   const bulkDelete = useBulkDeleteIngredients();
 
   const handleSelectAll = () => {
@@ -135,233 +130,55 @@ export default function IngredientsPage() {
     });
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const data = await file.arrayBuffer();
-      const workbook = XLSX.read(data);
-
-      // Look for 'Ingredients' sheet, fallback to first sheet
-      const sheetName = workbook.SheetNames.find(name => name.toLowerCase() === 'ingredients') || workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      // Filter out instruction rows and empty rows
-      const validRows = jsonData.filter((row: any) => {
-        const name = row.Name || row.name || '';
-        return name && !name.includes('INSTRUCTIONS') && !name.includes('READ THIS FIRST');
-      });
-
-      if (validRows.length === 0) {
-        alert('No valid ingredients found in the file. Please check the format.');
-        return;
-      }
-
-      const ingredientsData: CreateIngredientInput[] = validRows.map((row: any) => ({
-        name: (row.Name || row.name || '').toLowerCase(),
-        category: row.Category || row.category || undefined,
-        tags: row.Tags || row.tags || '',
-      }));
-
-      bulkImport.mutate(ingredientsData, {
-        onSuccess: () => {
-          if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-          }
-        },
-      });
-    } catch (error) {
-      alert('Failed to parse Excel file. Please check the format.');
-      console.error(error);
-    }
-  };
-
-  const downloadTemplate = () => {
-    const template = [
-      {
-        Name: 'tomato',
-        Category: 'produce',
-        Tags: 'fresh,seasonal'
-      },
-      {
-        Name: 'chicken breast',
-        Category: 'meat',
-        Tags: 'protein,main'
-      },
-      {
-        Name: 'olive oil',
-        Category: 'pantry',
-        Tags: 'cooking,essential'
-      },
-      {
-        Name: 'garlic',
-        Category: 'produce',
-        Tags: 'fresh,aromatic'
-      },
-      {
-        Name: 'parmesan cheese',
-        Category: 'dairy',
-        Tags: 'cheese,italian'
-      }
-    ];
-
-    const instructions = [
-      {
-        Name: 'INSTRUCTIONS - READ THIS FIRST',
-        Category: 'Column formats and examples',
-        Tags: 'Important information'
-      },
-      {
-        Name: 'INGREDIENT NAME FORMAT',
-        Category: 'Use lowercase, singular form (e.g., "tomato", "chicken breast", "olive oil")',
-        Tags: 'Required field'
-      },
-      {
-        Name: 'CATEGORY OPTIONS',
-        Category: 'produce, meat, dairy, pantry, spices, beverages, frozen, bakery, or leave blank',
-        Tags: 'Optional field'
-      },
-      {
-        Name: 'TAGS FORMAT',
-        Category: 'Comma-separated tags (e.g., "fresh,seasonal" or "protein,main")',
-        Tags: 'Optional, no spaces after commas'
-      },
-      {
-        Name: '',
-        Category: '',
-        Tags: ''
-      }
-    ];
-
-    const wb = XLSX.utils.book_new();
-
-    // Add Instructions sheet
-    const wsInstructions = XLSX.utils.json_to_sheet(instructions);
-    wsInstructions['!cols'] = [
-      { wch: 40 },
-      { wch: 80 },
-      { wch: 30 }
-    ];
-    XLSX.utils.book_append_sheet(wb, wsInstructions, 'Instructions');
-
-    // Add Ingredients sheet
-    const wsIngredients = XLSX.utils.json_to_sheet(template);
-    wsIngredients['!cols'] = [
-      { wch: 30 },
-      { wch: 20 },
-      { wch: 30 }
-    ];
-    XLSX.utils.book_append_sheet(wb, wsIngredients, 'Ingredients');
-
-    XLSX.writeFile(wb, 'ingredients_import_template.xlsx');
-  };
-
-  const handleExportIngredients = async () => {
-    try {
-      // Fetch all ingredients (no search filter)
-      const allIngredients = await ingredientsService.list();
-
-      if (allIngredients.length === 0) {
-        alert('No ingredients to export.');
-        return;
-      }
-
-      // Map to the same format as the import template
-      const exportData = allIngredients.map((ingredient) => ({
-        Name: ingredient.name,
-        Category: ingredient.category || '',
-        Tags: ingredient.tags || '',
-      }));
-
-      const wb = XLSX.utils.book_new();
-      const ws = XLSX.utils.json_to_sheet(exportData);
-      ws['!cols'] = [
-        { wch: 30 },  // Name
-        { wch: 20 },  // Category
-        { wch: 30 },  // Tags
-      ];
-      XLSX.utils.book_append_sheet(wb, ws, 'Ingredients');
-
-      const timestamp = new Date().toISOString().slice(0, 10);
-      XLSX.writeFile(wb, `ingredients_export_${timestamp}.xlsx`);
-    } catch (error) {
-      console.error('Export failed:', error);
-      alert('Failed to export ingredients. Please try again.');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ingredients</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Ingredients</h1>
+            <p className="text-text-secondary mt-1">
               {ingredients?.length || 0} ingredients total
               {selectedIngredients.size > 0 && ` • ${selectedIngredients.size} selected`}
             </p>
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            <button
-              onClick={() => setShowBulkActions(!showBulkActions)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                showBulkActions
-                  ? 'bg-gray-700 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {showBulkActions ? 'Cancel Selection' : 'Bulk Actions'}
-            </button>
-            <button
-              onClick={handleExportIngredients}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center"
-            >
+            <span className="px-4 py-2 rounded-lg bg-border-default text-text-muted cursor-default">
+              Bulk Actions
+            </span>
+            <span className="px-4 py-2 rounded-lg bg-border-default text-text-muted cursor-default flex items-center">
               <Download className="w-4 h-4 mr-1" />
               Export Ingredients
-            </button>
-            <button
-              onClick={downloadTemplate}
-              className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
+            </span>
+            <span className="px-4 py-2 rounded-lg bg-border-default text-text-muted cursor-default">
               Download Template
-            </button>
-            <label className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors cursor-pointer">
+            </span>
+            <span className="px-4 py-2 rounded-lg bg-border-default text-text-muted cursor-default">
               Import Excel
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".xlsx,.xls"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={bulkImport.isPending}
-              />
-            </label>
+            </span>
           </div>
         </div>
 
         {/* Bulk Actions Bar */}
         {showBulkActions && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-accent-light border border-accent rounded-lg p-4 mb-6">
             <div className="flex justify-between items-center">
               <div className="flex gap-4">
                 <button
                   onClick={handleSelectAll}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
                 >
                   {ingredients && selectedIngredients.size === ingredients.length ? 'Deselect All' : 'Select All'}
                 </button>
                 <button
                   onClick={handleBulkDelete}
                   disabled={selectedIngredients.size === 0 || bulkDelete.isPending}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {bulkDelete.isPending ? 'Deleting...' : `Delete Selected (${selectedIngredients.size})`}
                 </button>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">
                 Click on ingredients to select them for bulk operations
               </p>
             </div>
@@ -375,12 +192,12 @@ export default function IngredientsPage() {
             placeholder="Search ingredients by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-4 py-3 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
           />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-gray-700 sm:min-w-[180px]"
+            className="px-4 py-3 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring bg-surface text-text-primary sm:min-w-[180px]"
           >
             <option value="">All categories</option>
             <option value="dairy">Dairy</option>
@@ -409,7 +226,7 @@ export default function IngredientsPage() {
         {isLoading && (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">⏳</div>
-            <p className="text-gray-600">Loading ingredients...</p>
+            <p className="text-text-secondary">Loading ingredients...</p>
           </div>
         )}
 
@@ -417,10 +234,10 @@ export default function IngredientsPage() {
         {!isLoading && (!ingredients || ingredients.length === 0) && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🥕</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-text-primary mb-2">
               No ingredients found
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-text-secondary mb-6">
               {search ? 'Try a different search term' : 'Import ingredients using the Excel template'}
             </p>
           </div>
@@ -428,9 +245,9 @@ export default function IngredientsPage() {
 
         {/* Ingredients Table */}
         {!isLoading && ingredients && ingredients.length > 0 && (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="bg-surface rounded-lg shadow overflow-hidden">
+            <table className="min-w-full divide-y divide-border-default">
+              <thead className="bg-page-bg">
                 <tr>
                   {showBulkActions && (
                     <th scope="col" className="w-12 px-6 py-3">
@@ -442,32 +259,32 @@ export default function IngredientsPage() {
                       />
                     </th>
                   )}
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Name
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Category
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     Tags
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                     ID
                   </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-surface divide-y divide-border-default">
                 {ingredients.map((ingredient) => {
                   const isEditing = editingId === ingredient.id;
 
                   return (
                     <tr
                       key={ingredient.id}
-                      className={`hover:bg-gray-50 cursor-pointer ${
-                        selectedIngredients.has(ingredient.id) ? 'bg-blue-50' : ''
+                      className={`hover:bg-page-bg cursor-pointer ${
+                        selectedIngredients.has(ingredient.id) ? 'bg-accent-light' : ''
                       }`}
                       onClick={() => {
                         if (showBulkActions) {
@@ -487,14 +304,14 @@ export default function IngredientsPage() {
                           />
                         </td>
                       )}
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-text-primary">
                         {isEditing ? (
                           <input
                             type="text"
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
                             autoFocus
                           />
                         ) : (
@@ -505,14 +322,14 @@ export default function IngredientsPage() {
                                 setSelectedIngredientForRecipes({ id: ingredient.id, name: ingredient.name });
                               }
                             }}
-                            className={`text-left ${!showBulkActions ? 'text-blue-600 hover:text-blue-800 hover:underline cursor-pointer' : ''}`}
+                            className={`text-left ${!showBulkActions ? 'text-accent hover:text-accent-hover hover:underline cursor-pointer' : ''}`}
                             disabled={showBulkActions}
                           >
                             {ingredient.name}
                           </button>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted">
                         {isEditing ? (
                           <input
                             type="text"
@@ -520,17 +337,17 @@ export default function IngredientsPage() {
                             onChange={(e) => setEditCategory(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                             placeholder="Category"
-                            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
                           />
                         ) : ingredient.category ? (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
+                          <span className="px-2 py-1 bg-hover-bg text-text-primary rounded-full text-xs">
                             {ingredient.category}
                           </span>
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span className="text-text-muted">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
+                      <td className="px-6 py-4 text-sm text-text-muted">
                         {isEditing ? (
                           <input
                             type="text"
@@ -538,21 +355,21 @@ export default function IngredientsPage() {
                             onChange={(e) => setEditTags(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
                             placeholder="Tags (comma-separated)"
-                            className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-2 py-1 border border-border-strong rounded focus:outline-none focus:ring-2 focus:ring-accent-ring"
                           />
                         ) : ingredient.tags && ingredient.tags.trim() ? (
                           <div className="flex flex-wrap gap-1">
                             {ingredient.tags.split(',').filter(t => t.trim()).map((tag, idx) => (
-                              <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                              <span key={idx} className="px-2 py-1 bg-accent-light text-accent rounded-full text-xs">
                                 {tag.trim()}
                               </span>
                             ))}
                           </div>
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span className="text-text-muted">-</span>
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-text-muted font-mono">
                         {ingredient.id.substring(0, 12)}...
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -573,7 +390,7 @@ export default function IngredientsPage() {
                                 e.stopPropagation();
                                 handleCancelEdit();
                               }}
-                              className="text-gray-600 hover:text-gray-900"
+                              className="text-text-secondary hover:text-text-primary"
                             >
                               Cancel
                             </button>
@@ -585,7 +402,7 @@ export default function IngredientsPage() {
                                 e.stopPropagation();
                                 handleStartEdit(ingredient);
                               }}
-                              className="text-blue-600 hover:text-blue-900"
+                              className="text-accent hover:text-accent-hover"
                               disabled={showBulkActions}
                             >
                               Edit
@@ -633,30 +450,30 @@ export default function IngredientsPage() {
         >
           {recipesLoading ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">Loading recipes...</p>
+              <p className="text-text-muted">Loading recipes...</p>
             </div>
           ) : !ingredientRecipes || ingredientRecipes.length === 0 ? (
             <div className="text-center py-8">
               <div className="text-4xl mb-3">📭</div>
-              <p className="text-gray-500">No recipes use this ingredient</p>
+              <p className="text-text-muted">No recipes use this ingredient</p>
             </div>
           ) : (
             <div>
-              <p className="text-sm text-gray-500 mb-4">
+              <p className="text-sm text-text-muted mb-4">
                 Found in {ingredientRecipes.length} recipe{ingredientRecipes.length !== 1 ? 's' : ''}
               </p>
-              <div className="divide-y divide-gray-200">
+              <div className="divide-y divide-border-default">
                 {ingredientRecipes.map((recipe) => (
                   <div key={recipe.recipeId} className="py-3 flex items-center justify-between">
                     <div>
                       <Link
                         to={`/recipes/${recipe.recipeId}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                        className="text-accent hover:text-accent-hover hover:underline font-medium"
                         onClick={() => setSelectedIngredientForRecipes(null)}
                       >
                         {recipe.recipeTitle}
                       </Link>
-                      <p className="text-sm text-gray-500 mt-0.5">
+                      <p className="text-sm text-text-muted mt-0.5">
                         {recipe.quantity} {recipe.unit}
                         {recipe.notes ? ` — ${recipe.notes}` : ''}
                         {recipe.servings ? ` (${recipe.servings} servings)` : ''}
@@ -665,7 +482,7 @@ export default function IngredientsPage() {
                     {recipe.tags && (
                       <div className="flex flex-wrap gap-1 ml-4">
                         {recipe.tags.split(',').filter(t => t.trim()).slice(0, 3).map((tag, idx) => (
-                          <span key={idx} className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">
+                          <span key={idx} className="px-2 py-0.5 bg-hover-bg text-text-secondary rounded-full text-xs">
                             {tag.trim()}
                           </span>
                         ))}

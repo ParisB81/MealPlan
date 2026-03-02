@@ -25,10 +25,10 @@ export default function RecipeDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-600">Loading recipe...</p>
+          <p className="text-text-secondary">Loading recipe...</p>
         </div>
       </div>
     );
@@ -36,14 +36,14 @@ export default function RecipeDetailPage() {
 
   if (error || !recipe) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">❌</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Recipe not found</h2>
-          <p className="text-gray-600 mb-6">The recipe you're looking for doesn't exist.</p>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Recipe not found</h2>
+          <p className="text-text-secondary mb-6">The recipe you're looking for doesn't exist.</p>
           <Link
             to="/recipes"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
           >
             Back to Recipes
           </Link>
@@ -55,18 +55,18 @@ export default function RecipeDetailPage() {
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         {/* Back Button */}
         <Link
           to="/recipes"
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+          className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
           ← Back to Recipes
         </Link>
 
         {/* Recipe Header */}
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+        <div className="bg-surface rounded-lg shadow-lg overflow-hidden mb-6">
           {recipe.imageUrl && (
             <img
               src={recipe.imageUrl}
@@ -77,25 +77,25 @@ export default function RecipeDetailPage() {
 
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{recipe.title}</h1>
+              <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{recipe.title}</h1>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowAddToMealPlan(true)}
-                  className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  className="inline-flex items-center px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover"
                 >
                   <CalendarPlus className="w-4 h-4 mr-1" />
                   Add to Meal Plan
                 </button>
                 <Link
                   to={`/recipes/${id}/edit`}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
                 >
                   Edit
                 </Link>
                 <button
                   onClick={handleDelete}
                   disabled={deleteRecipe.isPending}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover disabled:opacity-50"
                 >
                   Delete
                 </button>
@@ -103,11 +103,11 @@ export default function RecipeDetailPage() {
             </div>
 
             {recipe.description && (
-              <p className="text-gray-600 mb-4">{recipe.description}</p>
+              <p className="text-text-secondary mb-4">{recipe.description}</p>
             )}
 
             {/* Meta Info */}
-            <div className="flex gap-6 text-sm text-gray-600 mb-4">
+            <div className="flex gap-6 text-sm text-text-secondary mb-4">
               {recipe.prepTime && (
                 <div>
                   <span className="font-semibold">Prep:</span> {recipe.prepTime} min
@@ -134,7 +134,7 @@ export default function RecipeDetailPage() {
                 {recipe.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full"
+                    className="px-3 py-1 bg-accent-light text-accent text-sm rounded-full"
                   >
                     {tag}
                   </span>
@@ -144,12 +144,12 @@ export default function RecipeDetailPage() {
 
             {/* Source URL */}
             {recipe.sourceUrl && (
-              <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="mt-4 pt-4 border-t border-border-default">
                 <a
                   href={recipe.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center text-blue-600 hover:text-blue-800 hover:underline"
+                  className="inline-flex items-center text-accent hover:text-accent-hover hover:underline"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   View Original Recipe
@@ -161,16 +161,16 @@ export default function RecipeDetailPage() {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Ingredients */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Ingredients</h2>
+          <div className="bg-surface rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold text-text-primary mb-4">Ingredients</h2>
             <ul className="space-y-2">
               {recipe.ingredients.map((item) => (
                 <li key={item.id} className="flex justify-between">
-                  <span className="text-gray-700">
+                  <span className="text-text-primary">
                     {item.ingredient.name}
                     {item.notes && ` (${item.notes})`}
                   </span>
-                  <span className="text-gray-600">
+                  <span className="text-text-secondary">
                     {item.quantity} {item.unit}
                   </span>
                 </li>
@@ -180,30 +180,30 @@ export default function RecipeDetailPage() {
 
           {/* Nutrition */}
           {recipe.nutrition && (
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Nutrition</h2>
+            <div className="bg-surface rounded-lg shadow p-6">
+              <h2 className="text-2xl font-bold text-text-primary mb-4">Nutrition <span className="text-base font-normal text-text-muted">(per serving)</span></h2>
               <div className="grid grid-cols-2 gap-4">
                 {recipe.nutrition.calories && (
                   <div>
-                    <div className="text-sm text-gray-600">Calories</div>
+                    <div className="text-sm text-text-secondary">Calories</div>
                     <div className="text-lg font-semibold">{recipe.nutrition.calories}</div>
                   </div>
                 )}
                 {recipe.nutrition.protein && (
                   <div>
-                    <div className="text-sm text-gray-600">Protein</div>
+                    <div className="text-sm text-text-secondary">Protein</div>
                     <div className="text-lg font-semibold">{recipe.nutrition.protein}g</div>
                   </div>
                 )}
                 {recipe.nutrition.carbs && (
                   <div>
-                    <div className="text-sm text-gray-600">Carbs</div>
+                    <div className="text-sm text-text-secondary">Carbs</div>
                     <div className="text-lg font-semibold">{recipe.nutrition.carbs}g</div>
                   </div>
                 )}
                 {recipe.nutrition.fat && (
                   <div>
-                    <div className="text-sm text-gray-600">Fat</div>
+                    <div className="text-sm text-text-secondary">Fat</div>
                     <div className="text-lg font-semibold">{recipe.nutrition.fat}g</div>
                   </div>
                 )}
@@ -213,15 +213,15 @@ export default function RecipeDetailPage() {
         </div>
 
         {/* Instructions */}
-        <div className="bg-white rounded-lg shadow p-6 mt-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Instructions</h2>
+        <div className="bg-surface rounded-lg shadow p-6 mt-6">
+          <h2 className="text-2xl font-bold text-text-primary mb-4">Instructions</h2>
           <ol className="space-y-4">
             {recipe.instructions.map((instruction, index) => (
               <li key={index} className="flex gap-4">
-                <span className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                <span className="flex-shrink-0 w-8 h-8 bg-btn-primary text-white rounded-full flex items-center justify-center font-semibold">
                   {index + 1}
                 </span>
-                <p className="text-gray-700 pt-1">{instruction}</p>
+                <p className="text-text-primary pt-1">{instruction}</p>
               </li>
             ))}
           </ol>

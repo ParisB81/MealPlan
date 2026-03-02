@@ -120,12 +120,12 @@ export default function TagAutocomplete({
       />
 
       {showDropdown && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-surface border border-border-strong rounded-lg shadow-lg max-h-80 overflow-y-auto">
           {groupedTags.map((group) => (
             <div key={group.name} className="py-1">
               <div
                 className={`px-4 py-2 text-xs font-semibold uppercase sticky top-0 ${
-                  categoryHeaderColors[group.color] || 'bg-gray-50 text-gray-500'
+                  categoryHeaderColors[group.color] || 'bg-hover-bg text-text-muted'
                 }`}
               >
                 {group.name}
@@ -135,7 +135,7 @@ export default function TagAutocomplete({
                   <li
                     key={tag}
                     onClick={() => handleSelectTag(tag)}
-                    className="px-4 py-2.5 min-h-[44px] flex items-center gap-2 hover:bg-blue-50 active:bg-blue-100 cursor-pointer text-sm text-gray-900"
+                    className="px-4 py-2.5 min-h-[44px] flex items-center gap-2 hover:bg-accent-light active:bg-accent-light cursor-pointer text-sm text-text-primary"
                   >
                     <span
                       className={`w-2 h-2 rounded-full flex-shrink-0 ${

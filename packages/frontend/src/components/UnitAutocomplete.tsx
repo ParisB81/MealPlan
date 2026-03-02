@@ -101,10 +101,10 @@ export default function UnitAutocomplete({
       />
 
       {showDropdown && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-surface border border-border-strong rounded-lg shadow-lg max-h-80 overflow-y-auto">
           {Object.entries(groupedUnits).map(([type, typeUnits]) => (
             <div key={type} className="py-1">
-              <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase bg-gray-50">
+              <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase bg-hover-bg">
                 {typeLabels[type] || type}
               </div>
               <ul>
@@ -112,7 +112,7 @@ export default function UnitAutocomplete({
                   <li
                     key={unit.unit}
                     onClick={() => handleSelectUnit(unit)}
-                    className="px-4 py-2.5 min-h-[44px] flex items-center hover:bg-blue-50 active:bg-blue-100 cursor-pointer text-sm text-gray-900"
+                    className="px-4 py-2.5 min-h-[44px] flex items-center hover:bg-accent-light active:bg-accent-light cursor-pointer text-sm text-text-primary"
                   >
                     {unit.unit}
                   </li>

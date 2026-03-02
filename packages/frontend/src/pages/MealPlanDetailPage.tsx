@@ -96,8 +96,8 @@ export default function MealPlanDetailPage() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       // Brief highlight flash
-      el.classList.add('ring-2', 'ring-blue-400');
-      setTimeout(() => el.classList.remove('ring-2', 'ring-blue-400'), 1500);
+      el.classList.add('ring-2', 'ring-accent-ring');
+      setTimeout(() => el.classList.remove('ring-2', 'ring-accent-ring'), 1500);
     }
   }, []);
 
@@ -194,10 +194,10 @@ export default function MealPlanDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">&#x231B;</div>
-          <p className="text-gray-600">Loading meal plan...</p>
+          <p className="text-text-secondary">Loading meal plan...</p>
         </div>
       </div>
     );
@@ -205,13 +205,13 @@ export default function MealPlanDetailPage() {
 
   if (error || !mealPlan) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">&#x274C;</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Meal plan not found</h2>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Meal plan not found</h2>
           <Link
             to="/meal-plans"
-            className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-blue-600 text-white hover:bg-blue-700"
+            className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-btn-primary text-white hover:bg-btn-primary-hover"
           >
             Back to Meal Plans
           </Link>
@@ -221,11 +221,11 @@ export default function MealPlanDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-6xl">
         <Link
           to="/meal-plans"
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+          className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
           &#x2190; Back to Meal Plans
         </Link>
@@ -235,16 +235,16 @@ export default function MealPlanDetailPage() {
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{mealPlan.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{mealPlan.name}</h1>
                 {mealPlan.status === 'completed' && (
                   <Badge variant="green" size="md">&#x2713; Completed</Badge>
                 )}
               </div>
-              <p className="text-gray-600">
+              <p className="text-text-secondary">
                 {format(new Date(mealPlan.startDate), 'MMMM d')} -{' '}
                 {format(new Date(mealPlan.endDate), 'MMMM d, yyyy')}
               </p>
-              <p className="text-gray-500 mt-1">{mealPlan.meals.length} meals planned</p>
+              <p className="text-text-muted mt-1">{mealPlan.meals.length} meals planned</p>
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap">
               <Button onClick={() => setIsAddRecipeModalOpen(true)}>
@@ -263,24 +263,24 @@ export default function MealPlanDetailPage() {
                   <ChevronDown size={14} className="ml-1.5" />
                 </Button>
                 {shoppingDropdownOpen && (
-                  <div className="absolute right-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
+                  <div className="absolute right-0 mt-1 w-56 bg-surface border border-border-default rounded-lg shadow-lg z-20">
                     <button
-                      className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+                      className="flex items-center gap-2 w-full px-4 py-3 text-sm text-text-primary hover:bg-page-bg rounded-t-lg"
                       onClick={handleGenerateNewList}
                     >
-                      <PlusCircle size={15} className="text-blue-500" />
+                      <PlusCircle size={15} className="text-accent" />
                       Generate new list
                     </button>
-                    <div className="border-t border-gray-100" />
+                    <div className="border-t border-border-default" />
                     <button
-                      className="flex items-center gap-2 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="flex items-center gap-2 w-full px-4 py-3 text-sm text-text-primary hover:bg-page-bg rounded-b-lg disabled:opacity-40 disabled:cursor-not-allowed"
                       onClick={() => { setShoppingDropdownOpen(false); setIsAddToListModalOpen(true); }}
                       disabled={!existingLists || existingLists.length === 0}
                     >
-                      <ListPlus size={15} className="text-green-500" />
+                      <ListPlus size={15} className="text-btn-success" />
                       Add to existing list
                       {existingLists && existingLists.length > 0 && (
-                        <span className="ml-auto text-xs text-gray-400">{existingLists.length}</span>
+                        <span className="ml-auto text-xs text-text-muted">{existingLists.length}</span>
                       )}
                     </button>
                   </div>
@@ -310,23 +310,23 @@ export default function MealPlanDetailPage() {
         {/* Nutrition Summary */}
         {nutrition && nutrition.mealsCount > 0 && (
           <Card className="mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Weekly Nutrition Summary</h2>
+            <h2 className="text-xl font-bold text-text-primary mb-4">Weekly Nutrition Summary</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600">{nutrition.totalCalories}</div>
-                <div className="text-sm text-gray-600">Calories</div>
+                <div className="text-3xl font-bold text-accent">{nutrition.totalCalories}</div>
+                <div className="text-sm text-text-secondary">Calories</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600">{nutrition.totalProtein}g</div>
-                <div className="text-sm text-gray-600">Protein</div>
+                <div className="text-sm text-text-secondary">Protein</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-600">{nutrition.totalCarbs}g</div>
-                <div className="text-sm text-gray-600">Carbs</div>
+                <div className="text-sm text-text-secondary">Carbs</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600">{nutrition.totalFat}g</div>
-                <div className="text-sm text-gray-600">Fat</div>
+                <div className="text-sm text-text-secondary">Fat</div>
               </div>
             </div>
           </Card>
@@ -336,10 +336,10 @@ export default function MealPlanDetailPage() {
         {mealPlan.meals.length === 0 && (
           <Card padding="lg" className="text-center">
             <div className="text-6xl mb-4">&#x1F37D;&#xFE0F;</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-text-primary mb-2">
               No meals planned yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-text-secondary mb-6">
               Click "Add Recipe" to start planning your meals
             </p>
             <Button size="lg" onClick={() => setIsAddRecipeModalOpen(true)}>
@@ -352,15 +352,15 @@ export default function MealPlanDetailPage() {
         {Object.keys(mealsByDate).length > 0 && (
           <div className="space-y-6">
             {Object.entries(mealsByDate).map(([dateKey, meals]) => (
-              <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300 bg-detail-mealplans border border-detail-mealplans-border">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">
                   {format(new Date(dateKey), 'EEEE, MMMM d')}
                 </h3>
                 <div className="space-y-3">
                   {meals.map((meal) => (
                     <div
                       key={meal.id}
-                      className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                      className="flex items-center justify-between p-4 bg-surface rounded-lg"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
@@ -369,12 +369,12 @@ export default function MealPlanDetailPage() {
                           </Badge>
                           <Link
                             to={`/recipes/${meal.recipe.id}`}
-                            className="text-lg font-medium text-gray-900 hover:text-blue-600"
+                            className="text-lg font-medium text-text-primary hover:text-accent"
                           >
                             {meal.recipe.title}
                           </Link>
                         </div>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-text-secondary mt-1">
                           {meal.servings} serving{meal.servings > 1 ? 's' : ''}
                           {meal.notes && ` \u2022 ${meal.notes}`}
                         </p>
@@ -399,7 +399,7 @@ export default function MealPlanDetailPage() {
         {/* Calendar */}
         {mealPlan.meals.length > 0 && (
           <Card className="mb-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Meal Calendar</h2>
+            <h2 className="text-xl font-bold text-text-primary mb-4">Meal Calendar</h2>
             <MealPlanCalendar
               startDate={mealPlan.startDate}
               endDate={mealPlan.endDate}
@@ -430,7 +430,7 @@ export default function MealPlanDetailPage() {
           title="Add to Existing Shopping List"
           size="sm"
         >
-          <p className="text-sm text-gray-600 mb-4">
+          <p className="text-sm text-text-secondary mb-4">
             Choose a shopping list to add all ingredients from <strong>{mealPlan.name}</strong> to:
           </p>
           <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -439,16 +439,16 @@ export default function MealPlanDetailPage() {
                 <button
                   key={list.id}
                   onClick={() => handleAddToExistingList(list.id)}
-                  className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-colors"
+                  className="w-full text-left px-4 py-3 rounded-lg border border-border-default hover:border-accent hover:bg-accent-light transition-colors"
                 >
-                  <div className="font-medium text-gray-900 text-sm">{list.name}</div>
+                  <div className="font-medium text-text-primary text-sm">{list.name}</div>
                   {list.mealPlan && (
-                    <div className="text-xs text-gray-500 mt-0.5">Linked to: {list.mealPlan.name}</div>
+                    <div className="text-xs text-text-muted mt-0.5">Linked to: {list.mealPlan.name}</div>
                   )}
                 </button>
               ))
             ) : (
-              <p className="text-sm text-gray-500 text-center py-4">No active shopping lists found.</p>
+              <p className="text-sm text-text-muted text-center py-4">No active shopping lists found.</p>
             )}
           </div>
           <div className="mt-4 flex justify-end">

@@ -9,6 +9,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <title>MealPlan - Meal Planning & Cooking</title>
+    <script>
+      // FOUC prevention: apply saved theme before first paint
+      (function() {
+        try {
+          var t = localStorage.getItem('mealplan_theme');
+          if (t) {
+            document.documentElement.dataset.theme = t;
+            // For custom themes, apply cached CSS variables immediately
+            if (t.indexOf('custom-') === 0) {
+              var cached = localStorage.getItem('mealplan_custom_vars_' + t);
+              if (cached) {
+                var vars = JSON.parse(cached);
+                var s = document.documentElement.style;
+                for (var k in vars) {
+                  if (vars.hasOwnProperty(k)) s.setProperty(k, vars[k]);
+                }
+              }
+            }
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

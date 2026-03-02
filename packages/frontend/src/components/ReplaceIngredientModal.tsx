@@ -82,7 +82,7 @@ export default function ReplaceIngredientModal({
 
         {/* Ingredient being deleted */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-text-primary mb-1">
             Deleting
           </label>
           <div className="px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-red-800 font-medium">
@@ -92,7 +92,7 @@ export default function ReplaceIngredientModal({
 
         {/* Replacement ingredient selection */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-text-primary mb-1">
             Replace with
           </label>
 
@@ -106,7 +106,7 @@ export default function ReplaceIngredientModal({
               </div>
               <button
                 onClick={() => setSelectedIngredient(null)}
-                className="text-gray-400 hover:text-gray-600 text-lg"
+                className="text-text-muted hover:text-text-secondary text-lg"
               >
                 &times;
               </button>
@@ -120,11 +120,11 @@ export default function ReplaceIngredientModal({
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
 
-              <div className="mt-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+              <div className="mt-2 max-h-60 overflow-y-auto border border-border-default rounded-lg">
                 {isLoading ? (
-                  <div className="text-center py-6 text-gray-500">Loading...</div>
+                  <div className="text-center py-6 text-text-muted">Loading...</div>
                 ) : filteredIngredients.length === 0 ? (
-                  <div className="text-center py-6 text-gray-500">
+                  <div className="text-center py-6 text-text-muted">
                     {searchTerm ? 'No ingredients found.' : 'Type to search ingredients.'}
                   </div>
                 ) : (
@@ -132,11 +132,11 @@ export default function ReplaceIngredientModal({
                     <button
                       key={ing.id}
                       onClick={() => setSelectedIngredient(ing)}
-                      className="w-full text-left px-3 py-2 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                      className="w-full text-left px-3 py-2 hover:bg-accent-light border-b border-border-default last:border-b-0 transition-colors"
                     >
-                      <span className="font-medium text-gray-900">{ing.name}</span>
+                      <span className="font-medium text-text-primary">{ing.name}</span>
                       {ing.category && (
-                        <span className="ml-2 text-xs text-gray-500">{ing.category}</span>
+                        <span className="ml-2 text-xs text-text-muted">{ing.category}</span>
                       )}
                     </button>
                   ))

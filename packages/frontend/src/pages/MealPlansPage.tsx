@@ -55,12 +55,12 @@ export default function MealPlansPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Meal Plans</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Meal Plans</h1>
+            <p className="text-text-secondary mt-1">
               {mealPlans?.length || 0} meal plans
             </p>
           </div>
@@ -70,7 +70,7 @@ export default function MealPlansPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
+        <div className="mb-6 border-b border-border-default">
           <nav className="flex gap-8">
             {(['active', 'completed', 'deleted'] as MealPlanStatus[]).map((tab) => (
               <button
@@ -78,8 +78,8 @@ export default function MealPlansPage() {
                 onClick={() => setActiveTab(tab)}
                 className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors capitalize ${
                   activeTab === tab
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-accent text-accent'
+                    : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border-strong'
                 }`}
               >
                 {tab}
@@ -109,7 +109,7 @@ export default function MealPlansPage() {
             </div>
           }
         >
-          <p className="text-gray-600 mb-4">
+          <p className="text-text-secondary mb-4">
             Create a weekly meal plan starting today
           </p>
           <Input
@@ -124,7 +124,7 @@ export default function MealPlansPage() {
         {isLoading && (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">&#x231B;</div>
-            <p className="text-gray-600">Loading meal plans...</p>
+            <p className="text-text-secondary">Loading meal plans...</p>
           </div>
         )}
 
@@ -132,10 +132,10 @@ export default function MealPlansPage() {
         {!isLoading && (!mealPlans || mealPlans.length === 0) && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">&#x1F4C5;</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-text-primary mb-2">
               No {activeTab} meal plans
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-text-secondary mb-6">
               {activeTab === 'active'
                 ? 'Create your first weekly meal plan to get started!'
                 : activeTab === 'completed'
@@ -152,28 +152,24 @@ export default function MealPlansPage() {
               <Card
                 key={plan.id}
                 hoverable
-                className="cursor-pointer"
+                className="cursor-pointer bg-card-mealplans border border-card-mealplans-border"
                 onClick={() => navigate(`/meal-plans/${plan.id}`)}
               >
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold text-text-primary mb-2">
                       {plan.name}
                     </h3>
-                    <p className="text-gray-600 text-sm mb-2">
+                    <p className="text-text-secondary text-sm mb-2">
                       {format(new Date(plan.startDate), 'MMM d')} -{' '}
                       {format(new Date(plan.endDate), 'MMM d, yyyy')}
                     </p>
-                    <p className="text-gray-500 text-sm">
+                    <p className="text-text-muted text-sm">
                       {plan.meals.length} meals planned
                     </p>
                   </div>
 
                   <div className="flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <Button size="sm" onClick={() => navigate(`/meal-plans/${plan.id}`)}>
-                      View
-                    </Button>
-
                     {activeTab === 'active' && (
                       <>
                         <Button size="sm" variant="success" onClick={() => handleMoveToCompleted(plan.id)}>

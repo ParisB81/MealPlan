@@ -778,19 +778,19 @@ export default function UrlImportPage() {
   const failedCount = results.filter((r) => r.Error).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Import Recipes from URLs</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Import Recipes from URLs</h1>
+            <p className="text-text-secondary mt-1">
               Scrape recipes from supported sites and generate an import template
             </p>
           </div>
           <Link
             to="/recipes"
-            className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
+            className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm border border-border-strong text-text-primary hover:bg-page-bg"
           >
             Back to Recipes
           </Link>
@@ -804,7 +804,7 @@ export default function UrlImportPage() {
             <li>Click "Scrape Recipes" to fetch recipe data</li>
             <li>Review the results and download the import template, or import directly</li>
           </ol>
-          <div className="mt-3 pt-3 border-t border-blue-200">
+          <div className="mt-3 pt-3 border-t border-accent">
             <p className="text-sm font-medium">Limits:</p>
             <ul className="text-sm list-disc list-inside ml-2 mt-1 space-y-0.5">
               <li>Maximum <strong>{MAX_URLS} URLs</strong> total per session</li>
@@ -817,14 +817,14 @@ export default function UrlImportPage() {
         </Alert>
 
         {/* General Excel Upload */}
-        <Card className="mb-6 border-2 border-dashed border-gray-300">
+        <Card className="mb-6 border-2 border-dashed border-border-strong">
           <div className="flex items-center gap-4">
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              <h3 className="text-lg font-semibold text-text-primary mb-1">
                 <Upload className="w-5 h-5 inline mr-2" />
                 Upload Excel with URLs
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-text-secondary">
                 Upload an Excel file with URLs in the first column. URLs will be automatically sorted into the correct source box by hostname.
               </p>
             </div>
@@ -864,7 +864,7 @@ export default function UrlImportPage() {
                     {source.label}
                   </span>
                   {urls.length > 0 && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-text-muted">
                       {urls.length} URL{urls.length !== 1 ? 's' : ''}
                     </span>
                   )}
@@ -872,7 +872,7 @@ export default function UrlImportPage() {
 
                 {/* File Upload */}
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-text-primary mb-2">
                     Upload Excel with URLs
                   </label>
                   <input
@@ -880,7 +880,7 @@ export default function UrlImportPage() {
                     type="file"
                     accept=".xlsx,.xls"
                     onChange={(e) => handleFileUpload(e, source.hostname)}
-                    className={`block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:${bgAccent} file:${textAccent} hover:file:opacity-80`}
+                    className={`block w-full text-sm text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:${bgAccent} file:${textAccent} hover:file:opacity-80`}
                   />
                 </div>
 
@@ -897,7 +897,7 @@ export default function UrlImportPage() {
                 {urls.length > 0 && (
                   <div className="mt-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-text-primary">
                         {urls.length} URL{urls.length !== 1 ? 's' : ''} ready
                       </span>
                       <Button
@@ -909,9 +909,9 @@ export default function UrlImportPage() {
                         Clear
                       </Button>
                     </div>
-                    <div className="max-h-32 overflow-y-auto bg-gray-50 rounded-lg p-3">
+                    <div className="max-h-32 overflow-y-auto bg-page-bg rounded-lg p-3">
                       {urls.map((url, index) => (
-                        <div key={index} className="text-sm text-gray-600 truncate">
+                        <div key={index} className="text-sm text-text-secondary truncate">
                           {index + 1}. {url}
                         </div>
                       ))}
@@ -976,7 +976,7 @@ export default function UrlImportPage() {
             </Button>
 
             <div className="flex flex-col text-sm">
-              <span className={`font-medium ${isOverLimit ? 'text-red-600' : 'text-gray-500'}`}>
+              <span className={`font-medium ${isOverLimit ? 'text-red-600' : 'text-text-muted'}`}>
                 {allUrls.length}/{MAX_URLS} URLs
               </span>
               {puppeteerUrlCount > 0 && (
@@ -994,7 +994,7 @@ export default function UrlImportPage() {
 
             {(status === 'loading' || status === 'stuck') && (
               <div className="flex-1 ml-4">
-                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                <div className="flex justify-between text-sm text-text-secondary mb-1">
                   <span>
                     {status === 'stuck'
                       ? '⚠️ Scraper appears stuck...'
@@ -1006,9 +1006,9 @@ export default function UrlImportPage() {
                     {estimatedTime > 0 && ` / ~${Math.ceil(estimatedTime / 60)} min estimated`}
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-border-default rounded-full h-2">
                   <div
-                    className={`h-2 rounded-full transition-all duration-500 ${status === 'stuck' ? 'bg-red-500' : 'bg-blue-600'}`}
+                    className={`h-2 rounded-full transition-all duration-500 ${status === 'stuck' ? 'bg-red-500' : 'bg-btn-primary'}`}
                     style={{ width: `${(progress.current / progress.total) * 100}%` }}
                   />
                 </div>
@@ -1062,9 +1062,9 @@ export default function UrlImportPage() {
 
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold text-gray-900">{results.length}</div>
-                <div className="text-sm text-gray-600">Total</div>
+              <div className="bg-page-bg rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-text-primary">{results.length}</div>
+                <div className="text-sm text-text-secondary">Total</div>
               </div>
               <div className="bg-green-50 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-green-600">{successCount}</div>
@@ -1092,7 +1092,7 @@ export default function UrlImportPage() {
                       <h3 className="font-medium">
                         {recipe.Title || 'Failed to scrape'}
                       </h3>
-                      <p className="text-sm text-gray-600 truncate">
+                      <p className="text-sm text-text-secondary truncate">
                         {recipe.SourceUrl}
                       </p>
                     </div>

@@ -37,9 +37,9 @@ export default function RecipePicker({ isOpen, onClose, onSelectRecipe }: Recipe
 
       {/* Recipe List */}
       {isLoading ? (
-        <div className="text-center py-8 text-gray-500">Loading recipes...</div>
+        <div className="text-center py-8 text-text-muted">Loading recipes...</div>
       ) : recipes.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-text-muted">
           {searchTerm ? 'No recipes found matching your search.' : 'No recipes available.'}
         </div>
       ) : (
@@ -48,13 +48,13 @@ export default function RecipePicker({ isOpen, onClose, onSelectRecipe }: Recipe
             <button
               key={recipe.id}
               onClick={() => onSelectRecipe(recipe)}
-              className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors"
+              className="w-full text-left p-4 border border-border-default rounded-lg hover:bg-accent-light hover:border-accent transition-colors"
             >
-              <h3 className="font-semibold text-gray-900 mb-1">{recipe.title}</h3>
+              <h3 className="font-semibold text-text-primary mb-1">{recipe.title}</h3>
               {recipe.description && (
-                <p className="text-sm text-gray-600 line-clamp-2">{recipe.description}</p>
+                <p className="text-sm text-text-secondary line-clamp-2">{recipe.description}</p>
               )}
-              <div className="flex gap-4 mt-2 text-xs text-gray-500">
+              <div className="flex gap-4 mt-2 text-xs text-text-muted">
                 <span>{recipe.servings} servings</span>
                 {recipe.prepTime && <span>{recipe.prepTime} min prep</span>}
                 {recipe.cookTime && <span>{recipe.cookTime} min cook</span>}
@@ -65,7 +65,7 @@ export default function RecipePicker({ isOpen, onClose, onSelectRecipe }: Recipe
                     <Badge key={tag} variant="gray">{tag}</Badge>
                   ))}
                   {recipe.tags.length > 3 && (
-                    <span className="px-2 py-1 text-gray-500 text-xs">
+                    <span className="px-2 py-1 text-text-muted text-xs">
                       +{recipe.tags.length - 3} more
                     </span>
                   )}

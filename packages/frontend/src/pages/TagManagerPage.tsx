@@ -68,27 +68,27 @@ export default function TagManagerPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         <Link
           to="/developer"
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+          className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
           ← Back to Developer Tools
         </Link>
 
         <header className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Tag Manager</h1>
-          <p className="text-gray-600">Drag tags onto recipes to apply them. Click × to remove.</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">Tag Manager</h1>
+          <p className="text-text-secondary">Drag tags onto recipes to apply them. Click × to remove.</p>
         </header>
 
         {/* Tag Palette */}
         <Card className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">Tag Palette</h2>
+          <h2 className="text-lg font-semibold text-text-primary mb-4">Tag Palette</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {TAG_CATEGORIES.map((category) => (
               <div key={category.name}>
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                <h3 className="text-sm font-semibold text-text-muted uppercase tracking-wide mb-2">
                   {category.name}
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
@@ -116,7 +116,7 @@ export default function TagManagerPage() {
         {/* Recipe List */}
         <Card>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-800">
+            <h2 className="text-lg font-semibold text-text-primary">
               Recipes {data ? `(${data.pagination.total})` : ''}
             </h2>
             <div className="w-72">
@@ -128,13 +128,13 @@ export default function TagManagerPage() {
             </div>
           </div>
 
-          <div className="max-h-[600px] overflow-y-auto divide-y divide-gray-100">
+          <div className="max-h-[600px] overflow-y-auto divide-y divide-border-default">
             {isLoading && (
-              <p className="text-gray-500 text-center py-8">Loading recipes...</p>
+              <p className="text-text-muted text-center py-8">Loading recipes...</p>
             )}
 
             {!isLoading && recipes.length === 0 && (
-              <p className="text-gray-500 text-center py-8">No recipes found.</p>
+              <p className="text-text-muted text-center py-8">No recipes found.</p>
             )}
 
             {recipes.map((recipe) => {
@@ -148,7 +148,7 @@ export default function TagManagerPage() {
                     isOver
                       ? alreadyHasTag
                         ? 'bg-yellow-50 ring-2 ring-yellow-300 ring-inset'
-                        : 'bg-blue-50 ring-2 ring-blue-300 ring-inset'
+                        : 'bg-accent-light ring-2 ring-accent-ring ring-inset'
                       : ''
                   }`}
                   onDragOver={(e) => handleDragOver(recipe.id, e)}
@@ -159,7 +159,7 @@ export default function TagManagerPage() {
                   <div className="w-48 flex-shrink-0">
                     <Link
                       to={`/recipes/${recipe.id}`}
-                      className="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                      className="text-sm font-medium text-accent hover:text-accent-hover hover:underline"
                     >
                       {recipe.title}
                     </Link>
@@ -168,7 +168,7 @@ export default function TagManagerPage() {
                   {/* Tags */}
                   <div className="flex-1 flex flex-wrap gap-1 min-h-[28px] items-center">
                     {recipe.tags.length === 0 && !isOver && (
-                      <span className="text-xs text-gray-400 italic">No tags</span>
+                      <span className="text-xs text-text-muted italic">No tags</span>
                     )}
                     {recipe.tags.map((tag) => {
                       const cat = getCategoryForTag(tag);
@@ -185,7 +185,7 @@ export default function TagManagerPage() {
                       );
                     })}
                     {isOver && (
-                      <span className="text-xs text-gray-400 italic ml-1">
+                      <span className="text-xs text-text-muted italic ml-1">
                         {alreadyHasTag ? 'Already has this tag' : 'Drop to add tag'}
                       </span>
                     )}

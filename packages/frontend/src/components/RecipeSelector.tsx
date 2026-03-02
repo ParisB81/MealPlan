@@ -36,8 +36,8 @@ export default function RecipeSelector({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">Add from Recipe</h2>
+      <div className="bg-surface rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+        <h2 className="text-2xl font-bold text-text-primary mb-4">Add from Recipe</h2>
 
         {/* Search Bar */}
         <div className="mb-4">
@@ -46,38 +46,38 @@ export default function RecipeSelector({
             placeholder="Search recipes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
           />
         </div>
 
         {/* Recipe List */}
-        <div className="flex-1 overflow-y-auto mb-4 border border-gray-200 rounded-lg">
+        <div className="flex-1 overflow-y-auto mb-4 border border-border-default rounded-lg">
           {isLoading ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">Loading recipes...</p>
+              <p className="text-text-muted">Loading recipes...</p>
             </div>
           ) : filteredRecipes.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500">No recipes found</p>
+              <p className="text-text-muted">No recipes found</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-border-default">
               {filteredRecipes.map((recipe) => (
                 <div
                   key={recipe.id}
                   onClick={() => setSelectedRecipeId(recipe.id)}
                   className={`p-4 cursor-pointer transition-colors ${
                     selectedRecipeId === recipe.id
-                      ? 'bg-blue-50 border-l-4 border-blue-600'
-                      : 'hover:bg-gray-50'
+                      ? 'bg-accent-light border-l-4 border-accent'
+                      : 'hover:bg-hover-bg'
                   }`}
                 >
-                  <h3 className="font-semibold text-gray-900">{recipe.title}</h3>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <h3 className="font-semibold text-text-primary">{recipe.title}</h3>
+                  <p className="text-sm text-text-secondary mt-1">
                     Servings: {recipe.servings} • Prep: {recipe.prepTime} min • Cook: {recipe.cookTime} min
                   </p>
                   {recipe.ingredients && recipe.ingredients.length > 0 && (
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-text-muted mt-1">
                       {recipe.ingredients.length} ingredient{recipe.ingredients.length !== 1 ? 's' : ''}
                     </p>
                   )}
@@ -91,7 +91,7 @@ export default function RecipeSelector({
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            className="flex-1 px-4 py-2 border border-border-strong text-text-primary rounded-lg hover:bg-hover-bg"
             disabled={isAdding}
           >
             Cancel
@@ -99,7 +99,7 @@ export default function RecipeSelector({
           <button
             onClick={handleAdd}
             disabled={!selectedRecipeId || isAdding}
-            className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isAdding ? 'Adding...' : 'Add Ingredients'}
           </button>

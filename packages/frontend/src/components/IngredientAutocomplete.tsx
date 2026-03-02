@@ -78,20 +78,20 @@ export default function IngredientAutocomplete({
       />
 
       {showDropdown && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <div className="absolute z-50 w-full mt-1 bg-surface border border-border-strong rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {isLoading ? (
-            <div className="px-4 py-3 text-sm text-gray-500">Loading...</div>
+            <div className="px-4 py-3 text-sm text-text-muted">Loading...</div>
           ) : (
             <ul className="py-1">
               {filteredIngredients.slice(0, 10).map((ingredient) => (
                 <li
                   key={ingredient.id}
                   onClick={() => handleSelectIngredient(ingredient)}
-                  className="px-4 py-2.5 min-h-[44px] hover:bg-blue-50 active:bg-blue-100 cursor-pointer text-sm text-gray-900"
+                  className="px-4 py-2.5 min-h-[44px] hover:bg-accent-light active:bg-accent-light cursor-pointer text-sm text-text-primary"
                 >
                   <div className="font-medium">{ingredient.name}</div>
                   {ingredient.category && (
-                    <div className="text-xs text-gray-500">{ingredient.category}</div>
+                    <div className="text-xs text-text-muted">{ingredient.category}</div>
                   )}
                 </li>
               ))}

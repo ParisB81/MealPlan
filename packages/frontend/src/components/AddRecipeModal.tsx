@@ -29,7 +29,7 @@ function DateStepper({
       <button
         type="button"
         onClick={() => onChange(shiftDate(value, -1))}
-        className="p-1 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+        className="p-1 rounded hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors"
         title="Previous day"
       >
         <ChevronLeft size={14} />
@@ -38,13 +38,13 @@ function DateStepper({
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 min-w-0 border border-gray-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+        className="flex-1 min-w-0 border border-border-strong rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
         required
       />
       <button
         type="button"
         onClick={() => onChange(shiftDate(value, 1))}
-        className="p-1 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+        className="p-1 rounded hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors"
         title="Next day"
       >
         <ChevronRight size={14} />
@@ -187,9 +187,9 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
           />
 
           {isLoading ? (
-            <div className="text-center py-12 text-gray-500">Loading recipes...</div>
+            <div className="text-center py-12 text-text-muted">Loading recipes...</div>
           ) : recipes.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-text-muted">
               {searchTerm ? 'No recipes found matching your search.' : 'No recipes available.'}
             </div>
           ) : (
@@ -200,10 +200,10 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                 return (
                   <div
                     key={recipe.id}
-                    className={`bg-white rounded-lg shadow transition-all overflow-hidden ${
+                    className={`bg-surface rounded-lg shadow transition-all overflow-hidden ${
                       isQuickAdding
                         ? 'ring-2 ring-green-400 shadow-lg'
-                        : 'hover:shadow-lg hover:ring-2 hover:ring-blue-400'
+                        : 'hover:shadow-lg hover:ring-2 hover:ring-accent-ring'
                     }`}
                   >
                     {/* Clickable card body → detail view */}
@@ -218,20 +218,20 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                           className="w-full h-36 object-cover"
                         />
                       ) : (
-                        <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
-                          <span className="text-gray-400 text-3xl">🍽️</span>
+                        <div className="w-full h-36 bg-hover-bg flex items-center justify-center">
+                          <span className="text-text-muted text-3xl">🍽️</span>
                         </div>
                       )}
                       <div className="p-3 pb-2">
-                        <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-1">
+                        <h3 className="font-semibold text-text-primary text-sm mb-1 line-clamp-1">
                           {recipe.title}
                         </h3>
                         {recipe.description && (
-                          <p className="text-xs text-gray-500 line-clamp-2 mb-2">
+                          <p className="text-xs text-text-muted line-clamp-2 mb-2">
                             {recipe.description}
                           </p>
                         )}
-                        <div className="flex gap-3 text-xs text-gray-400 mb-2">
+                        <div className="flex gap-3 text-xs text-text-muted mb-2">
                           <span>⏱️ {time > 0 ? `${time} min` : 'N/A'}</span>
                           <span>🍴 {recipe.servings} srv</span>
                         </div>
@@ -240,13 +240,13 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                             {recipe.tags.slice(0, 2).map((tag) => (
                               <span
                                 key={tag}
-                                className="px-1.5 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
+                                className="px-1.5 py-0.5 bg-accent-light text-accent text-xs rounded-full"
                               >
                                 {tag}
                               </span>
                             ))}
                             {recipe.tags.length > 2 && (
-                              <span className="text-xs text-gray-400">
+                              <span className="text-xs text-text-muted">
                                 +{recipe.tags.length - 2}
                               </span>
                             )}
@@ -259,7 +259,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                     {isQuickAdding ? (
                       <form
                         onSubmit={handleQuickAddSubmit}
-                        className="px-3 pb-3 pt-1 border-t border-gray-100 bg-green-50 flex flex-col gap-2"
+                        className="px-3 pb-3 pt-1 border-t border-border-default bg-green-50 flex flex-col gap-2"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DateStepper
@@ -274,7 +274,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                               mealType: e.target.value as QuickAddState['mealType'],
                             })
                           }
-                          className="w-full text-xs border border-gray-300 rounded px-2 py-1"
+                          className="w-full text-xs border border-border-strong rounded px-2 py-1"
                         >
                           <option value="breakfast">Breakfast</option>
                           <option value="lunch">Lunch</option>
@@ -282,7 +282,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                           <option value="snack">Snack</option>
                         </select>
                         <div className="flex items-center gap-2">
-                          <label className="text-xs text-gray-500 whitespace-nowrap">Servings</label>
+                          <label className="text-xs text-text-muted whitespace-nowrap">Servings</label>
                           <input
                             type="number"
                             value={quickAdd.servings}
@@ -293,28 +293,28 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                               })
                             }
                             min={1}
-                            className="w-16 text-xs border border-gray-300 rounded px-2 py-1"
+                            className="w-16 text-xs border border-border-strong rounded px-2 py-1"
                           />
                         </div>
                         <div className="flex gap-2">
                           <button
                             type="submit"
                             disabled={addRecipe.isPending}
-                            className="flex-1 text-xs bg-green-600 text-white rounded py-1.5 hover:bg-green-700 disabled:opacity-50 font-medium"
+                            className="flex-1 text-xs bg-btn-success text-white rounded py-1.5 hover:bg-btn-success-hover disabled:opacity-50 font-medium"
                           >
                             {addRecipe.isPending ? 'Adding…' : '✓ Add'}
                           </button>
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); setQuickAdd(null); }}
-                            className="text-xs text-gray-500 hover:text-gray-700 px-2"
+                            className="text-xs text-text-muted hover:text-text-primary px-2"
                           >
                             <X size={14} />
                           </button>
                         </div>
                       </form>
                     ) : (
-                      <div className="px-3 pb-3 pt-1 border-t border-gray-100">
+                      <div className="px-3 pb-3 pt-1 border-t border-border-default">
                         <button
                           onClick={(e) => openQuickAdd(e, recipe)}
                           className="w-full flex items-center justify-center gap-1 text-xs text-green-700 bg-green-50 hover:bg-green-100 rounded py-1.5 transition-colors font-medium"
@@ -343,23 +343,23 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                   className="w-full h-40 object-cover rounded-lg"
                 />
               ) : (
-                <div className="w-full h-40 bg-gray-100 flex items-center justify-center rounded-lg">
-                  <span className="text-gray-400 text-4xl">🍽️</span>
+                <div className="w-full h-40 bg-hover-bg flex items-center justify-center rounded-lg">
+                  <span className="text-text-muted text-4xl">🍽️</span>
                 </div>
               )}
 
               <div>
-                <h3 className="font-bold text-gray-900 text-lg leading-tight">
+                <h3 className="font-bold text-text-primary text-lg leading-tight">
                   {selectedRecipe.title}
                 </h3>
                 {selectedRecipe.description && (
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-3">
+                  <p className="text-sm text-text-muted mt-1 line-clamp-3">
                     {selectedRecipe.description}
                   </p>
                 )}
               </div>
 
-              <div className="flex gap-4 text-sm text-gray-500">
+              <div className="flex gap-4 text-sm text-text-muted">
                 <span className="flex items-center gap-1">
                   <Clock size={14} />
                   {totalTime > 0 ? `${totalTime} min` : 'N/A'}
@@ -375,13 +375,13 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                   {selectedRecipe.tags.slice(0, 5).map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full"
+                      className="px-2 py-0.5 bg-accent-light text-accent text-xs rounded-full"
                     >
                       {tag}
                     </span>
                   ))}
                   {selectedRecipe.tags.length > 5 && (
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-text-muted">
                       +{selectedRecipe.tags.length - 5} more
                     </span>
                   )}
@@ -390,20 +390,20 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
 
               {selectedRecipe.ingredients.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-1">
+                  <h4 className="text-xs font-semibold text-text-primary uppercase tracking-wide mb-1">
                     Ingredients
                   </h4>
-                  <ul className="text-sm text-gray-600 space-y-0.5">
+                  <ul className="text-sm text-text-secondary space-y-0.5">
                     {selectedRecipe.ingredients.slice(0, 8).map((ri) => (
                       <li key={ri.id} className="line-clamp-1">
-                        <span className="text-gray-400">
+                        <span className="text-text-muted">
                           {ri.quantity} {ri.unit}
                         </span>{' '}
                         {ri.ingredient.name}
                       </li>
                     ))}
                     {selectedRecipe.ingredients.length > 8 && (
-                      <li className="text-gray-400 text-xs">
+                      <li className="text-text-muted text-xs">
                         +{selectedRecipe.ingredients.length - 8} more ingredients
                       </li>
                     )}
@@ -416,7 +416,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                   href={selectedRecipe.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                  className="inline-flex items-center gap-1 text-xs text-accent hover:underline"
                 >
                   <ExternalLink size={12} />
                   View original recipe
@@ -426,7 +426,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
               <Link
                 to={`/recipes/${selectedRecipe.id}`}
                 target="_blank"
-                className="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"
+                className="inline-flex items-center gap-1 text-xs text-text-secondary hover:text-text-primary"
               >
                 <ExternalLink size={12} />
                 Open recipe page
@@ -438,7 +438,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
           <div className="flex-1 flex flex-col gap-4">
             <button
               onClick={handleBack}
-              className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 self-start"
+              className="inline-flex items-center gap-1 text-sm text-accent hover:text-accent-hover self-start"
             >
               <ArrowLeft size={14} />
               Back to recipes
@@ -446,7 +446,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-text-primary mb-1">Date</label>
                 <DateStepper value={date} onChange={setDate} />
               </div>
 

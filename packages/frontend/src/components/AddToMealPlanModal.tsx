@@ -84,17 +84,17 @@ export default function AddToMealPlanModal({ recipeId, recipeName, isOpen, onClo
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Recipe name (read-only) */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Recipe</label>
-          <p className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-medium">
+          <label className="block text-sm font-medium text-text-primary mb-1">Recipe</label>
+          <p className="px-3 py-2 bg-page-bg border border-border-default rounded-lg text-text-primary font-medium">
             {recipeName}
           </p>
         </div>
 
         {/* Meal Plan Selection */}
         {loadingPlans ? (
-          <p className="text-gray-500">Loading meal plans...</p>
+          <p className="text-text-muted">Loading meal plans...</p>
         ) : activePlans.length === 0 ? (
-          <p className="text-gray-500">No active meal plans. Create one first.</p>
+          <p className="text-text-muted">No active meal plans. Create one first.</p>
         ) : (
           <Select
             label="Meal Plan"

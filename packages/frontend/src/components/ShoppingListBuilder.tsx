@@ -139,19 +139,19 @@ export default function ShoppingListBuilder({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-4 md:p-6 max-w-2xl w-full mx-4 max-h-[90vh] md:max-h-[90vh] h-full md:h-auto overflow-y-auto">
-        <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">
+      <div className="bg-surface rounded-lg p-4 md:p-6 max-w-2xl w-full mx-4 max-h-[90vh] md:max-h-[90vh] h-full md:h-auto overflow-y-auto">
+        <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-4">
           Create Shopping List
         </h2>
 
         {/* Mode Tabs */}
-        <div className="flex gap-1 md:gap-2 mb-6 border-b border-gray-200">
+        <div className="flex gap-1 md:gap-2 mb-6 border-b border-border-default">
           <button
             onClick={() => setMode('meal-plans')}
             className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'meal-plans'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-muted hover:text-text-secondary active:text-text-primary'
             }`}
           >
             Meal Plans
@@ -160,8 +160,8 @@ export default function ShoppingListBuilder({
             onClick={() => setMode('recipes')}
             className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'recipes'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-muted hover:text-text-secondary active:text-text-primary'
             }`}
           >
             Recipes
@@ -170,8 +170,8 @@ export default function ShoppingListBuilder({
             onClick={() => setMode('custom')}
             className={`flex-1 md:flex-none px-3 md:px-4 py-2.5 text-sm md:text-base font-medium transition-colors text-center ${
               mode === 'custom'
-                ? 'text-blue-600 border-b-2 border-blue-600'
-                : 'text-gray-500 hover:text-gray-700 active:text-gray-900'
+                ? 'text-accent border-b-2 border-accent'
+                : 'text-text-muted hover:text-text-secondary active:text-text-primary'
             }`}
           >
             Custom
@@ -181,13 +181,13 @@ export default function ShoppingListBuilder({
         {/* Meal Plans Mode */}
         {mode === 'meal-plans' && (
           <div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-text-secondary mb-4">
               Select one or more active meal plans to generate a shopping list
             </p>
 
             {/* List Name Input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Shopping List Name (optional)
               </label>
               <input
@@ -195,20 +195,20 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="My Shopping List"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
             {!mealPlans || mealPlans.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">No active meal plans found</p>
+                <p className="text-text-muted">No active meal plans found</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {mealPlans.map((mealPlan) => (
                   <label
                     key={mealPlan.id}
-                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center gap-3 p-3 border border-border-default rounded-lg hover:bg-hover-bg cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -217,8 +217,8 @@ export default function ShoppingListBuilder({
                       className="w-4 h-4"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{mealPlan.name}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-text-primary">{mealPlan.name}</p>
+                      <p className="text-sm text-text-muted">
                         {formatDate(mealPlan.startDate)} - {formatDate(mealPlan.endDate)}
                       </p>
                     </div>
@@ -232,13 +232,13 @@ export default function ShoppingListBuilder({
         {/* Recipes Mode */}
         {mode === 'recipes' && (
           <div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-text-secondary mb-4">
               Select recipes to include in your shopping list
             </p>
 
             {/* List Name Input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Shopping List Name (optional)
               </label>
               <input
@@ -246,7 +246,7 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="My Shopping List"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -257,20 +257,20 @@ export default function ShoppingListBuilder({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search recipes..."
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
             {filteredRecipes.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">No recipes found</p>
+                <p className="text-text-muted">No recipes found</p>
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {filteredRecipes.map((recipe) => (
                   <label
                     key={recipe.id}
-                    className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer"
+                    className="flex items-center gap-3 p-3 border border-border-default rounded-lg hover:bg-hover-bg cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -279,8 +279,8 @@ export default function ShoppingListBuilder({
                       className="w-4 h-4"
                     />
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{recipe.title}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-text-primary">{recipe.title}</p>
+                      <p className="text-sm text-text-muted">
                         {recipe.servings} servings • {recipe.cookTime} min
                       </p>
                     </div>
@@ -294,13 +294,13 @@ export default function ShoppingListBuilder({
         {/* Custom Mode */}
         {mode === 'custom' && (
           <div>
-            <p className="text-gray-600 mb-4">
+            <p className="text-text-secondary mb-4">
               Create a custom shopping list with your own ingredients
             </p>
 
             {/* List Name Input */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Shopping List Name *
               </label>
               <input
@@ -308,7 +308,7 @@ export default function ShoppingListBuilder({
                 value={listName}
                 onChange={(e) => setListName(e.target.value)}
                 placeholder="Weekend BBQ Shopping"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
             </div>
 
@@ -319,12 +319,12 @@ export default function ShoppingListBuilder({
                 placeholder="Search ingredients by name..."
                 value={ingredientSearch}
                 onChange={(e) => setIngredientSearch(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
               />
               <select
                 value={ingredientCategory}
                 onChange={(e) => setIngredientCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm text-gray-700 min-w-[150px]"
+                className="px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring bg-surface text-sm text-text-primary min-w-[150px]"
               >
                 <option value="">All categories</option>
                 {CATEGORIES.map((cat) => (
@@ -336,10 +336,10 @@ export default function ShoppingListBuilder({
             </div>
 
             {/* Ingredient List (click to add) */}
-            <div className="mb-4 border border-gray-200 rounded-lg overflow-hidden">
-              <div className="max-h-48 overflow-y-auto divide-y divide-gray-100">
+            <div className="mb-4 border border-border-default rounded-lg overflow-hidden">
+              <div className="max-h-48 overflow-y-auto divide-y divide-border-default">
                 {!ingredients || ingredients.length === 0 ? (
-                  <div className="text-center py-6 text-gray-500 text-sm">
+                  <div className="text-center py-6 text-text-muted text-sm">
                     {ingredientSearch || ingredientCategory ? 'No ingredients match your search.' : 'No ingredients found.'}
                   </div>
                 ) : (
@@ -352,11 +352,11 @@ export default function ShoppingListBuilder({
                           { ingredientId: ing.id, quantity: 1, unit: 'unit' },
                         ])
                       }
-                      className="w-full flex items-center justify-between px-3 py-2 hover:bg-blue-50 text-left transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 hover:bg-accent-light text-left transition-colors"
                     >
-                      <span className="text-sm text-gray-800">{ing.name}</span>
+                      <span className="text-sm text-text-primary">{ing.name}</span>
                       {ing.category && (
-                        <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full ml-2 shrink-0">
+                        <span className="text-xs text-text-muted bg-hover-bg px-2 py-0.5 rounded-full ml-2 shrink-0">
                           {ing.category}
                         </span>
                       )}
@@ -369,15 +369,15 @@ export default function ShoppingListBuilder({
             {/* Added Ingredients */}
             {customIngredients.length > 0 && (
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-text-primary mb-2">
                   Added ({customIngredients.length})
                 </label>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {customIngredients.map((item, index) => {
                     const ing = allIngredients?.find((i) => i.id === item.ingredientId);
                     return (
-                      <div key={index} className="flex gap-2 items-center bg-gray-50 rounded-lg px-3 py-2">
-                        <span className="flex-1 text-sm text-gray-800 truncate">
+                      <div key={index} className="flex gap-2 items-center bg-page-bg rounded-lg px-3 py-2">
+                        <span className="flex-1 text-sm text-text-primary truncate">
                           {ing?.name ?? 'Unknown'}
                         </span>
                         <input
@@ -390,13 +390,13 @@ export default function ShoppingListBuilder({
                             const rounded = Math.round(value * 100) / 100;
                             handleUpdateCustomIngredient(index, 'quantity', rounded);
                           }}
-                          className="w-20 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-20 px-2 py-1 border border-border-strong rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent-ring"
                         />
                         <UnitAutocomplete
                           value={item.unit}
                           onChange={(value) => handleUpdateCustomIngredient(index, 'unit', value)}
                           placeholder="unit"
-                          className="w-24 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-24 px-2 py-1 border border-border-strong rounded text-sm focus:outline-none focus:ring-2 focus:ring-accent-ring"
                         />
                         <button
                           onClick={() => handleRemoveCustomIngredient(index)}
@@ -417,7 +417,7 @@ export default function ShoppingListBuilder({
         <div className="flex gap-3 mt-6">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            className="flex-1 px-4 py-2 border border-border-strong text-text-primary rounded-lg hover:bg-hover-bg"
             disabled={isCreating}
           >
             Cancel
@@ -425,7 +425,7 @@ export default function ShoppingListBuilder({
           <button
             onClick={handleCreate}
             disabled={isCreating}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isCreating ? 'Creating...' : 'Create Shopping List'}
           </button>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   useCookingPlans,
   useDeleteCookingPlan,
@@ -7,12 +7,13 @@ import {
   usePermanentDeleteCookingPlan,
 } from '../hooks/useCookingPlans';
 import { Button, Card } from '../components/ui';
-import { ChefHat, Plus, Eye, Trash2, RotateCcw } from 'lucide-react';
+import { ChefHat, Plus, Trash2, RotateCcw } from 'lucide-react';
 import type { CookingPlanStatus } from '../types/cookingPlan';
 
 export default function CookingPlansPage() {
   const [activeTab, setActiveTab] = useState<CookingPlanStatus>('active');
   const { data: plans, isLoading } = useCookingPlans(activeTab);
+  const navigate = useNavigate();
 
   const deletePlan = useDeleteCookingPlan();
   const restorePlan = useRestoreCookingPlan();
@@ -56,10 +57,10 @@ export default function CookingPlansPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
-          <ChefHat className="w-8 h-8 text-orange-500" />
+          <ChefHat className="w-8 h-8 text-text-secondary" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Cooking Plans</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Cooking Plans</h1>
+            <p className="text-text-secondary mt-1">
               {plans?.length || 0} cooking plan{plans?.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -73,7 +74,7 @@ export default function CookingPlansPage() {
       </div>
 
       {/* Tabs */}
-      <div className="mb-6 border-b border-gray-200">
+      <div className="mb-6 border-b border-border-default">
         <nav className="flex gap-8">
           {(['active', 'deleted'] as CookingPlanStatus[]).map((tab) => (
             <button
@@ -81,8 +82,8 @@ export default function CookingPlansPage() {
               onClick={() => setActiveTab(tab)}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors capitalize ${
                 activeTab === tab
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-text-muted hover:text-text-secondary hover:border-border-strong'
               }`}
             >
               {tab}
@@ -94,18 +95,18 @@ export default function CookingPlansPage() {
       {/* Loading */}
       {isLoading && (
         <div className="text-center py-12">
-          <p className="text-gray-600">Loading cooking plans...</p>
+          <p className="text-text-secondary">Loading cooking plans...</p>
         </div>
       )}
 
       {/* Empty state */}
       {!isLoading && (!plans || plans.length === 0) && (
         <div className="text-center py-12">
-          <ChefHat className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <ChefHat className="w-16 h-16 text-card-cooking-meta mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-text-primary mb-2">
             No {activeTab} cooking plans
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-text-secondary mb-6">
             {activeTab === 'active'
               ? 'Create a cooking plan to organize your cooking schedule!'
               : 'Deleted cooking plans will appear here.'}
@@ -125,14 +126,18 @@ export default function CookingPlansPage() {
       {!isLoading && plans && plans.length > 0 && (
         <div className="grid gap-4">
           {plans.map((plan) => (
-            <Link key={plan.id} to={`/cooking-plans/${plan.id}`}>
-              <Card hoverable>
+              <Card
+                key={plan.id}
+                hoverable
+                className="cursor-pointer bg-card-cooking border border-card-cooking-border"
+                onClick={() => navigate(`/cooking-plans/${plan.id}`)}
+              >
                 <div className="flex justify-between items-start gap-4">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    <h3 className="text-xl font-semibold text-card-cooking-text mb-2">
                       {plan.name}
                     </h3>
-                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                    <div className="flex flex-wrap gap-4 text-sm text-card-cooking-meta">
                       <span>
                         {plan.mealPlanIds.length} meal plan
                         {plan.mealPlanIds.length !== 1 ? 's' : ''}
@@ -141,15 +146,12 @@ export default function CookingPlansPage() {
                         {plan.cookDays.length} cook day
                         {plan.cookDays.length !== 1 ? 's' : ''}
                       </span>
-                      <span className="text-gray-400">
+                      <span className="text-card-cooking-meta">
                         Created {formatDate(plan.createdAt)}
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-2 flex-shrink-0">
-                    <Button size="sm" variant="ghost">
-                      <Eye className="w-4 h-4" />
-                    </Button>
+                  <div className="flex gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                     {activeTab === 'active' && (
                       <Button
                         size="sm"
@@ -184,7 +186,6 @@ export default function CookingPlansPage() {
                   </div>
                 </div>
               </Card>
-            </Link>
           ))}
         </div>
       )}

@@ -11,13 +11,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-  secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-  success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
-  warning: 'bg-orange-600 text-white hover:bg-orange-700 focus:ring-orange-500',
-  ghost: 'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
-  link: 'text-blue-600 hover:text-blue-700 underline-offset-2 hover:underline focus:ring-blue-500',
+  primary: 'bg-btn-primary text-white hover:bg-btn-primary-hover focus:ring-accent-ring',
+  secondary: 'bg-btn-secondary text-white hover:bg-btn-secondary-hover focus:ring-accent-ring',
+  danger: 'bg-btn-danger text-white hover:bg-btn-danger-hover focus:ring-accent-ring',
+  success: 'bg-btn-success text-white hover:bg-btn-success-hover focus:ring-accent-ring',
+  warning: 'bg-btn-warning text-white hover:bg-btn-warning-hover focus:ring-accent-ring',
+  ghost: 'border border-btn-ghost-border text-btn-ghost-text hover:bg-btn-ghost-hover focus:ring-accent-ring',
+  link: 'text-btn-link hover:text-btn-link-hover underline-offset-2 hover:underline focus:ring-accent-ring',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

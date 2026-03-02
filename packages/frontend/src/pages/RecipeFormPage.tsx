@@ -296,17 +296,17 @@ export default function RecipeFormPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         <Link
           to="/recipes"
-          className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+          className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
           ← Back to Recipes
         </Link>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
             {isEditing ? 'Edit Recipe' : 'Create New Recipe'}
           </h1>
           {!isEditing && (
@@ -357,7 +357,7 @@ export default function RecipeFormPage() {
 
           {/* Basic Info */}
           <Card className="space-y-4">
-            <h2 className="text-xl font-semibold text-gray-900">Basic Information</h2>
+            <h2 className="text-xl font-semibold text-text-primary">Basic Information</h2>
 
             <Input
               label="Title *"
@@ -410,7 +410,7 @@ export default function RecipeFormPage() {
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-primary mb-1">
                 Tags
               </label>
               <div className="flex gap-2 mb-2">
@@ -426,7 +426,7 @@ export default function RecipeFormPage() {
                   onAddCustomTag={addTag}
                   existingTags={formData.tags}
                   placeholder="Add a tag..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                 />
                 <Button variant="secondary" onClick={addTag} type="button">
                   Add
@@ -448,7 +448,7 @@ export default function RecipeFormPage() {
           {/* Ingredients */}
           <Card>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Ingredients</h2>
+              <h2 className="text-xl font-semibold text-text-primary">Ingredients</h2>
               <Button variant="secondary" onClick={addIngredient} type="button">
                 + Add Ingredient
               </Button>
@@ -477,8 +477,8 @@ export default function RecipeFormPage() {
                         onChange={(value) => updateIngredient(index, 'name', value)}
                         placeholder="Ingredient name *"
                         required
-                        className={`w-full sm:flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                          fieldWithError('name') ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        className={`w-full sm:flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                          fieldWithError('name') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                         }`}
                       />
                       <div className="flex gap-2">
@@ -494,8 +494,8 @@ export default function RecipeFormPage() {
                           }}
                           required
                           min="0.01"
-                          className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            fieldWithError('quantity') ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          className={`w-20 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                            fieldWithError('quantity') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                           }`}
                         />
                         <UnitAutocomplete
@@ -503,8 +503,8 @@ export default function RecipeFormPage() {
                           onChange={(value) => updateIngredient(index, 'unit', value)}
                           placeholder="Unit *"
                           required
-                          className={`w-24 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                            fieldWithError('unit') ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          className={`w-24 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring ${
+                            fieldWithError('unit') ? 'border-red-500 bg-red-50' : 'border-border-strong'
                           }`}
                         />
                       </div>
@@ -516,7 +516,7 @@ export default function RecipeFormPage() {
                           onChange={(e) =>
                             updateIngredient(index, 'notes', e.target.value)
                           }
-                          className="flex-1 sm:w-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="flex-1 sm:w-32 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                         />
                         <Button
                           variant="danger"
@@ -546,7 +546,7 @@ export default function RecipeFormPage() {
           {/* Instructions */}
           <Card>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Instructions</h2>
+              <h2 className="text-xl font-semibold text-text-primary">Instructions</h2>
               <Button variant="secondary" onClick={addInstruction} type="button">
                 + Add Step
               </Button>
@@ -560,14 +560,14 @@ export default function RecipeFormPage() {
             <div className="space-y-3">
               {formData.instructions.map((instruction, index) => (
                 <div key={index} className="flex gap-2">
-                  <span className="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
+                  <span className="flex-shrink-0 w-8 h-8 bg-btn-primary text-white rounded-full flex items-center justify-center font-semibold">
                     {index + 1}
                   </span>
                   <textarea
                     value={instruction}
                     onChange={(e) => updateInstruction(index, e.target.value)}
                     rows={2}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                   />
                   <Button
                     variant="danger"
@@ -585,10 +585,10 @@ export default function RecipeFormPage() {
 
           {/* Nutrition Information */}
           <Card>
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            <h2 className="text-xl font-semibold text-text-primary mb-4">
               Nutrition Information (per serving)
             </h2>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-text-secondary mb-4">
               Optional - Fill in nutritional values if known
             </p>
 
@@ -677,7 +677,7 @@ export default function RecipeFormPage() {
           <div className="flex justify-end gap-4">
             <Link
               to="/recipes"
-              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-6 py-2 text-sm border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-6 py-2 text-sm border border-border-strong text-text-primary hover:bg-page-bg"
             >
               Cancel
             </Link>

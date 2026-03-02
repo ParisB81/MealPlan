@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import Navigation from './components/Navigation';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import LoginPage from './pages/LoginPage';
 
 function ScrollToTop() {
@@ -34,8 +35,8 @@ function AppContent() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400 text-lg">Loading...</div>
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
+        <div className="text-text-muted text-lg">Loading...</div>
       </div>
     );
   }
@@ -45,7 +46,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <ScrollToTop />
       <Navigation />
       <Toaster position="bottom-center" toastOptions={{ className: 'mb-safe' }} />
@@ -76,11 +77,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

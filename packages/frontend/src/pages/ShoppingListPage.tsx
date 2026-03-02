@@ -189,10 +189,10 @@ export default function ShoppingListPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">⏳</div>
-          <p className="text-gray-600">Loading shopping list...</p>
+          <p className="text-text-secondary">Loading shopping list...</p>
         </div>
       </div>
     );
@@ -200,13 +200,13 @@ export default function ShoppingListPage() {
 
   if (error || !shoppingList) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-page-bg flex items-center justify-center">
         <div className="text-center">
           <div className="text-4xl mb-4">❌</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to load shopping list</h2>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Unable to load shopping list</h2>
           <Link
             to={mealPlanId ? `/meal-plans/${mealPlanId}` : '/shopping-lists'}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block"
+            className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover inline-block"
           >
             {mealPlanId ? 'Back to Meal Plan' : 'Back to Shopping Lists'}
           </Link>
@@ -223,35 +223,35 @@ export default function ShoppingListPage() {
   const progress = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
         {/* Back Button & Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 print:hidden">
-          <Link to={backUrl} className="text-blue-600 hover:text-blue-700">
+          <Link to={backUrl} className="text-accent hover:text-accent-hover">
             {backText}
           </Link>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setShowAddIngredient(true)}
-              className="px-3 py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800"
+              className="px-3 py-2 text-sm bg-btn-success text-white rounded-lg hover:bg-btn-success-hover active:bg-green-800"
             >
               Add Ingredient
             </button>
             <button
               onClick={() => setShowRecipePicker(true)}
-              className="px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 active:bg-purple-800"
+              className="px-3 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 active:bg-orange-800"
             >
               Add from Recipe
             </button>
             <button
               onClick={() => setShowMealPlanPicker(true)}
-              className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 active:bg-indigo-800"
+              className="px-3 py-2 text-sm bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover active:bg-accent"
             >
               Add from Meal Plan
             </button>
             <button
               onClick={handlePrint}
-              className="px-3 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800"
+              className="px-3 py-2 text-sm bg-border-default text-text-primary rounded-lg hover:bg-border-strong active:bg-border-strong"
             >
               Print
             </button>
@@ -259,7 +259,7 @@ export default function ShoppingListPage() {
         </div>
 
         {/* Header */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="bg-surface rounded-lg shadow p-6 mb-6">
           {/* Shopping List Name with Edit */}
           <div className="mb-4">
             {isEditingName ? (
@@ -268,7 +268,7 @@ export default function ShoppingListPage() {
                   type="text"
                   value={editedName}
                   onChange={(e) => setEditedName(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-2xl font-bold"
+                  className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring text-2xl font-bold"
                   autoFocus
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleSaveName();
@@ -278,24 +278,24 @@ export default function ShoppingListPage() {
                 <button
                   onClick={handleSaveName}
                   disabled={updateShoppingList.isPending}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover disabled:opacity-50"
                 >
                   Save
                 </button>
                 <button
                   onClick={handleCancelEditingName}
                   disabled={updateShoppingList.isPending}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-border-strong text-text-primary rounded-lg hover:bg-page-bg"
                 >
                   Cancel
                 </button>
               </div>
             ) : (
               <div className="flex gap-2 items-center">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{shoppingList.name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{shoppingList.name}</h1>
                 <button
                   onClick={handleStartEditingName}
-                  className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 rounded-lg print:hidden"
+                  className="px-3 py-1 text-sm text-accent hover:bg-accent-light rounded-lg print:hidden"
                 >
                   ✏️ Edit
                 </button>
@@ -305,13 +305,13 @@ export default function ShoppingListPage() {
 
           {/* Progress Bar */}
           <div className="mb-2">
-            <div className="flex justify-between text-sm text-gray-600 mb-1">
+            <div className="flex justify-between text-sm text-text-secondary mb-1">
               <span>Progress</span>
               <span>
                 {checkedItems} / {totalItems} items
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+            <div className="w-full bg-border-default rounded-full h-2 mb-3">
               <div
                 className="bg-green-600 h-2 rounded-full transition-all"
                 style={{ width: `${progress}%` }}
@@ -321,7 +321,7 @@ export default function ShoppingListPage() {
               <button
                 onClick={handleToggleAll}
                 disabled={toggleItem.isPending}
-                className="px-4 py-2 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 disabled:opacity-50 print:hidden"
+                className="px-4 py-2 text-sm bg-btn-secondary text-white rounded-lg hover:bg-btn-secondary-hover disabled:opacity-50 print:hidden"
               >
                 {shoppingList.items.every(item => item.checked) ? 'Uncheck All' : 'Check All'}
               </button>
@@ -331,17 +331,17 @@ export default function ShoppingListPage() {
 
         {/* Empty State */}
         {totalItems === 0 && (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="bg-surface rounded-lg shadow p-12 text-center">
             <div className="text-6xl mb-4">🛒</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-text-primary mb-2">
               No items in shopping list
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-text-secondary mb-6">
               Click "Add Ingredient" to start adding items to your list
             </p>
             <button
               onClick={() => setShowAddIngredient(true)}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              className="px-6 py-3 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover"
             >
               Add Your First Ingredient
             </button>
@@ -354,34 +354,34 @@ export default function ShoppingListPage() {
             <div className="space-y-6">
               {Object.entries(shoppingList.itemsByCategory).map(
                 ([category, items]) => (
-                  <div key={category} className="bg-white rounded-lg shadow p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 capitalize">
+                  <div key={category} className="bg-surface rounded-lg shadow p-6">
+                    <h2 className="text-xl font-bold text-text-primary mb-4 capitalize">
                       {category}
                     </h2>
                     <div className="space-y-1">
                       {items.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-gray-50 active:bg-gray-100 rounded-lg transition-colors"
+                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-page-bg active:bg-hover-bg rounded-lg transition-colors"
                         >
                           <input
                             type="checkbox"
                             checked={item.checked}
                             onChange={() => handleToggleItem(item.id)}
-                            className="w-6 h-6 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer flex-shrink-0"
+                            className="w-6 h-6 text-accent rounded focus:ring-2 focus:ring-accent-ring cursor-pointer flex-shrink-0"
                           />
                           <span
                             className={`flex-1 ${
                               item.checked
-                                ? 'line-through text-gray-400'
-                                : 'text-gray-900'
+                                ? 'line-through text-text-muted'
+                                : 'text-text-primary'
                             }`}
                           >
                             {item.ingredient.name}
                           </span>
                           <span
                             className={`text-sm whitespace-nowrap ${
-                              item.checked ? 'text-gray-400' : 'text-gray-600'
+                              item.checked ? 'text-text-muted' : 'text-text-secondary'
                             }`}
                           >
                             {item.quantity} {item.unit}
@@ -405,27 +405,27 @@ export default function ShoppingListPage() {
         {/* Add Ingredient Modal */}
         {showAddIngredient && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 print:hidden">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <div className="bg-surface rounded-lg p-6 max-w-md w-full mx-4">
+              <h2 className="text-2xl font-bold text-text-primary mb-4">
                 Add Ingredient
               </h2>
 
               {!ingredients || ingredients.length === 0 ? (
                 <div className="text-center py-4">
-                  <p className="text-gray-500">No ingredients available</p>
+                  <p className="text-text-muted">No ingredients available</p>
                 </div>
               ) : (
                 <>
                   <div className="space-y-4 mb-4">
                     {/* Ingredient Selection */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-text-primary mb-1">
                         Ingredient
                       </label>
                       <select
                         value={selectedIngredientId}
                         onChange={(e) => setSelectedIngredientId(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       >
                         {ingredients.map((ing) => (
                           <option key={ing.id} value={ing.id}>
@@ -437,7 +437,7 @@ export default function ShoppingListPage() {
 
                     {/* Quantity Input */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-text-primary mb-1">
                         Quantity
                       </label>
                       <input
@@ -450,20 +450,20 @@ export default function ShoppingListPage() {
                           const rounded = Math.round(value * 100) / 100;
                           setQuantity(rounded);
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       />
                     </div>
 
                     {/* Unit Input */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-sm font-medium text-text-primary mb-1">
                         Unit
                       </label>
                       <UnitAutocomplete
                         value={unit}
                         onChange={(value) => setUnit(value)}
                         placeholder="e.g., grams, cups, pieces"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
                       />
                     </div>
                   </div>
@@ -473,7 +473,7 @@ export default function ShoppingListPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setShowAddIngredient(false)}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="flex-1 px-4 py-2 border border-border-strong text-text-primary rounded-lg hover:bg-page-bg"
                   disabled={addItem.isPending}
                 >
                   Cancel
@@ -481,7 +481,7 @@ export default function ShoppingListPage() {
                 <button
                   onClick={handleAddIngredient}
                   disabled={addItem.isPending || !ingredients || ingredients.length === 0}
-                  className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {addItem.isPending ? 'Adding...' : 'Add'}
                 </button>
@@ -506,6 +506,9 @@ export default function ShoppingListPage() {
 
         {/* Print-only styles */}
         <style>{`
+          @page {
+            size: portrait;
+          }
           @media print {
             .print\\:hidden {
               display: none !important;

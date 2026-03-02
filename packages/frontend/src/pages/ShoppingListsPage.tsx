@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   useShoppingLists,
   useGenerateShoppingList,
@@ -158,13 +158,13 @@ export default function ShoppingListsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Shopping Lists</h1>
-            <p className="text-gray-600 mt-1">
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Shopping Lists</h1>
+            <p className="text-text-secondary mt-1">
               {shoppingLists?.length || 0} shopping list(s)
               {selectedLists.size > 0 && ` • ${selectedLists.size} selected`}
             </p>
@@ -173,7 +173,7 @@ export default function ShoppingListsPage() {
             {activeTab === 'deleted' && !showBulkActions && (
               <button
                 onClick={() => setShowBulkActions(true)}
-                className="px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors flex items-center"
+                className="px-3 py-2 text-sm bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover active:bg-red-800 transition-colors flex items-center"
               >
                 <Trash2 className="w-4 h-4 mr-1" />
                 Select to Delete Forever
@@ -181,7 +181,7 @@ export default function ShoppingListsPage() {
             )}
             <button
               onClick={() => setShowBuilder(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-colors"
+              className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover active:bg-accent transition-colors"
             >
               Create Shopping List
             </button>
@@ -189,14 +189,14 @@ export default function ShoppingListsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="mb-6 border-b border-gray-200">
+        <div className="mb-6 border-b border-border-default">
           <nav className="flex gap-8">
             <button
               onClick={() => handleTabChange('active')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'active'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-strong'
               }`}
             >
               Active
@@ -205,8 +205,8 @@ export default function ShoppingListsPage() {
               onClick={() => handleTabChange('completed')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'completed'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-strong'
               }`}
             >
               Completed
@@ -215,8 +215,8 @@ export default function ShoppingListsPage() {
               onClick={() => handleTabChange('deleted')}
               className={`pb-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === 'deleted'
-                  ? 'border-blue-600 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-accent text-accent'
+                  : 'border-transparent text-text-muted hover:text-text-primary hover:border-border-strong'
               }`}
             >
               Deleted
@@ -231,11 +231,11 @@ export default function ShoppingListsPage() {
               <div className="flex items-center gap-4">
                 <button
                   onClick={handleSelectAll}
-                  className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-sm text-text-primary hover:bg-hover-bg rounded-lg transition-colors"
                 >
                   {shoppingLists && selectedLists.size === shoppingLists.length ? 'Deselect All' : 'Select All'}
                 </button>
-                <span className="text-sm text-gray-700 font-medium">
+                <span className="text-sm text-text-primary font-medium">
                   {selectedLists.size} of {shoppingLists?.length || 0} selected
                 </span>
               </div>
@@ -243,7 +243,7 @@ export default function ShoppingListsPage() {
                 <button
                   onClick={handleBulkPermanentDelete}
                   disabled={selectedLists.size === 0 || isBulkDeleting}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center text-sm"
+                  className="px-4 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover disabled:opacity-50 disabled:cursor-not-allowed flex items-center text-sm"
                 >
                   <Trash2 className="w-4 h-4 mr-1" />
                   {isBulkDeleting
@@ -256,7 +256,7 @@ export default function ShoppingListsPage() {
                     setShowBulkActions(false);
                     setSelectedLists(new Set());
                   }}
-                  className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex items-center"
+                  className="px-3 py-1.5 text-sm text-text-primary hover:bg-hover-bg rounded-lg transition-colors flex items-center"
                 >
                   <X className="w-4 h-4 mr-1" />
                   Cancel
@@ -291,7 +291,7 @@ export default function ShoppingListsPage() {
         {isLoading && (
           <div className="text-center py-12">
             <div className="text-4xl mb-4">⏳</div>
-            <p className="text-gray-600">Loading shopping lists...</p>
+            <p className="text-text-secondary">Loading shopping lists...</p>
           </div>
         )}
 
@@ -299,10 +299,10 @@ export default function ShoppingListsPage() {
         {!isLoading && (!shoppingLists || shoppingLists.length === 0) && (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🛒</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <h3 className="text-xl font-semibold text-text-primary mb-2">
               No {activeTab} shopping lists
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-text-secondary mb-6">
               {activeTab === 'active'
                 ? 'Create a shopping list from meal plans, recipes, or custom ingredients'
                 : activeTab === 'completed'
@@ -312,7 +312,7 @@ export default function ShoppingListsPage() {
             {activeTab === 'active' && (
               <button
                 onClick={() => setShowBuilder(true)}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                className="px-6 py-3 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
               >
                 Create Your First Shopping List
               </button>
@@ -331,8 +331,8 @@ export default function ShoppingListsPage() {
               return (
                 <div
                   key={list.id}
-                  className={`bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer ${
-                    selectedLists.has(list.id) ? 'ring-2 ring-blue-500' : ''
+                  className={`bg-card-shopping border border-card-shopping-border rounded-lg shadow hover:shadow-lg transition-shadow p-6 cursor-pointer ${
+                    selectedLists.has(list.id) ? 'ring-2 ring-accent-ring' : ''
                   }`}
                   onClick={() => {
                     if (showBulkActions) {
@@ -343,7 +343,7 @@ export default function ShoppingListsPage() {
                   }}
                 >
                   {showBulkActions && (
-                    <div className="pb-2 mb-2 border-b border-gray-200">
+                    <div className="pb-2 mb-2 border-b border-border-default">
                       <input
                         type="checkbox"
                         checked={selectedLists.has(list.id)}
@@ -354,14 +354,14 @@ export default function ShoppingListsPage() {
                   )}
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                      <h3 className="text-lg font-semibold text-text-primary mb-1">
                         {list.name}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-text-muted">
                         Created {formatDate(list.createdAt)}
                       </p>
                       {list.mealPlan && (
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-text-muted mt-1">
                           From: {list.mealPlan.name}
                         </p>
                       )}
@@ -370,11 +370,11 @@ export default function ShoppingListsPage() {
 
                   {/* Progress Bar */}
                   <div className="mb-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
+                    <div className="flex justify-between text-sm text-text-secondary mb-1">
                       <span>Progress</span>
                       <span>{checkedItems}/{totalItems} items</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-border-default rounded-full h-2">
                       <div
                         className="bg-green-600 h-2 rounded-full transition-all"
                         style={{ width: `${progress}%` }}
@@ -385,12 +385,12 @@ export default function ShoppingListsPage() {
                   {/* Category Summary */}
                   {list.itemsByCategory && (
                     <div className="mb-4">
-                      <p className="text-sm text-gray-600 mb-2">Categories:</p>
+                      <p className="text-sm text-text-secondary mb-2">Categories:</p>
                       <div className="flex flex-wrap gap-2">
                         {Object.keys(list.itemsByCategory).map((category) => (
                           <span
                             key={category}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                            className="px-2 py-1 bg-hover-bg text-text-primary rounded-full text-xs"
                           >
                             {category} ({list.itemsByCategory![category].length})
                           </span>
@@ -401,18 +401,11 @@ export default function ShoppingListsPage() {
 
                   {/* Actions */}
                   <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Link
-                      to={`/shopping-lists/${list.id}`}
-                      className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center"
-                    >
-                      View
-                    </Link>
-
                     {activeTab === 'active' && (
                       <>
                         <button
                           onClick={() => handleComplete(list.id, list.name)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                          className="px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover"
                           disabled={completeShoppingList.isPending}
                         >
                           Complete
@@ -431,7 +424,7 @@ export default function ShoppingListsPage() {
                       <>
                         <button
                           onClick={() => handleRestore(list.id, list.name)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
                           disabled={restoreShoppingList.isPending}
                         >
                           Restore
@@ -450,14 +443,14 @@ export default function ShoppingListsPage() {
                       <>
                         <button
                           onClick={() => handleRestore(list.id, list.name)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                          className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
                           disabled={restoreShoppingList.isPending}
                         >
                           Restore
                         </button>
                         <button
                           onClick={() => handlePermanentDelete(list.id, list.name)}
-                          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                          className="px-4 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover"
                           disabled={permanentDeleteShoppingList.isPending}
                         >
                           Permanent Delete

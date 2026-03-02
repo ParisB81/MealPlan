@@ -95,26 +95,26 @@ export default function CalendarContextMenu({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[180px]"
+      className="fixed z-50 bg-surface border border-border-default rounded-lg shadow-lg py-1 min-w-[180px]"
       style={{ left: position.x, top: position.y }}
     >
       {showCopyAll && (
         <>
           <button
-            className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 active:bg-gray-100 min-h-[44px]"
+            className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-text-primary hover:bg-hover-bg active:bg-hover-bg min-h-[44px]"
             onClick={() => onSelect('all')}
             onTouchEnd={(e) => { e.preventDefault(); onSelect('all'); }}
           >
-            <Copy size={14} className="text-gray-500 shrink-0" />
+            <Copy size={14} className="text-text-muted shrink-0" />
             <span>Copy all meals</span>
           </button>
-          <div className="border-t border-gray-100 mx-2" />
+          <div className="border-t border-border-default mx-2" />
         </>
       )}
       {sortedTypes.map((type) => (
         <button
           key={type}
-          className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 active:bg-gray-100 min-h-[44px]"
+          className="flex items-center gap-2.5 w-full px-4 py-3 text-sm text-text-primary hover:bg-hover-bg active:bg-hover-bg min-h-[44px]"
           onClick={() => onSelect(type)}
           onTouchEnd={(e) => { e.preventDefault(); onSelect(type); }}
         >

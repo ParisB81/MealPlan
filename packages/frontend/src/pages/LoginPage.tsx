@@ -21,13 +21,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-page-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-surface rounded-2xl shadow-lg p-8">
           <div className="text-center mb-8">
             <div className="text-4xl mb-3">🍽️</div>
-            <h1 className="text-2xl font-bold text-gray-900">MealPlan</h1>
-            <p className="text-gray-500 text-sm mt-1">Enter password to continue</p>
+            <h1 className="text-2xl font-bold text-text-primary">MealPlan</h1>
+            <p className="text-text-muted text-sm mt-1">Enter password to continue</p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -37,7 +37,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
-                className="w-full px-4 py-3 min-h-[48px] border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 min-h-[48px] border border-border-strong rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-accent-ring focus:border-transparent"
                 autoFocus
                 autoComplete="current-password"
               />
@@ -52,7 +52,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading || !password}
-              className="w-full py-3 min-h-[48px] bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 min-h-[48px] bg-btn-primary text-white font-medium rounded-lg hover:bg-btn-primary-hover active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Checking...' : 'Sign In'}
             </button>

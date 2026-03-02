@@ -254,7 +254,7 @@ export default function CookingPlanPage() {
   if (isViewMode && savedPlanLoading) {
     return (
       <div className="container mx-auto px-4 py-4 md:py-8 max-w-5xl">
-        <p className="text-gray-500">Loading cooking plan...</p>
+        <p className="text-text-muted">Loading cooking plan...</p>
       </div>
     );
   }
@@ -265,7 +265,7 @@ export default function CookingPlanPage() {
         <Alert variant="error">Cooking plan not found.</Alert>
         <Link
           to="/cooking-plans"
-          className="text-blue-600 hover:text-blue-700 mt-4 inline-block"
+          className="text-accent hover:text-accent-hover mt-4 inline-block"
         >
           &larr; Back to Cooking Plans
         </Link>
@@ -278,19 +278,19 @@ export default function CookingPlanPage() {
       {/* Header */}
       <Link
         to="/cooking-plans"
-        className="inline-flex items-center text-blue-600 hover:text-blue-700 mb-6"
+        className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
       >
         &larr; Back to Cooking Plans
       </Link>
 
       <header className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <ChefHat className="w-8 h-8 text-orange-500" />
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <ChefHat className="w-8 h-8 text-text-secondary" />
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary">
             {isViewMode ? savedPlan?.name || 'Cooking Plan' : 'New Cooking Plan'}
           </h1>
         </div>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-text-secondary">
           {isViewMode
             ? 'Viewing your saved cooking schedule.'
             : "Select your meal plans, pick the days you'll cook, and see exactly what to prepare on each cook day."}
@@ -299,15 +299,15 @@ export default function CookingPlanPage() {
 
       {/* Step 1: Select Meal Plans */}
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
-          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
+        <h2 className="text-xl font-semibold text-text-primary mb-3 flex items-center gap-2">
+          <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-light text-accent text-sm font-bold">
             1
           </span>
           {isViewMode ? 'Selected Meal Plans' : 'Select Meal Plans'}
         </h2>
 
         {plansLoading ? (
-          <p className="text-gray-500">Loading meal plans...</p>
+          <p className="text-text-muted">Loading meal plans...</p>
         ) : !mealPlans || mealPlans.length === 0 ? (
           <Alert variant="info">
             No active meal plans found.{' '}
@@ -329,17 +329,17 @@ export default function CookingPlanPage() {
                   disabled={isViewMode}
                   className={`text-left p-4 rounded-lg border-2 transition-all ${
                     isSelected
-                      ? 'border-blue-500 bg-blue-50 shadow-sm'
-                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      ? 'border-accent bg-accent-light shadow-sm'
+                      : 'border-border-default bg-surface hover:border-border-strong'
                   } ${isViewMode ? 'cursor-default' : ''}`}
                 >
-                  <h3 className="font-semibold text-gray-900">{plan.name}</h3>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <h3 className="font-semibold text-text-primary">{plan.name}</h3>
+                  <p className="text-sm text-text-muted mt-1">
                     {format(parseISO(plan.startDate), 'MMM d')} –{' '}
                     {format(parseISO(plan.endDate), 'MMM d, yyyy')}
                   </p>
                   {plan.meals && (
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-text-muted mt-1">
                       {plan.meals.length} meal{plan.meals.length !== 1 ? 's' : ''}
                     </p>
                   )}
@@ -353,21 +353,21 @@ export default function CookingPlanPage() {
       {/* Step 2: Pick Cook Days */}
       {selectedPlanIds.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-3 flex items-center gap-2">
-            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
+          <h2 className="text-xl font-semibold text-text-primary mb-3 flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-light text-accent text-sm font-bold">
               2
             </span>
             {isViewMode ? 'Cook Days' : 'Pick Your Cook Days'}
           </h2>
 
           {isLoadingPlans ? (
-            <p className="text-gray-500">Loading plan details...</p>
+            <p className="text-text-muted">Loading plan details...</p>
           ) : dateRange.length === 0 ? (
-            <p className="text-gray-500">No date range found.</p>
+            <p className="text-text-muted">No date range found.</p>
           ) : (
             <>
               {!isViewMode && (
-                <p className="text-sm text-gray-500 mb-3">
+                <p className="text-sm text-text-muted mb-3">
                   Click on the dates when you plan to cook. Each cook day will cover
                   meals until the next cook day.
                 </p>
@@ -389,8 +389,8 @@ export default function CookingPlanPage() {
                       disabled={isViewMode}
                       className={`flex flex-col items-center px-3 py-2 rounded-lg border-2 transition-all min-w-[60px] ${
                         isSelected
-                          ? 'border-orange-500 bg-orange-50 text-orange-700 shadow-sm'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                          ? 'border-card-cooking-border bg-hover-bg text-text-primary shadow-sm'
+                          : 'border-border-default bg-surface text-text-secondary hover:border-border-strong'
                       } ${isViewMode ? 'cursor-default' : ''}`}
                     >
                       <span className="text-xs font-medium">{dayName}</span>
@@ -419,8 +419,8 @@ export default function CookingPlanPage() {
       {/* Step 3: Generated Schedule */}
       {schedule && (
         <section>
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
-            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">
+          <h2 className="text-xl font-semibold text-text-primary mb-4 flex items-center gap-2">
+            <span className="inline-flex items-center justify-center w-7 h-7 rounded-full bg-accent-light text-accent text-sm font-bold">
               3
             </span>
             Your Cooking Schedule
@@ -433,14 +433,14 @@ export default function CookingPlanPage() {
               {schedule.map((day, idx) => (
                 <Card key={idx} padding="none">
                   {/* Cook day header */}
-                  <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-4 rounded-t-lg">
+                  <div className="bg-gradient-to-r from-detail-cooking-from to-detail-cooking-to px-6 py-4 rounded-t-lg">
                     <div className="flex items-center justify-between">
                       <div>
                         <h3 className="text-white font-bold text-lg flex items-center gap-2">
                           <ChefHat className="w-5 h-5" />
                           Cook Day: {format(day.cookDate, 'EEEE, MMM d')}
                         </h3>
-                        <p className="text-orange-100 text-sm mt-1">
+                        <p className="text-text-muted text-sm mt-1">
                           Covers meals for:{' '}
                           {format(day.cookDate, 'EEE MMM d')}
                           {!isEqual(day.cookDate, day.coversUntil) && (
@@ -458,7 +458,7 @@ export default function CookingPlanPage() {
                             <Clock className="w-4 h-4" />
                             {formatTime(day.totalPrepTime + day.totalCookTime)} total
                           </div>
-                          <p className="text-orange-100 text-xs mt-0.5">
+                          <p className="text-text-muted text-xs mt-0.5">
                             Prep {formatTime(day.totalPrepTime)} + Cook{' '}
                             {formatTime(day.totalCookTime)}
                           </p>
@@ -468,22 +468,22 @@ export default function CookingPlanPage() {
                   </div>
 
                   {/* Meals list */}
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-border-default">
                     {day.meals.length === 0 ? (
-                      <div className="px-6 py-8 text-center text-gray-400">
+                      <div className="px-6 py-8 text-center text-text-muted">
                         No meals scheduled for this period.
                       </div>
                     ) : (
                       day.meals.map((meal, mIdx) => (
                         <div
                           key={`${meal.id}-${mIdx}`}
-                          className="px-6 py-4 hover:bg-gray-50 transition-colors"
+                          className="px-6 py-4 hover:bg-hover-bg transition-colors"
                         >
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <Link
                                 to={`/recipes/${meal.recipeId}`}
-                                className="text-base font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+                                className="text-base font-semibold text-accent hover:text-accent-hover hover:underline"
                               >
                                 {meal.recipe?.title || 'Unknown Recipe'}
                               </Link>
@@ -494,17 +494,17 @@ export default function CookingPlanPage() {
                                 >
                                   {formatMealType(meal.mealType)}
                                 </Badge>
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-text-muted">
                                   {format(parseISO(meal.date), 'EEE, MMM d')}
                                 </span>
-                                <span className="text-sm text-gray-400">&middot;</span>
-                                <span className="text-sm text-gray-500">
+                                <span className="text-sm text-text-muted">&middot;</span>
+                                <span className="text-sm text-text-muted">
                                   {meal.servings} serving
                                   {meal.servings !== 1 ? 's' : ''}
                                 </span>
                               </div>
                             </div>
-                            <div className="text-right text-sm text-gray-400 ml-4 flex-shrink-0">
+                            <div className="text-right text-sm text-text-muted ml-4 flex-shrink-0">
                               {(meal.recipe?.prepTime || meal.recipe?.cookTime) && (
                                 <div className="flex items-center gap-1">
                                   <Clock className="w-3.5 h-3.5" />
@@ -522,7 +522,7 @@ export default function CookingPlanPage() {
                             </div>
                           </div>
                           {meal.notes && (
-                            <p className="text-sm text-gray-400 italic mt-1">
+                            <p className="text-sm text-text-muted italic mt-1">
                               {meal.notes}
                             </p>
                           )}
@@ -533,13 +533,13 @@ export default function CookingPlanPage() {
 
                   {/* Summary footer */}
                   {day.meals.length > 0 && (
-                    <div className="px-6 py-3 bg-gray-50 rounded-b-lg border-t border-gray-100 flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
+                    <div className="px-6 py-3 bg-page-bg rounded-b-lg border-t border-border-default flex items-center justify-between">
+                      <span className="text-sm text-text-muted">
                         {day.meals.length} recipe
                         {day.meals.length !== 1 ? 's' : ''} to prepare
                       </span>
                       {(day.totalPrepTime > 0 || day.totalCookTime > 0) && (
-                        <span className="text-sm font-medium text-gray-600">
+                        <span className="text-sm font-medium text-text-secondary">
                           Total: {formatTime(day.totalPrepTime + day.totalCookTime)}
                         </span>
                       )}
