@@ -291,6 +291,7 @@ cd "C:\00 Paris\MealPlan"
 - **Export Recipes:** Button on RecipesPage exports all active recipes (ID, Name, Tags) to Excel
 - **Add to Meal Plan:** Button on each recipe card and RecipeDetailPage to add recipe to any active meal plan
 - Ingredient quantity limited to 2 decimal places
+- **Tabbed form interface:** 4-tab layout (Details, Ingredients, Instructions, Nutrition) with sticky tab bar, red error dot indicators on tabs with validation issues, auto-navigation to first error tab on submit failure. Mobile-responsive with shorter tab labels (Ingred., Steps, Nutri.). Uses `noValidate` on `<form>` since hidden `required` inputs would silently block submission. Tab state: `activeTab` + conditional rendering (`{activeTab === 'x' && (...)}`), form data preserved across tab switches.
 - **Field-specific validation errors:**
   - Backend Zod errors preserved via `ApiError` class (keeps `response.data.errors` array)
   - Toast popup shows error count (e.g., "Validation error: 3 fields need fixing. See details below.")
@@ -298,6 +299,7 @@ cd "C:\00 Paris\MealPlan"
   - Individual ingredient rows highlighted with red ring/background; specific fields (name, quantity, unit) get red borders
   - Per-row error messages displayed below the affected ingredient
   - `formatErrorPath()` helper converts Zod paths like `ingredients.0.unit` to readable labels
+  - `getTabForError()` maps error paths to their owning tab; `getTabsWithErrors()` returns `Set<RecipeFormTab>` for red dot indicators
 - "Start from existing recipe" feature (copies recipe data into new form)
 - **Prefill from URL import:** RecipeFormPage accepts `location.state.prefill` data from React Router navigation, pre-populating all form fields for review before saving; shows info banner "Imported from URL — review and edit before saving"
 - **Tag autocomplete:** `TagAutocomplete` component on recipe form with grouped dropdown (6 categories: Meal, Base, Duration, Country, Store, Method), color-coded suggestions, keyboard navigation (Enter selects first match), and existing tag exclusion
@@ -392,6 +394,7 @@ cd "C:\00 Paris\MealPlan"
 - **Item management:** Add, remove, update quantity on items
 - **Add from recipes (with conversion):** `POST /:id/add-from-recipes` endpoint runs recipes through `aggregateIngredients()` pipeline before adding to an existing list — ensures imperial→metric conversion and ingredient-specific overrides are applied (e.g., `1.5 lb` → `680.39 g`)
 - **Status management:** active / completed / deleted with restore
+- **Print-optimized layout:** Portrait mode with `@media print` styles — progress bar hidden, print-friendly checkboxes (□/☑ Unicode), tightened spacing, dotted leader lines connecting ingredient names to quantities, category cards with minimal padding
 
 ### 6. Unit Conversion System
 Located in `packages/backend/src/utils/unitConversion.ts`. Uses 7 unified measurement systems with metric output for shopping lists:
@@ -954,12 +957,17 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Theme System** - 55 CSS custom properties drive all colors; 5 predefined themes (Classic, Ocean, Forest, Sunset, Midnight) + 3 user-customizable slots; HSL-based auto-derivation from 6 key colors with dark mode auto-detection; ThemePicker in nav bar + mobile drawer; CustomThemeEditor in Assets Library; FOUC prevention via localStorage cache; all ~30 files migrated from hardcoded colors to semantic tokens
 
+**Tabbed Recipe Form** - RecipeFormPage converted from single long scroll to 4-tab interface (Details, Ingredients, Instructions, Nutrition); sticky tab bar below nav; red error dot indicators on tabs with validation issues; auto-navigation to first error tab on submit; mobile-responsive shorter labels; `noValidate` prevents hidden `required` inputs from blocking submission; form data preserved across tab switches; works with create, edit, URL import prefill, and "start from existing recipe" flows
+
+**Shopping List Print Improvements** - Print-optimized layout with `@media print` Tailwind variants: progress bar hidden, real checkboxes replaced with Unicode □/☑, tightened spacing on all elements (cards, categories, items, page margins), dotted leader lines between ingredient names and quantities for readability
+
+**Themed Shopping List Button** - Meal plan detail page Shopping List button uses `hero-shopping` theme color (changes per theme: rose in Classic, indigo in Ocean, etc.) instead of generic secondary variant
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
 - Support for more recipe websites beyond bigrecipe.com, allrecipes.com, akispetretzikis.com, argiro.gr
 - Meal plan templates
-- Print-friendly shopping list layout
 
 ## Troubleshooting
 
@@ -1133,4 +1141,4 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 **Last Updated:** 2026-03-02
 **Project Version:** 2.1.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System**)
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button**)

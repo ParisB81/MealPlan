@@ -52,6 +52,33 @@ function formatErrorPath(path: string): string {
   return labels.join(' → ');
 }
 
+// --- Tabbed form ---
+type RecipeFormTab = 'details' | 'ingredients' | 'instructions' | 'nutrition';
+
+const FORM_TABS: { id: RecipeFormTab; label: string; mobileLabel: string }[] = [
+  { id: 'details', label: 'Details', mobileLabel: 'Details' },
+  { id: 'ingredients', label: 'Ingredients', mobileLabel: 'Ingred.' },
+  { id: 'instructions', label: 'Instructions', mobileLabel: 'Steps' },
+  { id: 'nutrition', label: 'Nutrition', mobileLabel: 'Nutri.' },
+];
+
+function getTabForError(errorPath: string): RecipeFormTab | null {
+  if (errorPath === '_general') return null;
+  if (errorPath.startsWith('ingredients')) return 'ingredients';
+  if (errorPath.startsWith('instructions')) return 'instructions';
+  if (errorPath.startsWith('nutrition')) return 'nutrition';
+  return 'details';
+}
+
+function getTabsWithErrors(errors: Record<string, string>): Set<RecipeFormTab> {
+  const tabs = new Set<RecipeFormTab>();
+  for (const path of Object.keys(errors)) {
+    const tab = getTabForError(path);
+    if (tab) tabs.add(tab);
+  }
+  return tabs;
+}
+
 export default function RecipeFormPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -78,6 +105,9 @@ export default function RecipeFormPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showRecipePicker, setShowRecipePicker] = useState(false);
   const [isPrefilled, setIsPrefilled] = useState(false);
+  const [activeTab, setActiveTab] = useState<RecipeFormTab>('details');
+
+  const tabsWithErrors = getTabsWithErrors(errors);
 
   // Prefill form from URL import (via React Router location state)
   useEffect(() => {
@@ -152,6 +182,12 @@ export default function RecipeFormPage() {
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      // Auto-switch to first tab with errors
+      const errorTabs = getTabsWithErrors(validationErrors);
+      if (errorTabs.size > 0 && !errorTabs.has(activeTab)) {
+        const firstErrorTab = FORM_TABS.find(t => errorTabs.has(t.id));
+        if (firstErrorTab) setActiveTab(firstErrorTab.id);
+      }
       return;
     }
 
@@ -167,6 +203,12 @@ export default function RecipeFormPage() {
           newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
+        // Auto-switch to first tab with errors
+        const errorTabs = getTabsWithErrors(newErrors);
+        if (errorTabs.size > 0 && !errorTabs.has(activeTab)) {
+          const firstErrorTab = FORM_TABS.find(t => errorTabs.has(t.id));
+          if (firstErrorTab) setActiveTab(firstErrorTab.id);
+        }
       } else {
         // Generic error (non-validation)
         setErrors({ _general: apiErr.message || 'An unexpected error occurred' });
@@ -326,7 +368,7 @@ export default function RecipeFormPage() {
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} noValidate className="space-y-6">
           {/* General Error Message */}
           {Object.keys(errors).length > 0 && (() => {
             // Backend field errors (excluding client-side "at least one" checks which display inline)
@@ -355,7 +397,36 @@ export default function RecipeFormPage() {
             );
           })()}
 
-          {/* Basic Info */}
+          {/* Tab Bar */}
+          <div className="sticky top-14 z-30 bg-page-bg pt-2 -mx-4 px-4">
+            <div className="flex border-b border-border-default">
+              {FORM_TABS.map((tab) => {
+                const hasError = tabsWithErrors.has(tab.id);
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 md:flex-none px-3 md:px-5 py-2.5 text-sm font-medium transition-colors text-center relative ${
+                      isActive
+                        ? 'text-accent border-b-2 border-accent'
+                        : 'text-text-muted hover:text-text-secondary border-b-2 border-transparent'
+                    }`}
+                  >
+                    <span className="hidden md:inline">{tab.label}</span>
+                    <span className="md:hidden">{tab.mobileLabel}</span>
+                    {hasError && (
+                      <span className="absolute -top-0.5 right-0.5 md:relative md:top-auto md:right-auto md:ml-1.5 w-2 h-2 bg-red-500 rounded-full inline-block" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          {activeTab === 'details' && (
           <Card className="space-y-4">
             <h2 className="text-xl font-semibold text-text-primary">Basic Information</h2>
 
@@ -444,8 +515,9 @@ export default function RecipeFormPage() {
               </div>
             </div>
           </Card>
+          )}
 
-          {/* Ingredients */}
+          {activeTab === 'ingredients' && (
           <Card>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-text-primary">Ingredients</h2>
@@ -542,8 +614,9 @@ export default function RecipeFormPage() {
               })}
             </div>
           </Card>
+          )}
 
-          {/* Instructions */}
+          {activeTab === 'instructions' && (
           <Card>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-text-primary">Instructions</h2>
@@ -567,7 +640,7 @@ export default function RecipeFormPage() {
                     value={instruction}
                     onChange={(e) => updateInstruction(index, e.target.value)}
                     rows={2}
-                    className="flex-1 px-3 py-2 border border-border-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                    className="flex-1 px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
                   />
                   <Button
                     variant="danger"
@@ -582,8 +655,9 @@ export default function RecipeFormPage() {
               ))}
             </div>
           </Card>
+          )}
 
-          {/* Nutrition Information */}
+          {activeTab === 'nutrition' && (
           <Card>
             <h2 className="text-xl font-semibold text-text-primary mb-4">
               Nutrition Information (per serving)
@@ -672,6 +746,7 @@ export default function RecipeFormPage() {
               />
             </div>
           </Card>
+          )}
 
           {/* Submit Buttons */}
           <div className="flex justify-end gap-4">

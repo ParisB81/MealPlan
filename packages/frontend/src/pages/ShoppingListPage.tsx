@@ -224,7 +224,7 @@ export default function ShoppingListPage() {
 
   return (
     <div className="min-h-screen bg-page-bg">
-      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl print:px-2 print:py-1">
         {/* Back Button & Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 print:hidden">
           <Link to={backUrl} className="text-accent hover:text-accent-hover">
@@ -259,7 +259,7 @@ export default function ShoppingListPage() {
         </div>
 
         {/* Header */}
-        <div className="bg-surface rounded-lg shadow p-6 mb-6">
+        <div className="bg-surface rounded-lg shadow p-6 mb-6 print:p-2 print:mb-2 print:shadow-none">
           {/* Shopping List Name with Edit */}
           <div className="mb-4">
             {isEditingName ? (
@@ -304,7 +304,7 @@ export default function ShoppingListPage() {
           </div>
 
           {/* Progress Bar */}
-          <div className="mb-2">
+          <div className="mb-2 print:hidden">
             <div className="flex justify-between text-sm text-text-secondary mb-1">
               <span>Progress</span>
               <span>
@@ -351,38 +351,45 @@ export default function ShoppingListPage() {
         {/* Shopping List by Category */}
         {shoppingList.itemsByCategory &&
           Object.keys(shoppingList.itemsByCategory).length > 0 && (
-            <div className="space-y-6">
+            <div className="space-y-6 print:space-y-2">
               {Object.entries(shoppingList.itemsByCategory).map(
                 ([category, items]) => (
-                  <div key={category} className="bg-surface rounded-lg shadow p-6">
-                    <h2 className="text-xl font-bold text-text-primary mb-4 capitalize">
+                  <div key={category} className="bg-surface rounded-lg shadow p-6 print:p-2 print:shadow-none print:rounded-none print:border-b print:border-gray-200">
+                    <h2 className="text-xl font-bold text-text-primary mb-4 capitalize print:text-base print:mb-1">
                       {category}
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-1 print:space-y-0">
                       {items.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-page-bg active:bg-hover-bg rounded-lg transition-colors"
+                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-page-bg active:bg-hover-bg rounded-lg transition-colors print:p-1 print:min-h-0 print:gap-2"
                         >
+                          {/* Screen checkbox */}
                           <input
                             type="checkbox"
                             checked={item.checked}
                             onChange={() => handleToggleItem(item.id)}
-                            className="w-6 h-6 text-accent rounded focus:ring-2 focus:ring-accent-ring cursor-pointer flex-shrink-0"
+                            className="w-6 h-6 text-accent rounded focus:ring-2 focus:ring-accent-ring cursor-pointer flex-shrink-0 print:hidden"
                           />
+                          {/* Print checkbox — clean □ / ☑ */}
+                          <span className="hidden print:inline flex-shrink-0 text-base leading-none">
+                            {item.checked ? '☑' : '□'}
+                          </span>
                           <span
-                            className={`flex-1 ${
+                            className={`flex-1 print:flex-none ${
                               item.checked
                                 ? 'line-through text-text-muted'
                                 : 'text-text-primary'
-                            }`}
+                            } print:text-sm`}
                           >
                             {item.ingredient.name}
                           </span>
+                          {/* Print-only dotted leader line connecting name to quantity */}
+                          <span className="hidden print:flex flex-1 border-b border-dotted border-gray-400 mx-1 min-w-[20px] self-end mb-[3px]" />
                           <span
                             className={`text-sm whitespace-nowrap ${
                               item.checked ? 'text-text-muted' : 'text-text-secondary'
-                            }`}
+                            } print:text-xs`}
                           >
                             {item.quantity} {item.unit}
                           </span>
@@ -508,13 +515,18 @@ export default function ShoppingListPage() {
         <style>{`
           @page {
             size: portrait;
+            margin: 10mm;
           }
           @media print {
             .print\\:hidden {
               display: none !important;
             }
             body {
-              background: white;
+              background: white !important;
+              font-size: 12px;
+            }
+            nav {
+              display: none !important;
             }
           }
         `}</style>

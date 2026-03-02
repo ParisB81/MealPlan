@@ -255,6 +255,7 @@ export default function MealPlanDetailPage() {
               <div className="relative" ref={dropdownRef}>
                 <Button
                   variant="secondary"
+                  className="!bg-hero-shopping hover:!bg-hero-shopping-border border border-hero-shopping-border text-white"
                   onClick={() => setShoppingDropdownOpen(o => !o)}
                   loading={generateShoppingList.isPending || addFromMealPlan.isPending}
                 >
