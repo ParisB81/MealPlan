@@ -109,6 +109,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   │   ├── Select.tsx      # Dropdown selector
 │   │   │   │   │   └── Alert.tsx       # Variants: info/success/error
 │   │   │   │   ├── Navigation.tsx          # Responsive nav: desktop horizontal, mobile hamburger+drawer
+│   │   │   │   ├── ThemePicker.tsx         # Theme selector: dropdown (desktop) + inline (mobile drawer)
+│   │   │   │   ├── CustomThemeEditor.tsx   # 3-slot custom theme editor with color pickers + live preview
 │   │   │   │   ├── RecipeSelector.tsx      # Recipe selection component
 │   │   │   │   ├── RecipePicker.tsx        # Modal to search/select existing recipe
 │   │   │   │   ├── MealPlanPicker.tsx      # Modal to select a meal plan
@@ -120,7 +122,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
 │   │   │   │   └── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom)
 │   │   │   ├── data/
-│   │   │   │   └── tagDefinitions.ts       # 97 predefined tags in 6 categories
+│   │   │   │   ├── tagDefinitions.ts       # 97 predefined tags in 6 categories
+│   │   │   │   └── themes.ts              # 5 predefined themes + custom theme types/helpers
 │   │   │   ├── pages/
 │   │   │   │   ├── HomePage.tsx            # Landing page with quick links
 │   │   │   │   ├── RecipesPage.tsx         # Browse/search recipes
@@ -140,7 +143,10 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── TagManagerPage.tsx      # Drag-and-drop tag assignment for recipes
 │   │   │   │   └── IngredientRefinementPage.tsx # Documentation for ingredient cleanup
 │   │   │   ├── contexts/
-│   │   │   │   └── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
+│   │   │   │   ├── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
+│   │   │   │   └── ThemeContext.tsx        # Theme provider: predefined + custom themes, inline CSS injection
+│   │   │   ├── utils/
+│   │   │   │   └── colorUtils.ts          # HSL color math: 6 key colors → 55 CSS variables derivation
 │   │   │   ├── hooks/
 │   │   │   │   ├── useRecipes.ts           # Recipe CRUD + bulk ops + soft delete/restore
 │   │   │   │   ├── useMealPlans.ts         # Meal plan CRUD + meal management + nutrition
@@ -520,6 +526,27 @@ Located in `packages/frontend/src/components/ui/`:
   - **Country**: Maps informal tags (Hawaiian→American, etc.) + title/description country keywords. Defaults to International.
   - **Store**: Conservative — only tags obvious cases (soups→Leftovers-friendly, meatballs→Freezer-friendly, dips→Make-ahead). Leaves untagged if unsure.
   - **Method**: Title/description keyword matching (grilled, baked, fried, roasted, etc.). Leaves untagged if unsure.
+
+### 15. Theme System (Complete)
+- **Architecture:** 55 CSS custom properties (`--color-*`) defined per `[data-theme]` selector in `index.css`, mapped to Tailwind utilities via `tailwind.config.js` `theme.extend.colors`
+- **5 predefined themes:** Classic (warm gray/blue), Ocean (sky/cyan), Forest (green/emerald), Sunset (amber/rose), Midnight (dark slate/sky)
+- **3 custom theme slots:** Users pick 6 key colors (pageBg, accent, heroRecipes, heroMealplans, heroShopping, heroCooking); all 55 CSS variables auto-derived via HSL color math in `colorUtils.ts`
+- **Dark mode auto-detection:** `isDark(pageBg)` checks luminance < 0.35; dark backgrounds invert text to white, lighten surfaces/borders, adjust accent-light values
+- **Custom theme injection:** Predefined themes use static `[data-theme="X"]` CSS selectors; custom themes inject all 55 variables as inline styles on `<html>` (highest specificity). Switching to predefined clears all inline styles so CSS selectors take effect.
+- **ThemePicker component:** Desktop = dropdown from palette icon in nav bar; Mobile = inline list at bottom of hamburger drawer. Shows 5 presets + divider + configured custom themes with color swatches.
+- **CustomThemeEditor component:** Located in Assets Library (`/developer/assets`). 3 tab buttons for slots, "Start from preset" buttons, 6 native `<input type="color">` pickers with hex sync, scoped live preview panel, Apply & Save / Reset / Delete buttons.
+- **FOUC prevention:** Synchronous `<script>` in `<head>` (in `index.html`) reads theme from localStorage, sets `data-theme` attribute. For custom themes, also reads cached CSS variables from `mealplan_custom_vars_custom-N` and applies them before first paint.
+- **Persistence:** Theme ID stored in `localStorage` key `mealplan_theme`; custom theme data (name + 6 keys) in `mealplan_custom_themes`; derived CSS variables cached in `mealplan_custom_vars_custom-N`
+- **Key files:**
+  - `packages/frontend/src/index.css` — 55 CSS variable declarations per theme (5 `[data-theme]` blocks)
+  - `packages/frontend/tailwind.config.js` — Maps 55 CSS vars to Tailwind utility classes
+  - `packages/frontend/src/data/themes.ts` — Theme definitions, custom slot types, localStorage helpers
+  - `packages/frontend/src/contexts/ThemeContext.tsx` — `ThemeProvider`, `useTheme()` hook, inline CSS injection
+  - `packages/frontend/src/utils/colorUtils.ts` — `deriveAllVariables()`, `applyInlineThemeStyles()`, `clearInlineThemeStyles()`
+  - `packages/frontend/src/components/ThemePicker.tsx` — Dropdown/inline theme selector
+  - `packages/frontend/src/components/CustomThemeEditor.tsx` — Color picker editor + live preview
+  - `packages/frontend/index.html` — FOUC prevention inline script
+- **All ~30 page/component files migrated** from hardcoded Tailwind colors to semantic theme tokens (e.g., `bg-white` → `bg-surface`, `text-gray-900` → `text-text-primary`, `bg-orange-600` → `bg-hero-recipes`)
 
 ## API Endpoints (Complete)
 
@@ -924,6 +951,8 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Clickable Meal Plan Cards** - MealPlansPage cards are fully clickable on mobile (entire card navigates to detail page, not just the title link)
 
+**Theme System** - 55 CSS custom properties drive all colors; 5 predefined themes (Classic, Ocean, Forest, Sunset, Midnight) + 3 user-customizable slots; HSL-based auto-derivation from 6 key colors with dark mode auto-detection; ThemePicker in nav bar + mobile drawer; CustomThemeEditor in Assets Library; FOUC prevention via localStorage cache; all ~30 files migrated from hardcoded colors to semantic tokens
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1098,6 +1127,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-02-20
-**Project Version:** 2.0.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix**)
+**Last Updated:** 2026-03-02
+**Project Version:** 2.1.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System**)
