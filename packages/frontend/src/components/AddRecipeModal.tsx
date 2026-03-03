@@ -6,6 +6,7 @@ import type { Recipe } from '../types/recipe';
 import type { AddRecipeToMealPlanInput } from '../types/mealPlan';
 import { Modal, Input, TextArea, Select, Button } from './ui';
 import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { getRecipeImageUrl } from '../utils/recipeImage';
 
 /** Shift a YYYY-MM-DD string by ±1 day */
 function shiftDate(dateStr: string, delta: 1 | -1): string {
@@ -211,17 +212,18 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
                       onClick={() => handleSelectRecipe(recipe)}
                       className="w-full text-left"
                     >
-                      {recipe.imageUrl ? (
-                        <img
-                          src={recipe.imageUrl}
-                          alt={recipe.title}
-                          className="w-full h-36 object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-36 bg-hover-bg flex items-center justify-center">
-                          <span className="text-text-muted text-3xl">🍽️</span>
-                        </div>
-                      )}
+                      <img
+                        src={getRecipeImageUrl(recipe)}
+                        alt={recipe.title}
+                        className="w-full h-36 object-cover"
+                        onError={(e) => {
+                          const img = e.target as HTMLImageElement;
+                          const placeholder = document.createElement('div');
+                          placeholder.className = 'w-full h-36 bg-hover-bg flex items-center justify-center';
+                          placeholder.innerHTML = '<span class="text-text-muted text-3xl">🍽️</span>';
+                          img.replaceWith(placeholder);
+                        }}
+                      />
                       <div className="p-3 pb-2">
                         <h3 className="font-semibold text-text-primary text-sm mb-1 line-clamp-1">
                           {recipe.title}
@@ -336,17 +338,18 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
           {/* Left: Recipe Preview */}
           {selectedRecipe && (
             <div className="w-2/5 flex-shrink-0 flex flex-col gap-3">
-              {selectedRecipe.imageUrl ? (
-                <img
-                  src={selectedRecipe.imageUrl}
-                  alt={selectedRecipe.title}
-                  className="w-full h-40 object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-full h-40 bg-hover-bg flex items-center justify-center rounded-lg">
-                  <span className="text-text-muted text-4xl">🍽️</span>
-                </div>
-              )}
+              <img
+                src={getRecipeImageUrl(selectedRecipe)}
+                alt={selectedRecipe.title}
+                className="w-full h-40 object-cover rounded-lg"
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  const placeholder = document.createElement('div');
+                  placeholder.className = 'w-full h-40 bg-hover-bg flex items-center justify-center rounded-lg';
+                  placeholder.innerHTML = '<span class="text-text-muted text-4xl">🍽️</span>';
+                  img.replaceWith(placeholder);
+                }}
+              />
 
               <div>
                 <h3 className="font-bold text-text-primary text-lg leading-tight">

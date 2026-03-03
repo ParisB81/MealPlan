@@ -1,15 +1,27 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useRecipe, useDeleteRecipe } from '../hooks/useRecipes';
+import { useRecipe, useDeleteRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 import { CalendarPlus, ExternalLink } from 'lucide-react';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
+import ImageUpload from '../components/ImageUpload';
 
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: recipe, isLoading, error } = useRecipe(id);
   const deleteRecipe = useDeleteRecipe();
+  const updateRecipe = useUpdateRecipe();
   const [showAddToMealPlan, setShowAddToMealPlan] = useState(false);
+
+  const handleImageUpload = (imageUrl: string) => {
+    if (!id) return;
+    updateRecipe.mutate({ id, input: { imageUrl } });
+  };
+
+  const handleImageRemove = () => {
+    if (!id || !confirm('Remove the recipe photo?')) return;
+    updateRecipe.mutate({ id, input: { imageUrl: '' } });
+  };
 
   const handleDelete = async () => {
     if (!id || !confirm('Are you sure you want to delete this recipe?')) {
@@ -67,13 +79,12 @@ export default function RecipeDetailPage() {
 
         {/* Recipe Header */}
         <div className="bg-surface rounded-lg shadow-lg overflow-hidden mb-6">
-          {recipe.imageUrl && (
-            <img
-              src={recipe.imageUrl}
-              alt={recipe.title}
-              className="w-full h-64 object-cover"
-            />
-          )}
+          <ImageUpload
+            currentImageUrl={recipe.imageUrl}
+            onUploadComplete={handleImageUpload}
+            onRemove={handleImageRemove}
+            className="w-full h-64"
+          />
 
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">

@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { Recipe } from '../../types/recipe';
+import { getRecipeImageUrl } from '../../utils/recipeImage';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -7,17 +9,19 @@ interface RecipeCardProps {
 
 export default function RecipeCard({ recipe }: RecipeCardProps) {
   const totalTime = (recipe.prepTime || 0) + (recipe.cookTime || 0);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Link
       to={`/recipes/${recipe.id}`}
       className="block bg-surface rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden"
     >
-      {recipe.imageUrl ? (
+      {!imgError ? (
         <img
-          src={recipe.imageUrl}
+          src={getRecipeImageUrl(recipe)}
           alt={recipe.title}
           className="w-full h-48 object-cover"
+          onError={() => setImgError(true)}
         />
       ) : (
         <div className="w-full h-48 bg-hover-bg flex items-center justify-center">
