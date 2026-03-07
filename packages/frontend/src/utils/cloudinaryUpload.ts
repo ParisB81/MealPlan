@@ -24,12 +24,9 @@ export interface UploadOptions {
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function uploadToCloudinary({ file, onProgress }: UploadOptions): Promise<CloudinaryUploadResult> {
-  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
-
-  if (!cloudName || !uploadPreset) {
-    return Promise.reject(new Error('Cloudinary is not configured. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in .env'));
-  }
+  // Env vars override hardcoded defaults (cloud name and unsigned preset are not secrets)
+  const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dmicedyoh';
+  const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'mealplan_unsigned';
 
   // Validate file type
   if (!file.type.startsWith('image/')) {
