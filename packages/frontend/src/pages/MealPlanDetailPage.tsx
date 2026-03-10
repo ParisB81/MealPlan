@@ -47,6 +47,29 @@ export default function MealPlanDetailPage() {
     return result;
   }, [mealPlan?.meals]);
 
+  // Compute per-day nutrition from meals data
+  const dailyNutrition = useMemo(() => {
+    const days: { date: string; calories: number; protein: number; carbs: number; fat: number; mealsWithData: number; totalMeals: number }[] = [];
+    const sortedDates = Object.keys(mealsByDate).sort();
+    for (const dateKey of sortedDates) {
+      const meals = mealsByDate[dateKey];
+      let cal = 0, protein = 0, carbs = 0, fat = 0, mealsWithData = 0;
+      for (const meal of meals) {
+        const n = meal.recipe?.nutrition;
+        if (n) {
+          const s = meal.servings || 1;
+          cal += (n.calories || 0) * s;
+          protein += (n.protein || 0) * s;
+          carbs += (n.carbs || 0) * s;
+          fat += (n.fat || 0) * s;
+          mealsWithData++;
+        }
+      }
+      days.push({ date: dateKey, calories: Math.round(cal), protein: Math.round(protein), carbs: Math.round(carbs), fat: Math.round(fat), mealsWithData, totalMeals: meals.length });
+    }
+    return days;
+  }, [mealsByDate]);
+
   // Build calendar data: date -> meal type summary
   const calendarMealsByDate: Record<string, { mealType: string }[]> = useMemo(() => {
     const result: Record<string, { mealType: string }[]> = {};
@@ -309,25 +332,72 @@ export default function MealPlanDetailPage() {
         </Card>
 
         {/* Nutrition Summary */}
-        {nutrition && nutrition.mealsCount > 0 && (
+        {nutrition && nutrition.mealsCount > 0 && dailyNutrition.length > 0 && (
           <Card className="mb-6">
-            <h2 className="text-xl font-bold text-text-primary mb-4">Weekly Nutrition Summary</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex items-baseline justify-between mb-4">
+              <h2 className="text-xl font-bold text-text-primary">Plan Nutrition Summary</h2>
+              {nutrition.mealsWithNutrition !== undefined && nutrition.mealsWithNutrition < nutrition.mealsCount && (
+                <span className="text-xs text-text-muted">
+                  Based on {nutrition.mealsWithNutrition} of {nutrition.mealsCount} meals
+                </span>
+              )}
+            </div>
+
+            {/* Plan totals + daily average */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
               <div className="text-center">
                 <div className="text-3xl font-bold text-accent">{nutrition.totalCalories}</div>
-                <div className="text-sm text-text-secondary">Calories</div>
+                <div className="text-sm text-text-secondary">Total Calories</div>
+                <div className="text-xs text-text-muted">{Math.round(nutrition.totalCalories / dailyNutrition.length)}/day avg</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-green-600">{nutrition.totalProtein}g</div>
-                <div className="text-sm text-text-secondary">Protein</div>
+                <div className="text-sm text-text-secondary">Total Protein</div>
+                <div className="text-xs text-text-muted">{Math.round(nutrition.totalProtein / dailyNutrition.length)}g/day avg</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-600">{nutrition.totalCarbs}g</div>
-                <div className="text-sm text-text-secondary">Carbs</div>
+                <div className="text-sm text-text-secondary">Total Carbs</div>
+                <div className="text-xs text-text-muted">{Math.round(nutrition.totalCarbs / dailyNutrition.length)}g/day avg</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600">{nutrition.totalFat}g</div>
-                <div className="text-sm text-text-secondary">Fat</div>
+                <div className="text-sm text-text-secondary">Total Fat</div>
+                <div className="text-xs text-text-muted">{Math.round(nutrition.totalFat / dailyNutrition.length)}g/day avg</div>
+              </div>
+            </div>
+
+            {/* Daily breakdown table */}
+            <div className="border-t border-border pt-4">
+              <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">Daily Breakdown</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-text-secondary">
+                      <th className="text-left py-1.5 pr-3 font-medium">Date</th>
+                      <th className="text-right py-1.5 px-2 font-medium text-accent">Calories</th>
+                      <th className="text-right py-1.5 px-2 font-medium text-green-600">Protein</th>
+                      <th className="text-right py-1.5 px-2 font-medium text-yellow-600">Carbs</th>
+                      <th className="text-right py-1.5 px-2 font-medium text-orange-600">Fat</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dailyNutrition.map((day) => (
+                      <tr key={day.date} className="border-t border-border/50">
+                        <td className="py-1.5 pr-3 text-text-primary font-medium">
+                          {format(new Date(day.date + 'T12:00:00'), 'EEE, MMM d')}
+                          {day.mealsWithData < day.totalMeals && (
+                            <span className="text-xs text-text-muted ml-1">({day.mealsWithData}/{day.totalMeals})</span>
+                          )}
+                        </td>
+                        <td className="text-right py-1.5 px-2 text-text-primary font-semibold">{day.calories}</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{day.protein}g</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{day.carbs}g</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{day.fat}g</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           </Card>

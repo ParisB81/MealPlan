@@ -61,6 +61,20 @@ export default function HomePage() {
         </Link>
       </div>
 
+      {/* AI Planner — featured card */}
+      <div className="max-w-4xl mx-auto mt-6">
+        <Link to="/ai-meal-plan">
+          <Card hoverable className="bg-gradient-to-r from-purple-600 to-violet-600 border border-purple-500">
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              AI Meal Planner
+            </h2>
+            <p className="text-white/80">
+              Set your preferences and let AI generate a personalized meal plan
+            </p>
+          </Card>
+        </Link>
+      </div>
+
       {/* Secondary utilities — aligned row below */}
       <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto mt-8">
         <Link to="/ingredients">

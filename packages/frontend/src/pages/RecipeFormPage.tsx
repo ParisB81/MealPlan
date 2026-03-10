@@ -109,7 +109,11 @@ export default function RecipeFormPage() {
 
   const tabsWithErrors = getTabsWithErrors(errors);
 
-  // Prefill form from URL import (via React Router location state)
+  // Store returnTo info from location state (for AI wizard round-trip)
+  const [returnTo] = useState(() => location.state?.returnTo as string | undefined);
+  const [returnTempKey] = useState(() => location.state?.tempKey as string | undefined);
+
+  // Prefill form from URL import or AI wizard (via React Router location state)
   useEffect(() => {
     if (!isEditing && location.state?.prefill) {
       const prefill = location.state.prefill as CreateRecipeInput;
@@ -228,7 +232,17 @@ export default function RecipeFormPage() {
     } else {
       createRecipe.mutate(cleanedData, {
         onSuccess: (data) => {
-          navigate(`/recipes/${data.id}`);
+          if (returnTo) {
+            // Navigate back to AI wizard with created recipe info
+            navigate(returnTo, {
+              state: {
+                createdRecipeId: data.id,
+                tempKey: returnTempKey,
+              },
+            });
+          } else {
+            navigate(`/recipes/${data.id}`);
+          }
         },
         onError,
       });

@@ -60,6 +60,17 @@ export const errorHandler = (
     });
   }
 
+  // Anthropic API errors (from @anthropic-ai/sdk)
+  if (err.constructor?.name === 'APIError' || (err as any).status) {
+    const apiErr = err as any;
+    const msg = apiErr.error?.error?.message || apiErr.message || 'AI service error';
+    const status = apiErr.status || 500;
+    return res.status(status).json({
+      status: 'error',
+      message: msg,
+    });
+  }
+
   // Default error
   return res.status(500).json({
     status: 'error',

@@ -131,6 +131,17 @@ export const TAG_CATEGORIES: TagCategory[] = [
       'Stewed',
     ],
   },
+  {
+    name: 'Source',
+    color: 'purple',
+    tags: [
+      'AI',
+      'Akis Petretzikis',
+      'Allrecipes',
+      'Argiro Barbarigou',
+      'Big Recipe',
+    ],
+  },
 ];
 
 const tagToCategoryMap = new Map<string, TagCategory>();

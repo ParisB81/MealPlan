@@ -18,9 +18,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  recipes      Recipe[]
-  mealPlans    MealPlan[]
-  cookingPlans CookingPlan[]
+  recipes              Recipe[]
+  mealPlans            MealPlan[]
+  cookingPlans         CookingPlan[]
+  mealPlanPreferences  MealPlanPreference[]
 
   @@map("users")
 }
@@ -159,6 +160,58 @@ model CookingPlan {
   @@index([userId])
   @@index([status])
   @@map("cooking_plans")
+}
+
+// Meal Plan Preference Profiles (for AI meal plan generation)
+model MealPlanPreference {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+
+  // Recipe source mode: "library_only" | "library_and_ai"
+  recipeSource String @default("library_only")
+
+  // Dietary preferences (stored as JSON strings)
+  dietaryRestrictions String @default("[]")
+  cuisinePreferences  String @default("[]")
+  allergies           String @default("[]")
+  ingredientLikes     String @default("")
+  ingredientDislikes  String @default("")
+
+  // Cooking constraints (minutes)
+  weekdayMaxPrep Int?
+  weekdayMaxCook Int?
+  weekendMaxPrep Int?
+  weekendMaxCook Int?
+
+  // Nutritional targets (daily)
+  caloriesMin    Int?
+  caloriesMax    Int?
+  proteinPercent Int?
+  carbsPercent   Int?
+  fatPercent     Int?
+
+  // Batch cooking / lifestyle
+  cookDaysPerWeek      Int?  // how many days per week the user actually cooks (e.g., 2)
+  quickMealMaxMinutes  Int?  // max total prep+cook time for non-cook-day meals (e.g., 10)
+  defaultServings      Int   @default(4) // default servings per recipe (1 for single-person)
+
+  // Meal plan structure
+  durationWeeks Int     @default(1)
+  durationDays  Int?    // Flexible duration in days (overrides durationWeeks when set)
+  repeatWeekly  Boolean @default(false)
+  mealVariety   Int     @default(3)
+  includedMeals String  @default("breakfast,lunch,dinner")
+
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("meal_plan_preferences")
 }
 
 // Shopping List Management

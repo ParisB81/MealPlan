@@ -29,6 +29,8 @@ import DeveloperPage from './pages/DeveloperPage';
 import AssetsLibraryPage from './pages/AssetsLibraryPage';
 import TagManagerPage from './pages/TagManagerPage';
 import IngredientRefinementPage from './pages/IngredientRefinementPage';
+import AIMealPlanWizardPage from './pages/AIMealPlanWizardPage';
+import PreferencesPage from './pages/PreferencesPage';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -66,6 +68,8 @@ function AppContent() {
         <Route path="/cooking-plans" element={<CookingPlansPage />} />
         <Route path="/cooking-plan/new" element={<CookingPlanPage />} />
         <Route path="/cooking-plans/:id" element={<CookingPlanPage />} />
+        <Route path="/ai-meal-plan" element={<AIMealPlanWizardPage />} />
+        <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/developer" element={<DeveloperPage />} />
         <Route path="/developer/assets" element={<AssetsLibraryPage />} />
         <Route path="/developer/tags" element={<TagManagerPage />} />

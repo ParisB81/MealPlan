@@ -281,13 +281,16 @@ export class MealPlanService {
     let totalCarbs = 0;
     let totalFat = 0;
 
+    let mealsWithNutrition = 0;
     meals.forEach((meal) => {
       if (meal.recipe.nutrition) {
-        const multiplier = meal.servings / meal.recipe.servings;
-        totalCalories += (meal.recipe.nutrition.calories || 0) * multiplier;
-        totalProtein += (meal.recipe.nutrition.protein || 0) * multiplier;
-        totalCarbs += (meal.recipe.nutrition.carbs || 0) * multiplier;
-        totalFat += (meal.recipe.nutrition.fat || 0) * multiplier;
+        // Nutrition values are stored per-serving, so multiply by the number of servings being eaten
+        const servingsEaten = meal.servings;
+        totalCalories += (meal.recipe.nutrition.calories || 0) * servingsEaten;
+        totalProtein += (meal.recipe.nutrition.protein || 0) * servingsEaten;
+        totalCarbs += (meal.recipe.nutrition.carbs || 0) * servingsEaten;
+        totalFat += (meal.recipe.nutrition.fat || 0) * servingsEaten;
+        mealsWithNutrition++;
       }
     });
 
@@ -297,6 +300,7 @@ export class MealPlanService {
       totalCarbs: Math.round(totalCarbs),
       totalFat: Math.round(totalFat),
       mealsCount: meals.length,
+      mealsWithNutrition,
     };
   }
 

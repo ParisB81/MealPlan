@@ -63,6 +63,7 @@ export interface MealPlanNutrition {
   totalCarbs: number;
   totalFat: number;
   mealsCount: number;
+  mealsWithNutrition?: number;
 }
 
 export interface CopyMealData {

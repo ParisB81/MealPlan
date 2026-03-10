@@ -551,6 +551,25 @@ Located in `packages/frontend/src/components/ui/`:
   - `packages/frontend/index.html` — FOUC prevention inline script
 - **All ~30 page/component files migrated** from hardcoded Tailwind colors to semantic theme tokens (e.g., `bg-white` → `bg-surface`, `text-gray-900` → `text-text-primary`, `bg-orange-600` → `bg-hero-recipes`)
 
+### 16. AI-Powered Meal Plan Generation (Complete)
+- **Multi-step wizard** at `/ai-meal-plan` with 5 steps: Preferences → Nutrition & Duration → Review Plan → Create Recipes → Confirm & Save
+- **Anthropic Claude integration:** Uses `@anthropic-ai/sdk` with `claude-sonnet-4-20250514` model for plan generation, meal swapping, and recipe detail generation
+- **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only or library+AI), meal variety (1-5 scale), batch cooking settings
+- **Flexible duration:** Days-based input (1-28) with preset chips (3, 5, 7, 14, 21 days); `durationDays` field overrides legacy `durationWeeks` when set
+- **Pinned meals:** Pre-assign specific library recipes to meal slots (e.g., "Greek Lentil Soup for lunch 3 times"). Passed as MANDATORY constraints in the AI prompt. Validated against plan capacity.
+- **AI plan generation:** Sends preferences + existing recipe library + date range to Claude. Returns structured JSON with per-day meals, each referencing existing recipes or suggesting new ones. Includes estimated per-serving nutrition for all meals.
+- **Post-generation validation:** Fixes hallucinated recipe IDs (converts to new suggestions); fuzzy-matches "new" recipes against library (normalized title comparison with stop-word stripping)
+- **Meal swapping:** Request 3 alternatives for any meal slot. Alternatives include existing library recipes or new AI suggestions with estimated nutrition.
+- **Recipe detail generation:** For AI-suggested dishes, generates full recipe (ingredients, instructions, nutrition, tags) using Claude. **Ingredient constraint:** All ingredient names must come from the existing ingredient database (~1,025 ingredients). **Auto-tagging:** "AI" tag automatically added to all AI-generated recipes.
+- **Estimated nutrition:** AI provides per-serving calorie/protein/carbs/fat estimates for every meal. Two-tier display: stored recipe nutrition (exact) → AI estimates (shown in italic with `~` prefix).
+- **Plan nutrition summary:** MealPlanDetailPage shows plan totals with daily averages + per-day breakdown table (date, calories, protein, carbs, fat). Nutrition values stored per-serving; `meal.servings` multiplier applied at display time.
+- **Batch cooking support:** When `cookDaysPerWeek < 7`, AI assigns batch-cook recipes on cook days and leftovers/quick meals on non-cook days
+- **Rate limiting:** 10 requests per minute per user (in-memory, resets on server restart)
+- **Key files:**
+  - Backend: `aiMealPlan.service.ts` (3 AI endpoints), `mealPlanPreference.service.ts` (CRUD), `mealPlanPreference.validator.ts` (Zod schemas)
+  - Frontend: `AIMealPlanWizardPage.tsx` (wizard state machine), `StepPreferences.tsx`, `StepNutrition.tsx`, `StepReviewPlan.tsx`, `StepCreateRecipes.tsx`, `StepConfirmation.tsx`
+  - Types: `mealPlanPreference.ts` (GeneratedPlan, GeneratedMeal, PinnedMeal, SwapAlternative, etc.)
+
 ## API Endpoints (Complete)
 
 ### Recipes (`/api/recipes`)
@@ -617,6 +636,18 @@ Located in `packages/frontend/src/components/ui/`:
 - `POST /bulk-import` - Bulk import with duplicate checking
 - `POST /bulk-delete` - Bulk delete with usage validation
 
+### AI Meal Plan (`/api/ai-meal-plan`)
+- `POST /generate` - Generate meal plan from preferences (body: `{ preferenceId, startDate, endDate, pinnedMeals? }`)
+- `POST /swap` - Get 3 alternative meals for a slot (body: `{ preferenceId, date, mealType, currentRecipeTitle, existingPlanContext? }`)
+- `POST /recipe-details` - Generate full recipe details for an AI-suggested dish (body: `{ title, description?, servings?, cuisineHint? }`)
+
+### Meal Plan Preferences (`/api/meal-plan-preferences`)
+- `GET /` - List user's preference profiles
+- `GET /:id` - Get single preference profile
+- `POST /` - Create preference profile
+- `PUT /:id` - Update preference profile
+- `DELETE /:id` - Delete preference profile
+
 ### Auth (`/api/auth`)
 - `POST /login` - Verify password, return token (body: `{ password }`)
 - `GET /check` - Validate existing token (header: `Authorization: Bearer <token>`)
@@ -643,12 +674,13 @@ Located in `packages/frontend/src/components/ui/`:
 | `/cooking-plans` | CookingPlansPage | List saved cooking plans (active/deleted tabs) |
 | `/cooking-plan/new` | CookingPlanPage | Create new cooking plan |
 | `/cooking-plans/:id` | CookingPlanPage | View saved cooking plan (read-only) |
+| `/ai-meal-plan` | AIMealPlanWizardPage | AI-powered meal plan generation wizard (5 steps) |
 | `/developer` | DeveloperPage | Developer tools hub |
 | `/developer/assets` | AssetsLibraryPage | UI component showcase with live demos |
 | `/developer/tags` | TagManagerPage | Drag-and-drop tag assignment for recipes |
 | `/developer/ingredients` | IngredientRefinementPage | Documentation for ingredient data cleanup and AI prompt |
 
-## Database Schema (10 Models)
+## Database Schema (11 Models)
 
 | Model | Table | Key Fields | Notes |
 |-------|-------|-----------|-------|
@@ -662,6 +694,7 @@ Located in `packages/frontend/src/components/ui/`:
 | CookingPlan | cooking_plans | name, mealPlanIds (comma-separated), cookDays (comma-separated dates), status | Status: active/deleted. Schedule computed client-side. |
 | ShoppingList | shopping_lists | name, mealPlanId (optional), status | Can be linked to meal plan or standalone |
 | ShoppingListItem | shopping_list_items | shoppingListId, ingredientId, quantity, unit, checked | Checked = purchased |
+| MealPlanPreference | meal_plan_preferences | userId, profileName, dietaryRestrictions, allergies, cuisinePreferences, caloriesMin/Max, proteinPercent, carbsPercent, fatPercent, recipeSource, mealVariety, durationWeeks, durationDays, repeatWeekly, includedMeals, maxPrepTimeWeekday/Weekend, maxCookTimeWeekday/Weekend, cookDaysPerWeek, quickMealMaxMinutes, defaultServings | AI meal plan preferences profile |
 
 ### Database Notes (PostgreSQL)
 - **Migrated from SQLite to PostgreSQL** in Feb 2026 for Railway cloud deployment
@@ -733,6 +766,7 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 | helmet | Security headers |
 | zod | Input validation |
 | date-fns | Date utilities |
+| @anthropic-ai/sdk | Claude AI API for meal plan generation |
 | dotenv | Environment variables |
 
 ### Frontend
@@ -803,6 +837,7 @@ Single Railway service: backend Express server serves the built frontend as stat
 | `NODE_ENV` | `production` | Enables static file serving |
 | `PORT` | (auto-set by Railway) | Usually 3000 |
 | `APP_PASSWORD` | User's chosen password | **Must be set manually** — protects all API endpoints |
+| `ANTHROPIC_API_KEY` | Anthropic API key | Required for AI Meal Plan generation (Claude API) |
 
 ### Deployment Workflow
 ```bash
@@ -962,6 +997,12 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 **Shopping List Print Improvements** - Print-optimized layout with `@media print` Tailwind variants: progress bar hidden, real checkboxes replaced with Unicode □/☑, tightened spacing on all elements (cards, categories, items, page margins), dotted leader lines between ingredient names and quantities for readability
 
 **Themed Shopping List Button** - Meal plan detail page Shopping List button uses `hero-shopping` theme color (changes per theme: rose in Classic, indigo in Ocean, etc.) instead of generic secondary variant
+
+**AI-Powered Meal Plan Generation** - Full wizard (5 steps) with Anthropic Claude integration for generating personalized meal plans; preference profiles with dietary restrictions, cuisine preferences, calorie/macro targets, cooking time limits; flexible duration (1-28 days) with preset chips; pinned meals (pre-assign library recipes); AI estimates per-serving nutrition for all meals; meal swapping with 3 alternatives; recipe detail generation constrained to DB ingredient list (~1,025 ingredients); auto "AI" tag on generated recipes; batch cooking support; rate limiting
+
+**Nutrition Calculation Fix** - Fixed critical bug where plan nutrition summary divided per-serving values by recipe servings (double-division); corrected formula: `per_serving_cal × servings_eaten`; added daily nutrition breakdown table to MealPlanDetailPage with per-day calories/protein/carbs/fat; changed label from "Weekly" to "Plan" Nutrition Summary; added coverage indicator showing how many meals had nutrition data
+
+**Source Tag Category** - Added "Source" tag category (purple) to tagDefinitions.ts with tags: AI, Akis Petretzikis, Allrecipes, Argiro Barbarigou, Big Recipe
 
 ### Future Enhancements
 - Drag-and-drop meal plan interface
@@ -1139,6 +1180,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-03-02
-**Project Version:** 2.1.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button**)
+**Last Updated:** 2026-03-10
+**Project Version:** 2.2.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category**)

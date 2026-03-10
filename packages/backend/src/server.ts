@@ -15,9 +15,12 @@ import mealPlansRouter from './routes/mealPlans.js';
 import shoppingListsRouter from './routes/shoppingLists.js';
 import scraperRouter from './routes/scraper.js';
 import cookingPlansRouter from './routes/cookingPlans.js';
+import mealPlanPreferencesRouter from './routes/mealPlanPreferences.js';
+import aiMealPlanRouter from './routes/aiMealPlan.js';
 
-// Load environment variables
-config();
+// Load environment variables (override: true needed because ANTHROPIC_API_KEY
+// may exist as empty string in shell env, which dotenv won't overwrite by default)
+config({ override: true });
 
 // Startup logging
 console.log('Starting MealPlan server...');
@@ -74,6 +77,8 @@ app.use('/api/meal-plans', mealPlansRouter);
 app.use('/api/shopping-lists', shoppingListsRouter);
 app.use('/api/scraper', scraperRouter);
 app.use('/api/cooking-plans', cookingPlansRouter);
+app.use('/api/meal-plan-preferences', mealPlanPreferencesRouter);
+app.use('/api/ai-meal-plan', aiMealPlanRouter);
 
 // Serve frontend static files in production
 if (isProduction) {
