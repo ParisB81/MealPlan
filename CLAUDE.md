@@ -187,6 +187,7 @@ C:\00 Paris\MealPlan/
 │   └── enrich-source-urls.ts       # Batch update recipes with source URLs from Excel
 ├── source-url-enrichment-report.json # Generated: Report from source URL enrichment
 ├── docker-compose.yml              # Local PostgreSQL for development
+├── nixpacks.toml                   # Railway Nixpacks config: system Chromium + Puppeteer env vars
 ├── railway.toml                    # Railway deployment configuration
 ├── package.json                    # Root workspace config (includes production start/postinstall)
 └── tsconfig.base.json              # Base TypeScript config
@@ -826,8 +827,9 @@ Single Railway service: backend Express server serves the built frontend as stat
 
 ### Key Files
 - **`railway.toml`** — Build command, start command, healthcheck config (120s timeout)
+- **`nixpacks.toml`** — System Chromium + apt dependencies for Puppeteer, env vars for skipping bundled download
 - **`package.json` (root)** — `"start"` and `"postinstall"` scripts for Railway
-- **`packages/backend/src/server.ts`** — Production static file serving + `0.0.0.0` bind
+- **`packages/backend/src/server.ts`** — Production static file serving + `0.0.0.0` bind; health endpoint registered BEFORE auth middleware
 - **`packages/frontend/src/services/api.ts`** — API base URL defaults to `/api` (same-origin in production)
 
 ### Railway Environment Variables
@@ -852,7 +854,10 @@ git push origin master
 The recipe scraper uses cross-platform spawning (`os.platform()` detection):
 - **Windows:** `wmic process call create` for fully independent child processes
 - **Linux (Railway):** Standard `spawn()` with `{detached: true}` + `unref()`
-- Puppeteer may need `nixpacks.toml` for Chromium dependencies on Railway
+- **`nixpacks.toml`** installs system Chromium + all required libraries (libnss3, libgbm1, etc.)
+- **`PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true`** set via nixpacks — skips bundled Chromium download (~300MB)
+- **`PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`** set via nixpacks — all `puppeteer.launch()` calls use system Chromium when this env var is set
+- All three `puppeteer.launch()` sites (in `workers/puppeteerWorker.ts` and `utils/puppeteerWorker.ts`) pass `executablePath` from env var
 
 ## Authentication System
 
@@ -866,7 +871,7 @@ Simple password-based auth protecting the entire app. Set `APP_PASSWORD` env var
 4. User enters password → `POST /api/auth/login` → server checks against `APP_PASSWORD`
 5. If correct → server returns SHA-256 hash token → frontend stores in `localStorage`
 6. All subsequent API calls include `Authorization: Bearer <token>` via Axios interceptor
-7. `requireAuth` middleware validates token on all `/api/*` routes (except `/api/health`, `/api/auth/*`)
+7. `requireAuth` middleware validates token on all `/api/*` routes (except `/api/health`, `/api/auth/*`). **Important:** Health endpoint is registered BEFORE the auth middleware in `server.ts` (not just path-checked in middleware), ensuring Railway healthchecks always pass
 8. 401 response interceptor auto-logs out and shows login screen
 
 ### Key Files
@@ -1004,6 +1009,12 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Source Tag Category** - Added "Source" tag category (purple) to tagDefinitions.ts with tags: AI, Akis Petretzikis, Allrecipes, Argiro Barbarigou, Big Recipe
 
+**Railway Nixpacks + Puppeteer Fix** - Created `nixpacks.toml` to install system Chromium + dependencies for Puppeteer on Railway Linux; `PUPPETEER_SKIP_CHROMIUM_DOWNLOAD` and `PUPPETEER_EXECUTABLE_PATH` env vars skip bundled download and use system Chromium; all `puppeteer.launch()` calls pass `executablePath` when env var is set
+
+**Railway Healthcheck Auth Fix** - Fixed deployment failure caused by health endpoint being blocked by `requireAuth` middleware; moved `/api/health` route registration before auth middleware in `server.ts`; also fixed `req.path` comparison in `requireAuth` (Express strips mount prefix: `/api/health` → `/health` inside middleware mounted at `/api`)
+
+**Startup Logging** - Added `ANTHROPIC_API_KEY` and `APP_PASSWORD` presence indicators to server startup log for production debugging
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1078,6 +1089,19 @@ powershell -Command "Stop-Process -Id <PID> -Force"
 ```
 
 ## Known Issues
+
+### Railway Healthcheck Auth Failure (Resolved)
+**Problem:** Railway deployments failed at the "Network > Healthcheck" stage. Build and deploy succeeded, but the server returned 401 for `/api/health`, causing Railway to mark the deployment as failed.
+
+**Root Cause:** Two compounding issues:
+1. The `/api/health` route was registered AFTER `app.use('/api', requireAuth)` in `server.ts`
+2. Inside `requireAuth`, the path check `req.path === '/api/health'` never matched because Express strips the mount prefix when middleware is mounted with a path — `req.path` was `/health`, not `/api/health`
+
+**Fix:**
+1. Moved health route registration BEFORE auth middleware in `server.ts`
+2. Fixed path comparisons in `requireAuth` to check both stripped (`/health`) and full (`/api/health`) paths
+
+**Lesson:** When Express middleware is mounted with `app.use('/prefix', middleware)`, inside that middleware `req.path` is relative to the mount point (prefix is stripped). Use `req.originalUrl` for the full path, or register routes that need to bypass middleware BEFORE the middleware.
 
 ### React Rules of Hooks in Production (Resolved)
 **Problem:** Navigation.tsx had `return null` before `useEffect` hooks. This worked in development but caused React Error #310 in production (minified build), making all pages blank when navigating.
@@ -1181,5 +1205,5 @@ Items within each category are sorted **alphabetically** by ingredient name.
 ---
 
 **Last Updated:** 2026-03-10
-**Project Version:** 2.2.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category**)
+**Project Version:** 2.3.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix**)
