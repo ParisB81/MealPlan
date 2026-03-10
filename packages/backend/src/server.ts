@@ -27,6 +27,8 @@ console.log('Starting MealPlan server...');
 console.log(`NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
 console.log(`PORT: ${process.env.PORT || '3000 (default)'}`);
 console.log(`DATABASE_URL: ${process.env.DATABASE_URL ? 'set' : 'NOT SET'}`);
+console.log(`ANTHROPIC_API_KEY: ${process.env.ANTHROPIC_API_KEY ? 'set (' + process.env.ANTHROPIC_API_KEY.substring(0, 10) + '...)' : 'NOT SET'}`);
+console.log(`APP_PASSWORD: ${process.env.APP_PASSWORD ? 'set' : 'NOT SET'}`);
 
 // Initialize Prisma Client
 export const prisma = new PrismaClient();
