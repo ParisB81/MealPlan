@@ -48,10 +48,12 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   if (!APP_PASSWORD) return next();
 
   // Allow health check without auth
-  if (req.path === '/api/health') return next();
+  // Note: when mounted as app.use('/api', requireAuth), req.path is stripped of '/api' prefix
+  if (req.path === '/health' || req.path === '/api/health') return next();
 
   // Allow auth endpoints without auth
-  if (req.path === '/api/auth/login' || req.path === '/api/auth/check') return next();
+  if (req.path === '/auth/login' || req.path === '/auth/check' ||
+      req.path === '/api/auth/login' || req.path === '/api/auth/check') return next();
 
   const authHeader = req.headers.authorization;
   const token = authHeader?.replace('Bearer ', '');

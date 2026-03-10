@@ -64,6 +64,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check (before auth - must be accessible without authentication for Railway healthchecks)
+app.use('/api/health', healthRouter);
+
 // Auth routes (before auth middleware)
 app.post('/api/auth/login', loginHandler);
 app.get('/api/auth/check', checkAuthHandler);
@@ -72,7 +75,6 @@ app.get('/api/auth/check', checkAuthHandler);
 app.use('/api', requireAuth);
 
 // Routes
-app.use('/api/health', healthRouter);
 app.use('/api/recipes', recipesRouter);
 app.use('/api/ingredients', ingredientsRouter);
 app.use('/api/meal-plans', mealPlansRouter);
