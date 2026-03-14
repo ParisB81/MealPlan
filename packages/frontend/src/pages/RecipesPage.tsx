@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecipes, useBulkDeleteRecipes, useRestoreRecipe, usePermanentDeleteRecipe } from '../hooks/useRecipes';
+import { useCollections } from '../hooks/useCollections';
 import { Button, Input, Badge, Alert } from '../components/ui';
-import { Download, CalendarPlus, Trash2, X } from 'lucide-react';
+import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus } from 'lucide-react';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
+import AddToCollectionModal from '../components/AddToCollectionModal';
 
 type TabType = 'active' | 'deleted';
 
@@ -13,6 +15,9 @@ export default function RecipesPage() {
   const [selectedRecipes, setSelectedRecipes] = useState<Set<string>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [addToMealPlan, setAddToMealPlan] = useState<{ id: string; title: string } | null>(null);
+  const [addToCollection, setAddToCollection] = useState<{ id: string; title: string } | null>(null);
+  const navigate = useNavigate();
+  const { data: collections } = useCollections('active');
 
   // If the search contains commas, treat each part as a tag filter (AND logic)
   // Otherwise, use it as a general search (title, description, or tags)
@@ -115,6 +120,13 @@ export default function RecipesPage() {
             >
               + Create Recipe
             </Link>
+            <Link
+              to="/recipes/ai-generate"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700"
+            >
+              <Sparkles className="w-4 h-4 mr-1" />
+              AI Generate
+            </Link>
             {!showBulkActions && (
               <Button
                 variant="danger"
@@ -207,15 +219,32 @@ export default function RecipesPage() {
           </div>
         )}
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <Input
-            type="text"
-            placeholder="Search by title, description, tag, or ingredient — use commas for multi-tag filter (e.g. Greek, Main Dishes)"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="px-4 py-3"
-          />
+        {/* Search Bar + Collection Dropdown */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-3">
+          <div className="flex-1">
+            <Input
+              type="text"
+              placeholder="Search by title, description, tag, or ingredient — use commas for multi-tag filter (e.g. Greek, Main Dishes)"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="px-4 py-3"
+            />
+          </div>
+          {collections && collections.length > 0 && (
+            <select
+              className="px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm min-w-[180px]"
+              defaultValue=""
+              onChange={(e) => {
+                if (e.target.value) navigate(`/collections/${e.target.value}`);
+                e.target.value = '';
+              }}
+            >
+              <option value="" disabled>Browse Collection...</option>
+              {collections.map((c) => (
+                <option key={c.id} value={c.id}>{c.name} ({c.recipeCount})</option>
+              ))}
+            </select>
+          )}
         </div>
 
         {/* Error State */}
@@ -313,9 +342,9 @@ export default function RecipesPage() {
                     )}
                   </Link>
 
-                  {/* Add to Meal Plan button (active recipes only) */}
+                  {/* Action buttons (active recipes only) */}
                   {activeTab === 'active' && !showBulkActions && (
-                    <div className="mt-4 pt-4 border-t border-card-recipes-border">
+                    <div className="mt-4 pt-4 border-t border-card-recipes-border flex gap-2">
                       <Button
                         variant="success"
                         size="sm"
@@ -326,7 +355,19 @@ export default function RecipesPage() {
                         }}
                       >
                         <CalendarPlus className="w-4 h-4 mr-1 inline" />
-                        Add to Meal Plan
+                        Meal Plan
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAddToCollection({ id: recipe.id, title: recipe.title });
+                        }}
+                      >
+                        <FolderPlus className="w-4 h-4 mr-1 inline" />
+                        Collection
                       </Button>
                     </div>
                   )}
@@ -371,6 +412,16 @@ export default function RecipesPage() {
             recipeName={addToMealPlan.title}
             isOpen={true}
             onClose={() => setAddToMealPlan(null)}
+          />
+        )}
+
+        {/* Add to Collection Modal */}
+        {addToCollection && (
+          <AddToCollectionModal
+            recipeId={addToCollection.id}
+            recipeName={addToCollection.title}
+            isOpen={true}
+            onClose={() => setAddToCollection(null)}
           />
         )}
       </div>

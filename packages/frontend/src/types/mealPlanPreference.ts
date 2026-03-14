@@ -21,6 +21,7 @@ export interface MealPlanPreference {
   carbsPercent: number | null;
   fatPercent: number | null;
   cookDaysPerWeek: number | null;
+  cookingFreeDays: string;
   quickMealMaxMinutes: number | null;
   defaultServings: number;
   durationWeeks: number;
@@ -28,6 +29,7 @@ export interface MealPlanPreference {
   repeatWeekly: boolean;
   mealVariety: number;
   includedMeals: MealType[];
+  preferredMethods: string[];
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -51,6 +53,7 @@ export interface CreatePreferenceInput {
   carbsPercent?: number | null;
   fatPercent?: number | null;
   cookDaysPerWeek?: number | null;
+  cookingFreeDays?: string;
   quickMealMaxMinutes?: number | null;
   defaultServings?: number;
   durationWeeks?: number;
@@ -58,6 +61,7 @@ export interface CreatePreferenceInput {
   repeatWeekly?: boolean;
   mealVariety?: number;
   includedMeals?: MealType[];
+  preferredMethods?: string[];
 }
 
 export type UpdatePreferenceInput = Partial<CreatePreferenceInput>;

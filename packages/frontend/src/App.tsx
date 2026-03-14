@@ -30,6 +30,9 @@ import AssetsLibraryPage from './pages/AssetsLibraryPage';
 import TagManagerPage from './pages/TagManagerPage';
 import IngredientRefinementPage from './pages/IngredientRefinementPage';
 import AIMealPlanWizardPage from './pages/AIMealPlanWizardPage';
+import AIRecipeGeneratorPage from './pages/AIRecipeGeneratorPage';
+import CollectionsPage from './pages/CollectionsPage';
+import CollectionDetailPage from './pages/CollectionDetailPage';
 import PreferencesPage from './pages/PreferencesPage';
 
 function AppContent() {
@@ -65,10 +68,13 @@ function AppContent() {
         <Route path="/shopping-lists" element={<ShoppingListsPage />} />
         <Route path="/shopping-lists/:id" element={<ShoppingListPage />} />
         <Route path="/meal-plans/:mealPlanId/shopping" element={<ShoppingListPage />} />
+        <Route path="/collections" element={<CollectionsPage />} />
+        <Route path="/collections/:id" element={<CollectionDetailPage />} />
         <Route path="/cooking-plans" element={<CookingPlansPage />} />
         <Route path="/cooking-plan/new" element={<CookingPlanPage />} />
         <Route path="/cooking-plans/:id" element={<CookingPlanPage />} />
         <Route path="/ai-meal-plan" element={<AIMealPlanWizardPage />} />
+        <Route path="/recipes/ai-generate" element={<AIRecipeGeneratorPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/developer" element={<DeveloperPage />} />
         <Route path="/developer/assets" element={<AssetsLibraryPage />} />

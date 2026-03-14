@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Home, CalendarDays, ShoppingCart, UtensilsCrossed, Salad, CookingPot, Wrench, Sparkles } from 'lucide-react';
+import { Menu, X, Home, CalendarDays, ShoppingCart, UtensilsCrossed, Salad, CookingPot, Wrench, Sparkles, FolderHeart } from 'lucide-react';
 import ThemePicker from './ThemePicker';
 
 const navLinks = [
   { to: '/', label: 'Home', icon: Home },
   { to: '/recipes', label: 'Recipes', icon: UtensilsCrossed, match: '/recipes' },
+  { to: '/collections', label: 'Collections', icon: FolderHeart, match: '/collections' },
   { to: '/meal-plans', label: 'Meal Plans', icon: CalendarDays, match: '/meal-plans' },
   { to: '/shopping-lists', label: 'Shopping Lists', icon: ShoppingCart, match: '/shopping-lists' },
   { to: '/cooking-plans', label: 'Cooking Plans', icon: CookingPot, match: '/cooking-plan' },

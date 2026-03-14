@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const MAX_GENERATIONS_PER_HOUR = 100;
 
-function checkRateLimit(userId: string) {
+export function checkRateLimit(userId: string) {
   const now = Date.now();
   const entry = rateLimitMap.get(userId);
 
@@ -25,7 +25,7 @@ function checkRateLimit(userId: string) {
   entry.count++;
 }
 
-function getClient(): Anthropic {
+export function getClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new AppError(500, 'ANTHROPIC_API_KEY is not configured. Set it in .env to enable AI meal plan generation.');
@@ -34,7 +34,7 @@ function getClient(): Anthropic {
 }
 
 // Fetch condensed recipe library for AI context
-async function getRecipeLibrarySummary(): Promise<string> {
+export async function getRecipeLibrarySummary(): Promise<string> {
   const recipes = await prisma.recipe.findMany({
     where: { status: 'active' },
     select: {
@@ -76,8 +76,21 @@ function formatPreferenceForPrompt(pref: any): string {
     parts.push(`Weekend cooking limits: max ${pref.weekendMaxPrep || 'no limit'} min prep, max ${pref.weekendMaxCook || 'no limit'} min cook`);
   }
 
-  // Batch cooking preferences
-  if (pref.cookDaysPerWeek && pref.cookDaysPerWeek < 7) {
+  // Preferred cooking methods
+  const methods = JSON.parse(pref.preferredMethods || '[]');
+  if (methods.length) parts.push(`Preferred cooking methods: ${methods.join(', ')}. Favor recipes using these methods.`);
+
+  // Cooking-free days (specific dates) — takes priority over legacy cookDaysPerWeek
+  const cookingFreeDays = (pref.cookingFreeDays || '').split(',').filter((d: string) => d.trim());
+  if (cookingFreeDays.length > 0) {
+    parts.push(`COOKING-FREE DAYS: ${cookingFreeDays.join(', ')}.`);
+    parts.push(`On these specific dates, plan ONLY quick meals (leftovers from previous cook days, salads, no-cook options, sandwiches, yogurt bowls, overnight oats, etc.).`);
+    if (pref.quickMealMaxMinutes) {
+      parts.push(`Cooking-free-day meals must require ${pref.quickMealMaxMinutes} minutes or less total prep+cook time.`);
+    }
+    parts.push(`On cooking days (all other dates), recipes should produce enough servings for leftovers on subsequent cooking-free days.`);
+  } else if (pref.cookDaysPerWeek && pref.cookDaysPerWeek < 7) {
+    // Legacy fallback: cookDaysPerWeek
     parts.push(`Cooking schedule: User cooks only ${pref.cookDaysPerWeek} days per week.`);
     parts.push(`On non-cooking days, plan quick meals (leftovers from cook days, salads, no-cook options, sandwiches, yogurt bowls, overnight oats, etc.).`);
     if (pref.quickMealMaxMinutes) {
@@ -171,9 +184,14 @@ export class AIMealPlanService {
       'Maximum variety: every meal should be a different dish if possible. No repeats.'
     ][pref.mealVariety];
 
-    const batchCookingRule = pref.cookDaysPerWeek && pref.cookDaysPerWeek < 7
-      ? `- BATCH COOKING: The user cooks only ${pref.cookDaysPerWeek} days per week. On cook days, assign recipes that can produce multiple servings. On non-cook days, reuse the SAME recipe from a recent cook day (representing leftovers) or assign quick no-cook meals (under ${pref.quickMealMaxMinutes || 10} minutes). It is EXPECTED and DESIRED for the same dish to appear on consecutive days.`
-      : '';
+    // Cooking-free days rule: specific dates take priority over legacy cookDaysPerWeek
+    const cookingFreeDaysList = (pref.cookingFreeDays || '').split(',').filter((d: string) => d.trim());
+    let batchCookingRule = '';
+    if (cookingFreeDaysList.length > 0) {
+      batchCookingRule = `- COOKING-FREE DAYS: The following dates are cooking-free: ${cookingFreeDaysList.join(', ')}. On these dates, assign ONLY quick no-cook/leftover meals (under ${pref.quickMealMaxMinutes || 10} minutes). On all other dates, assign full recipes that can produce multiple servings for leftovers. The same dish MAY appear on consecutive days (leftovers from a cook day).`;
+    } else if (pref.cookDaysPerWeek && pref.cookDaysPerWeek < 7) {
+      batchCookingRule = `- BATCH COOKING: The user cooks only ${pref.cookDaysPerWeek} days per week. On cook days, assign recipes that can produce multiple servings. On non-cook days, reuse the SAME recipe from a recent cook day (representing leftovers) or assign quick no-cook meals (under ${pref.quickMealMaxMinutes || 10} minutes). It is EXPECTED and DESIRED for the same dish to appear on consecutive days.`;
+    }
 
     const systemPrompt = `You are a professional meal planning assistant. Generate a structured meal plan as valid JSON.
 

@@ -64,13 +64,17 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── mealPlan.controller.ts
 │   │   │   │   ├── shoppingList.controller.ts
 │   │   │   │   ├── cookingPlan.controller.ts
-│   │   │   │   └── ingredient.controller.ts
+│   │   │   │   ├── ingredient.controller.ts
+│   │   │   │   ├── collection.controller.ts   # Recipe collections CRUD
+│   │   │   │   └── aiRecipe.controller.ts     # AI recipe generation endpoint
 │   │   │   ├── services/
 │   │   │   │   ├── recipe.service.ts
 │   │   │   │   ├── recipeScraper.service.ts
 │   │   │   │   ├── mealPlan.service.ts
 │   │   │   │   ├── shoppingList.service.ts
-│   │   │   │   └── cookingPlan.service.ts
+│   │   │   │   ├── cookingPlan.service.ts
+│   │   │   │   ├── collection.service.ts      # Recipe collection management
+│   │   │   │   └── aiRecipe.service.ts        # AI recipe suggestion generation
 │   │   │   ├── routes/
 │   │   │   │   ├── recipes.ts
 │   │   │   │   ├── scraper.ts
@@ -78,11 +82,15 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── shoppingLists.ts
 │   │   │   │   ├── cookingPlans.ts
 │   │   │   │   ├── ingredients.ts
-│   │   │   │   └── health.ts
+│   │   │   │   ├── health.ts
+│   │   │   │   ├── collections.ts             # Recipe collection routes
+│   │   │   │   └── aiRecipes.ts               # AI recipe routes
 │   │   │   ├── validators/
 │   │   │   │   ├── recipe.validator.ts
 │   │   │   │   ├── mealPlan.validator.ts
-│   │   │   │   └── cookingPlan.validator.ts
+│   │   │   │   ├── cookingPlan.validator.ts
+│   │   │   │   ├── collection.validator.ts    # Collection Zod schemas
+│   │   │   │   └── aiRecipe.validator.ts      # AI recipe generation Zod schemas
 │   │   │   ├── utils/
 │   │   │   │   ├── autoTagger.ts        # Auto-tag assignment on recipe creation
 │   │   │   │   ├── unitConversion.ts   # Unit conversion for shopping list aggregation
@@ -107,7 +115,20 @@ C:\00 Paris\MealPlan/
 │   │   │   │   │   ├── Modal.tsx       # Dialog/modal container
 │   │   │   │   │   ├── Badge.tsx       # Small label/tag component
 │   │   │   │   │   ├── Select.tsx      # Dropdown selector
+│   │   │   │   │   ├── Collapsible.tsx # Accordion section with smooth CSS grid animation
 │   │   │   │   │   └── Alert.tsx       # Variants: info/success/error
+│   │   │   │   ├── ai-shared/              # Shared components for AI meal plan + AI recipe wizards
+│   │   │   │   │   ├── DietaryRestrictionsSelector.tsx
+│   │   │   │   │   ├── AllergiesSelector.tsx
+│   │   │   │   │   ├── CuisineSelector.tsx
+│   │   │   │   │   ├── IngredientPreferencesFields.tsx
+│   │   │   │   │   ├── CookingMethodSelector.tsx
+│   │   │   │   │   └── CookingFreeDaysPicker.tsx  # Calendar-based cooking-free day picker
+│   │   │   │   ├── ai-recipes/             # AI Recipe Generator step components
+│   │   │   │   │   ├── StepConcept.tsx
+│   │   │   │   │   ├── StepRecipePreferences.tsx
+│   │   │   │   │   ├── StepReviewCreate.tsx
+│   │   │   │   │   └── StepDone.tsx
 │   │   │   │   ├── Navigation.tsx          # Responsive nav: desktop horizontal, mobile hamburger+drawer
 │   │   │   │   ├── ThemePicker.tsx         # Theme selector: dropdown (desktop) + inline (mobile drawer)
 │   │   │   │   ├── CustomThemeEditor.tsx   # 3-slot custom theme editor with color pickers + live preview
@@ -117,6 +138,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── MealPlanCalendar.tsx    # Interactive monthly calendar for meal plan dates
 │   │   │   │   ├── AddRecipeModal.tsx      # Modal to add recipe to meal plan (from MealPlanDetailPage)
 │   │   │   │   ├── AddToMealPlanModal.tsx # Modal to add recipe to any meal plan (from RecipesPage/RecipeDetailPage)
+│   │   │   │   ├── AddToCollectionModal.tsx # Toggle-on-check modal to add/remove recipe from collections
 │   │   │   │   ├── IngredientAutocomplete.tsx  # Autocomplete for ingredient names
 │   │   │   │   ├── UnitAutocomplete.tsx    # Autocomplete for measurement units
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
@@ -141,7 +163,12 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── DeveloperPage.tsx       # Developer tools hub
 │   │   │   │   ├── AssetsLibraryPage.tsx   # UI component showcase
 │   │   │   │   ├── TagManagerPage.tsx      # Drag-and-drop tag assignment for recipes
-│   │   │   │   └── IngredientRefinementPage.tsx # Documentation for ingredient cleanup
+│   │   │   │   ├── IngredientRefinementPage.tsx # Documentation for ingredient cleanup
+│   │   │   │   ├── AIMealPlanWizardPage.tsx    # AI meal plan wizard (5 steps)
+│   │   │   │   ├── AIRecipeGeneratorPage.tsx   # AI recipe generator wizard (4 steps)
+│   │   │   │   ├── CollectionsPage.tsx         # List/create recipe collections (active/deleted)
+│   │   │   │   ├── CollectionDetailPage.tsx    # View collection with recipe grid, add/remove/edit
+│   │   │   │   └── PreferencesPage.tsx         # User preferences page
 │   │   │   ├── contexts/
 │   │   │   │   ├── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
 │   │   │   │   └── ThemeContext.tsx        # Theme provider: predefined + custom themes, inline CSS injection
@@ -152,7 +179,9 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── useMealPlans.ts         # Meal plan CRUD + meal management + nutrition
 │   │   │   │   ├── useShoppingLists.ts     # Shopping list generation + item management
 │   │   │   │   ├── useCookingPlans.ts     # Cooking plan CRUD + soft delete/restore
-│   │   │   │   └── useIngredients.ts       # Ingredient list/detail/recipes
+│   │   │   │   ├── useIngredients.ts       # Ingredient list/detail/recipes
+│   │   │   │   ├── useCollections.ts      # Collection CRUD + recipe add/remove + memberships
+│   │   │   │   └── useAIRecipes.ts         # AI recipe generation mutation
 │   │   │   ├── services/
 │   │   │   │   ├── api.ts                  # Axios instance + ApiError class (preserves backend response data)
 │   │   │   │   ├── recipes.service.ts      # Recipe API methods
@@ -160,12 +189,17 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── shoppingLists.service.ts # Shopping list API methods
 │   │   │   │   ├── cookingPlans.service.ts # Cooking plan API methods
 │   │   │   │   ├── scraper.service.ts      # Recipe scraper API methods
-│   │   │   │   └── ingredients.service.ts  # Ingredient API methods
+│   │   │   │   ├── ingredients.service.ts  # Ingredient API methods
+│   │   │   │   ├── collections.service.ts # Recipe collection API methods
+│   │   │   │   └── aiRecipes.service.ts    # AI recipe generation API methods
 │   │   │   ├── types/
 │   │   │   │   ├── recipe.ts               # Recipe, Ingredient, Nutrition types
 │   │   │   │   ├── mealPlan.ts             # MealPlan, MealPlanRecipe types
 │   │   │   │   ├── shoppingList.ts         # ShoppingList, ShoppingListItem types
-│   │   │   │   └── cookingPlan.ts          # CookingPlan types
+│   │   │   │   ├── cookingPlan.ts          # CookingPlan types
+│   │   │   │   ├── mealPlanPreference.ts   # Preference profiles + AI generation types
+│   │   │   │   ├── collection.ts           # RecipeCollection, CollectionMembership types
+│   │   │   │   └── aiRecipe.ts             # AI recipe suggestion + queue entry types
 │   │   │   ├── App.tsx                     # Router with auth wrapper, ScrollToTop
 │   │   │   └── main.tsx                    # React Query setup, app entry
 │   │   ├── public/
@@ -501,6 +535,7 @@ Located in `packages/frontend/src/components/ui/`:
 - **Modal** - Dialog overlay with close button
 - **Badge** - Small label/tag display
 - **Select** - Dropdown selector with options
+- **Collapsible** - Accordion section with smooth CSS grid animation (`grid-template-rows: 0fr → 1fr`), supports controlled/uncontrolled modes, title + optional subtitle + chevron
 - **Alert** - Notification banner (info, success, error)
 
 ### 13. Ingredient Refinement (Complete)
@@ -553,10 +588,13 @@ Located in `packages/frontend/src/components/ui/`:
 - **All ~30 page/component files migrated** from hardcoded Tailwind colors to semantic theme tokens (e.g., `bg-white` → `bg-surface`, `text-gray-900` → `text-text-primary`, `bg-orange-600` → `bg-hero-recipes`)
 
 ### 16. AI-Powered Meal Plan Generation (Complete)
-- **Multi-step wizard** at `/ai-meal-plan` with 5 steps: Preferences → Nutrition & Duration → Review Plan → Create Recipes → Confirm & Save
+- **Multi-step wizard** at `/ai-meal-plan` with 5 steps: Plan Setup → Taste & Diet → Review Plan → Create Recipes → Confirm & Save
 - **Anthropic Claude integration:** Uses `@anthropic-ai/sdk` with `claude-sonnet-4-20250514` model for plan generation, meal swapping, and recipe detail generation
-- **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only or library+AI), meal variety (1-5 scale), batch cooking settings
-- **Flexible duration:** Days-based input (1-28) with preset chips (3, 5, 7, 14, 21 days); `durationDays` field overrides legacy `durationWeeks` when set
+- **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only or library+AI), meal variety (1-5 scale), cooking-free days, preferred cooking methods
+- **Step 1 — Plan Setup** (collapsible accordion sections): Profile management (load/save), plan dates with duration presets (1-28 days), meals & servings, recipe source, pinned meals, meal variety (1-5 slider), cooking-free days (calendar picker), cooking time limits (weekday/weekend), nutrition targets (calories + macro split)
+- **Step 2 — Taste & Diet** (uses shared components): Dietary restrictions, allergies, cuisine preferences, ingredient likes/dislikes, preferred cooking methods + **Generate Plan** button
+- **Cooking-free days:** Calendar-based picker replaces legacy `cookDaysPerWeek`; user selects specific dates when cooking is not possible. AI generates only quick/no-cook/leftover meals for those dates.
+- **Preferred cooking methods:** Multi-select chips (Baked, Fried, Grilled, etc.) stored in `preferredMethods` field. AI favors recipes using selected methods.
 - **Pinned meals:** Pre-assign specific library recipes to meal slots (e.g., "Greek Lentil Soup for lunch 3 times"). Passed as MANDATORY constraints in the AI prompt. Validated against plan capacity.
 - **AI plan generation:** Sends preferences + existing recipe library + date range to Claude. Returns structured JSON with per-day meals, each referencing existing recipes or suggesting new ones. Includes estimated per-serving nutrition for all meals.
 - **Post-generation validation:** Fixes hallucinated recipe IDs (converts to new suggestions); fuzzy-matches "new" recipes against library (normalized title comparison with stop-word stripping)
@@ -564,12 +602,46 @@ Located in `packages/frontend/src/components/ui/`:
 - **Recipe detail generation:** For AI-suggested dishes, generates full recipe (ingredients, instructions, nutrition, tags) using Claude. **Ingredient constraint:** All ingredient names must come from the existing ingredient database (~1,025 ingredients). **Auto-tagging:** "AI" tag automatically added to all AI-generated recipes.
 - **Estimated nutrition:** AI provides per-serving calorie/protein/carbs/fat estimates for every meal. Two-tier display: stored recipe nutrition (exact) → AI estimates (shown in italic with `~` prefix).
 - **Plan nutrition summary:** MealPlanDetailPage shows plan totals with daily averages + per-day breakdown table (date, calories, protein, carbs, fat). Nutrition values stored per-serving; `meal.servings` multiplier applied at display time.
-- **Batch cooking support:** When `cookDaysPerWeek < 7`, AI assigns batch-cook recipes on cook days and leftovers/quick meals on non-cook days
-- **Rate limiting:** 10 requests per minute per user (in-memory, resets on server restart)
+- **Shared components:** 6 reusable selector components in `components/ai-shared/` shared between AI Meal Plan and AI Recipe Generator wizards
+- **Rate limiting:** 10 requests per minute per user (in-memory, shared across AI endpoints, resets on server restart)
 - **Key files:**
   - Backend: `aiMealPlan.service.ts` (3 AI endpoints), `mealPlanPreference.service.ts` (CRUD), `mealPlanPreference.validator.ts` (Zod schemas)
-  - Frontend: `AIMealPlanWizardPage.tsx` (wizard state machine), `StepPreferences.tsx`, `StepNutrition.tsx`, `StepReviewPlan.tsx`, `StepCreateRecipes.tsx`, `StepConfirmation.tsx`
+  - Frontend: `AIMealPlanWizardPage.tsx` (wizard state machine), `StepPlanSetup.tsx`, `StepTasteDiet.tsx`, `StepReviewPlan.tsx`, `StepCreateRecipes.tsx`, `StepConfirmation.tsx`
+  - Shared: `components/ai-shared/` (DietaryRestrictionsSelector, AllergiesSelector, CuisineSelector, IngredientPreferencesFields, CookingMethodSelector, CookingFreeDaysPicker)
   - Types: `mealPlanPreference.ts` (GeneratedPlan, GeneratedMeal, PinnedMeal, SwapAlternative, etc.)
+
+### 17. AI Recipe Generator (Complete)
+- **Standalone recipe generation** at `/recipes/ai-generate` — creates recipes without a meal plan context
+- **4-step wizard:** Concept → Preferences → Review & Create → Done
+- **Step 1 — Concept:** Number of recipes (1-5 chip buttons), freetext concept summary, optional "alternative version of existing recipe" via RecipePicker
+- **Step 2 — Preferences:** Load-only profile support (pre-fills from saved meal plan preference profiles but doesn't save back), meal type toggles, specific taste target, all shared selectors (dietary restrictions, allergies, cuisines, ingredient likes/dislikes, cooking methods), calorie range, time limits, other remarks + **Generate Recipes** button
+- **Step 3 — Review & Create:** AI suggestions displayed as cards with estimated nutrition, cuisine tag, prep/cook times. Each has "Create Recipe" (generates full details via existing `POST /api/ai-meal-plan/recipe-details` → navigates to RecipeFormPage with prefill) or "Skip" options. Progress bar tracks completion.
+- **Step 4 — Done:** Summary of created/skipped recipes with links to created recipe pages, "Generate More" and "Back to Recipes" buttons
+- **Entry points:** "AI Generate" button on RecipesPage header + "AI Recipe Creator" card on HomePage
+- **Emerald accent color** to visually distinguish from the AI Meal Planner (purple)
+- **SessionStorage persistence:** Wizard state survives page refreshes; handles return from RecipeFormPage after recipe creation
+- **Rate limiting:** Shares the same 10 req/min rate limiter as AI Meal Plan
+- **Key files:**
+  - Backend: `aiRecipe.service.ts`, `aiRecipe.controller.ts`, `aiRecipes.ts` (routes), `aiRecipe.validator.ts`
+  - Frontend: `AIRecipeGeneratorPage.tsx` (wizard), `StepConcept.tsx`, `StepRecipePreferences.tsx`, `StepReviewCreate.tsx`, `StepDone.tsx`
+  - Service: `aiRecipes.service.ts`, Hook: `useAIRecipes.ts`, Types: `aiRecipe.ts`
+
+### 18. Recipe Collections (Complete)
+- **User-organized recipe groups** — named collections (e.g., "Favorites", "Quick Weeknight Dinners") for easy recipe organization
+- **Full CRUD** with soft delete/restore/permanent delete at `/collections` and `/collections/:id`
+- **Collection list page** (`CollectionsPage`): Active/deleted tabs, card grid with name, description, recipe count, create modal
+- **Collection detail page** (`CollectionDetailPage`): Recipe grid with tags/servings/times, add recipes via RecipePicker modal, remove with hover X button, "Add to Meal Plan" button on each recipe card (same pattern as RecipesPage), edit name/description modal
+- **AddToCollectionModal:** Toggle-on-check pattern — checkboxes for each active collection with immediate add/remove mutations, inline "create new" section
+- **Integration points:**
+  - RecipesPage: "Collection" button on each recipe card + collection dropdown near search bar (navigates to `/collections/:id`)
+  - RecipeDetailPage: "Collection" button in header + purple collection membership badges below tags (linked to collection pages)
+  - Navigation: "Collections" link with FolderHeart icon after Recipes
+  - HomePage: Collections card in primary grid with violet gradient (`from-violet-600 to-purple-600`)
+- **Backend:** `RecipeCollection` + `RecipeCollectionItem` models (junction table with `@@unique([collectionId, recipeId])`), cascade deletes, ownership checks via userId
+- **Key files:**
+  - Backend: `collection.service.ts`, `collection.controller.ts`, `collections.ts` (routes), `collection.validator.ts`
+  - Frontend: `CollectionsPage.tsx`, `CollectionDetailPage.tsx`, `AddToCollectionModal.tsx`
+  - Service: `collections.service.ts`, Hook: `useCollections.ts`, Types: `collection.ts`
 
 ## API Endpoints (Complete)
 
@@ -628,6 +700,19 @@ Located in `packages/frontend/src/components/ui/`:
 - `DELETE /:id/permanent` - Permanently delete from database
 - `POST /:id/restore` - Restore soft-deleted cooking plan
 
+### Collections (`/api/collections`)
+- `GET /recipe/:recipeId/collections` - Get collections a recipe belongs to (must be before `/:id`)
+- `GET /` - List collections (with `?status=active|deleted`)
+- `GET /:id` - Get collection with full recipe data
+- `POST /` - Create collection (body: `{ name, description? }`)
+- `PUT /:id` - Update collection name/description
+- `DELETE /:id` - Soft delete
+- `DELETE /:id/permanent` - Permanently delete
+- `POST /:id/restore` - Restore soft-deleted collection
+- `POST /:id/recipes` - Add single recipe (body: `{ recipeId }`)
+- `POST /:id/recipes/batch` - Add multiple recipes (body: `{ recipeIds }`)
+- `DELETE /:id/recipes/:recipeId` - Remove recipe from collection
+
 ### Ingredients (`/api/ingredients`)
 - `GET /` - List ingredients (with search, limit 100)
 - `GET /:id` - Get ingredient by ID
@@ -641,6 +726,9 @@ Located in `packages/frontend/src/components/ui/`:
 - `POST /generate` - Generate meal plan from preferences (body: `{ preferenceId, startDate, endDate, pinnedMeals? }`)
 - `POST /swap` - Get 3 alternative meals for a slot (body: `{ preferenceId, date, mealType, currentRecipeTitle, existingPlanContext? }`)
 - `POST /recipe-details` - Generate full recipe details for an AI-suggested dish (body: `{ title, description?, servings?, cuisineHint? }`)
+
+### AI Recipes (`/api/ai-recipes`)
+- `POST /generate` - Generate recipe suggestions (body: `{ count, concept, baseRecipeId?, mealTypes?, specificTaste?, ingredientLikes?, ingredientDislikes?, dietaryRestrictions?, allergies?, cuisinePreferences?, caloriesMin?, caloriesMax?, preferredMethods?, maxPrepTime?, maxCookTime?, otherRemarks? }`)
 
 ### Meal Plan Preferences (`/api/meal-plan-preferences`)
 - `GET /` - List user's preference profiles
@@ -675,13 +763,16 @@ Located in `packages/frontend/src/components/ui/`:
 | `/cooking-plans` | CookingPlansPage | List saved cooking plans (active/deleted tabs) |
 | `/cooking-plan/new` | CookingPlanPage | Create new cooking plan |
 | `/cooking-plans/:id` | CookingPlanPage | View saved cooking plan (read-only) |
+| `/collections` | CollectionsPage | List/create recipe collections (active/deleted tabs) |
+| `/collections/:id` | CollectionDetailPage | View collection with recipe grid, add/remove |
 | `/ai-meal-plan` | AIMealPlanWizardPage | AI-powered meal plan generation wizard (5 steps) |
+| `/recipes/ai-generate` | AIRecipeGeneratorPage | AI recipe generator wizard (4 steps) |
 | `/developer` | DeveloperPage | Developer tools hub |
 | `/developer/assets` | AssetsLibraryPage | UI component showcase with live demos |
 | `/developer/tags` | TagManagerPage | Drag-and-drop tag assignment for recipes |
 | `/developer/ingredients` | IngredientRefinementPage | Documentation for ingredient data cleanup and AI prompt |
 
-## Database Schema (11 Models)
+## Database Schema (13 Models)
 
 | Model | Table | Key Fields | Notes |
 |-------|-------|-----------|-------|
@@ -695,7 +786,9 @@ Located in `packages/frontend/src/components/ui/`:
 | CookingPlan | cooking_plans | name, mealPlanIds (comma-separated), cookDays (comma-separated dates), status | Status: active/deleted. Schedule computed client-side. |
 | ShoppingList | shopping_lists | name, mealPlanId (optional), status | Can be linked to meal plan or standalone |
 | ShoppingListItem | shopping_list_items | shoppingListId, ingredientId, quantity, unit, checked | Checked = purchased |
-| MealPlanPreference | meal_plan_preferences | userId, profileName, dietaryRestrictions, allergies, cuisinePreferences, caloriesMin/Max, proteinPercent, carbsPercent, fatPercent, recipeSource, mealVariety, durationWeeks, durationDays, repeatWeekly, includedMeals, maxPrepTimeWeekday/Weekend, maxCookTimeWeekday/Weekend, cookDaysPerWeek, quickMealMaxMinutes, defaultServings | AI meal plan preferences profile |
+| MealPlanPreference | meal_plan_preferences | userId, profileName, dietaryRestrictions, allergies, cuisinePreferences, caloriesMin/Max, proteinPercent, carbsPercent, fatPercent, recipeSource, mealVariety, durationWeeks, durationDays, repeatWeekly, includedMeals, maxPrepTimeWeekday/Weekend, maxCookTimeWeekday/Weekend, cookDaysPerWeek, quickMealMaxMinutes, defaultServings, cookingFreeDays, preferredMethods | AI meal plan preferences profile |
+| RecipeCollection | recipe_collections | userId, name, description?, status | User-organized recipe groups |
+| RecipeCollectionItem | recipe_collection_items | collectionId, recipeId, addedAt | Junction: recipes in a collection, @@unique([collectionId, recipeId]) |
 
 ### Database Notes (PostgreSQL)
 - **Migrated from SQLite to PostgreSQL** in Feb 2026 for Railway cloud deployment
@@ -752,6 +845,12 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 
 ### useIngredients.ts
 `useIngredients()`, `useIngredient(id)`, `useIngredientRecipes(ingredientId)`
+
+### useCollections.ts
+`useCollections(status?)`, `useCollection(id)`, `useCreateCollection()`, `useUpdateCollection()`, `useDeleteCollection()`, `usePermanentDeleteCollection()`, `useRestoreCollection()`, `useAddRecipeToCollection()`, `useRemoveRecipeFromCollection()`, `useCollectionsForRecipe(recipeId)`
+
+### useAIRecipes.ts
+`useGenerateRecipeSuggestions()`
 
 ## Dependencies
 
@@ -1005,6 +1104,10 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **AI-Powered Meal Plan Generation** - Full wizard (5 steps) with Anthropic Claude integration for generating personalized meal plans; preference profiles with dietary restrictions, cuisine preferences, calorie/macro targets, cooking time limits; flexible duration (1-28 days) with preset chips; pinned meals (pre-assign library recipes); AI estimates per-serving nutrition for all meals; meal swapping with 3 alternatives; recipe detail generation constrained to DB ingredient list (~1,025 ingredients); auto "AI" tag on generated recipes; batch cooking support; rate limiting
 
+**AI Meal Plan Wizard Restructure** - Merged old Steps 1-2 (Preferences + Nutrition/Duration) into new Step 1 "Plan Setup" with collapsible accordion sections (Collapsible UI component) + new Step 2 "Taste & Diet" with shared selector components; added cooking-free days (calendar picker replacing legacy cookDaysPerWeek) and preferred cooking methods fields to MealPlanPreference model; extracted 6 reusable selector components into `components/ai-shared/` directory shared between AI Meal Plan and AI Recipe Generator wizards
+
+**AI Recipe Generator** - Standalone recipe generation at `/recipes/ai-generate` with 4-step wizard (Concept → Preferences → Review & Create → Done); generates 1-5 recipe suggestions via Claude; supports "alternative version of existing recipe" via RecipePicker; load-only profile support (pre-fills from saved profiles without saving back); creates full recipes via existing recipe-details endpoint → RecipeFormPage prefill; sessionStorage persistence; emerald accent color; shares rate limiter with AI Meal Plan; entry points on RecipesPage header + HomePage card
+
 **Nutrition Calculation Fix** - Fixed critical bug where plan nutrition summary divided per-serving values by recipe servings (double-division); corrected formula: `per_serving_cal × servings_eaten`; added daily nutrition breakdown table to MealPlanDetailPage with per-day calories/protein/carbs/fat; changed label from "Weekly" to "Plan" Nutrition Summary; added coverage indicator showing how many meals had nutrition data
 
 **Source Tag Category** - Added "Source" tag category (purple) to tagDefinitions.ts with tags: AI, Akis Petretzikis, Allrecipes, Argiro Barbarigou, Big Recipe
@@ -1014,6 +1117,8 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 **Railway Healthcheck Auth Fix** - Fixed deployment failure caused by health endpoint being blocked by `requireAuth` middleware; moved `/api/health` route registration before auth middleware in `server.ts`; also fixed `req.path` comparison in `requireAuth` (Express strips mount prefix: `/api/health` → `/health` inside middleware mounted at `/api`)
 
 **Startup Logging** - Added `ANTHROPIC_API_KEY` and `APP_PASSWORD` presence indicators to server startup log for production debugging
+
+**Recipe Collections** - User-organized recipe groups with full CRUD + soft delete/restore; CollectionsPage with card grid (active/deleted tabs), CollectionDetailPage with recipe grid and RecipePicker integration; AddToCollectionModal with toggle-on-check pattern (immediate mutations); integrated into RecipesPage ("Collection" button + dropdown), RecipeDetailPage ("Collection" button + purple membership badges), Navigation (FolderHeart icon), HomePage (violet gradient card in primary grid); 2 new Prisma models (RecipeCollection, RecipeCollectionItem junction table); 11 REST endpoints at `/api/collections`
 
 ### Future Enhancements
 - Drag-and-drop meal plan interface
@@ -1204,6 +1309,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-03-10
-**Project Version:** 2.3.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix**)
+**Last Updated:** 2026-03-14
+**Project Version:** 2.5.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections**)

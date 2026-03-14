@@ -26,8 +26,10 @@ export class MealPlanPreferenceService {
         carbsPercent: data.carbsPercent ?? null,
         fatPercent: data.fatPercent ?? null,
         cookDaysPerWeek: data.cookDaysPerWeek ?? null,
+        cookingFreeDays: data.cookingFreeDays ?? '',
         quickMealMaxMinutes: data.quickMealMaxMinutes ?? null,
         defaultServings: data.defaultServings ?? 4,
+        preferredMethods: JSON.stringify(data.preferredMethods ?? []),
         durationWeeks: data.durationWeeks,
         durationDays: data.durationDays ?? null,
         repeatWeekly: data.repeatWeekly,
@@ -92,8 +94,10 @@ export class MealPlanPreferenceService {
     if (data.carbsPercent !== undefined) updateData.carbsPercent = data.carbsPercent;
     if (data.fatPercent !== undefined) updateData.fatPercent = data.fatPercent;
     if (data.cookDaysPerWeek !== undefined) updateData.cookDaysPerWeek = data.cookDaysPerWeek;
+    if (data.cookingFreeDays !== undefined) updateData.cookingFreeDays = data.cookingFreeDays;
     if (data.quickMealMaxMinutes !== undefined) updateData.quickMealMaxMinutes = data.quickMealMaxMinutes;
     if (data.defaultServings !== undefined) updateData.defaultServings = data.defaultServings;
+    if (data.preferredMethods !== undefined) updateData.preferredMethods = JSON.stringify(data.preferredMethods);
     if (data.durationWeeks !== undefined) updateData.durationWeeks = data.durationWeeks;
     if (data.durationDays !== undefined) updateData.durationDays = data.durationDays;
     if (data.repeatWeekly !== undefined) updateData.repeatWeekly = data.repeatWeekly;
@@ -129,6 +133,7 @@ export class MealPlanPreferenceService {
       dietaryRestrictions: JSON.parse(preference.dietaryRestrictions || '[]'),
       cuisinePreferences: JSON.parse(preference.cuisinePreferences || '[]'),
       allergies: JSON.parse(preference.allergies || '[]'),
+      preferredMethods: JSON.parse(preference.preferredMethods || '[]'),
       includedMeals: preference.includedMeals ? preference.includedMeals.split(',') : ['breakfast', 'lunch', 'dinner'],
     };
   }

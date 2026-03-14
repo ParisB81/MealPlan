@@ -22,6 +22,7 @@ model User {
   mealPlans            MealPlan[]
   cookingPlans         CookingPlan[]
   mealPlanPreferences  MealPlanPreference[]
+  recipeCollections    RecipeCollection[]
 
   @@map("users")
 }
@@ -47,6 +48,7 @@ model Recipe {
   ingredients       RecipeIngredient[]
   nutrition         RecipeNutrition?
   mealPlanRecipes   MealPlanRecipe[]
+  collectionItems   RecipeCollectionItem[]
 
   @@index([userId])
   @@index([title])
@@ -192,9 +194,11 @@ model MealPlanPreference {
   fatPercent     Int?
 
   // Batch cooking / lifestyle
-  cookDaysPerWeek      Int?  // how many days per week the user actually cooks (e.g., 2)
+  cookDaysPerWeek      Int?  // LEGACY: how many days per week the user actually cooks (e.g., 2)
+  cookingFreeDays      String  @default("")  // Comma-separated YYYY-MM-DD dates for cooking-free days
   quickMealMaxMinutes  Int?  // max total prep+cook time for non-cook-day meals (e.g., 10)
   defaultServings      Int   @default(4) // default servings per recipe (1 for single-person)
+  preferredMethods     String  @default("[]") // JSON array of preferred cooking methods
 
   // Meal plan structure
   durationWeeks Int     @default(1)
@@ -246,4 +250,38 @@ model ShoppingListItem {
   @@index([shoppingListId])
   @@index([ingredientId])
   @@map("shopping_list_items")
+}
+
+// Recipe Collections (user-organized recipe groups)
+model RecipeCollection {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  status      String   @default("active") // "active", "deleted"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items RecipeCollectionItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("recipe_collections")
+}
+
+// Junction table: recipes in a collection
+model RecipeCollectionItem {
+  id           String   @id @default(cuid())
+  collectionId String
+  recipeId     String
+  addedAt      DateTime @default(now())
+
+  collection RecipeCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  recipe     Recipe           @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, recipeId])
+  @@index([collectionId])
+  @@index([recipeId])
+  @@map("recipe_collection_items")
 }

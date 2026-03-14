@@ -14,8 +14,8 @@ export default function HomePage() {
         </p>
       </header>
 
-      {/* Primary feature cards — 2x2 grid */}
-      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+      {/* Primary feature cards */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
         <Link to="/recipes">
           <Card hoverable className="bg-hero-recipes border border-hero-recipes-border">
             <h2 className="text-2xl font-semibold text-white mb-2">
@@ -23,6 +23,17 @@ export default function HomePage() {
             </h2>
             <p className="text-white/80">
               Browse, create, and manage your recipe collection
+            </p>
+          </Card>
+        </Link>
+
+        <Link to="/collections">
+          <Card hoverable className="bg-gradient-to-r from-violet-600 to-purple-600 border border-violet-500">
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              Collections
+            </h2>
+            <p className="text-white/80">
+              Organize recipes into themed groups like Favorites
             </p>
           </Card>
         </Link>
@@ -61,8 +72,8 @@ export default function HomePage() {
         </Link>
       </div>
 
-      {/* AI Planner — featured card */}
-      <div className="max-w-4xl mx-auto mt-6">
+      {/* AI features — two featured cards */}
+      <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-6">
         <Link to="/ai-meal-plan">
           <Card hoverable className="bg-gradient-to-r from-purple-600 to-violet-600 border border-purple-500">
             <h2 className="text-2xl font-semibold text-white mb-2">
@@ -70,6 +81,16 @@ export default function HomePage() {
             </h2>
             <p className="text-white/80">
               Set your preferences and let AI generate a personalized meal plan
+            </p>
+          </Card>
+        </Link>
+        <Link to="/recipes/ai-generate">
+          <Card hoverable className="bg-gradient-to-r from-emerald-600 to-teal-600 border border-emerald-500">
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              AI Recipe Generator
+            </h2>
+            <p className="text-white/80">
+              Describe a dish concept and let AI create recipes for you
             </p>
           </Card>
         </Link>

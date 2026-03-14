@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useRecipe, useDeleteRecipe, useUpdateRecipe } from '../hooks/useRecipes';
-import { CalendarPlus, ExternalLink } from 'lucide-react';
+import { useCollectionsForRecipe } from '../hooks/useCollections';
+import { CalendarPlus, FolderPlus, ExternalLink } from 'lucide-react';
+import { Badge } from '../components/ui';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
+import AddToCollectionModal from '../components/AddToCollectionModal';
 import ImageUpload from '../components/ImageUpload';
 
 export default function RecipeDetailPage() {
@@ -12,6 +15,8 @@ export default function RecipeDetailPage() {
   const deleteRecipe = useDeleteRecipe();
   const updateRecipe = useUpdateRecipe();
   const [showAddToMealPlan, setShowAddToMealPlan] = useState(false);
+  const [showAddToCollection, setShowAddToCollection] = useState(false);
+  const { data: collectionMemberships } = useCollectionsForRecipe(id);
 
   const handleImageUpload = (imageUrl: string) => {
     if (!id) return;
@@ -95,7 +100,14 @@ export default function RecipeDetailPage() {
                   className="inline-flex items-center px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover"
                 >
                   <CalendarPlus className="w-4 h-4 mr-1" />
-                  Add to Meal Plan
+                  Meal Plan
+                </button>
+                <button
+                  onClick={() => setShowAddToCollection(true)}
+                  className="inline-flex items-center px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"
+                >
+                  <FolderPlus className="w-4 h-4 mr-1" />
+                  Collection
                 </button>
                 <Link
                   to={`/recipes/${id}/edit`}
@@ -149,6 +161,17 @@ export default function RecipeDetailPage() {
                   >
                     {tag}
                   </span>
+                ))}
+              </div>
+            )}
+
+            {/* Collection Badges */}
+            {collectionMemberships && collectionMemberships.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {collectionMemberships.map((c) => (
+                  <Link key={c.id} to={`/collections/${c.id}`}>
+                    <Badge variant="purple">{c.name}</Badge>
+                  </Link>
                 ))}
               </div>
             )}
@@ -245,6 +268,16 @@ export default function RecipeDetailPage() {
             recipeName={recipe.title}
             isOpen={showAddToMealPlan}
             onClose={() => setShowAddToMealPlan(false)}
+          />
+        )}
+
+        {/* Add to Collection Modal */}
+        {recipe && (
+          <AddToCollectionModal
+            recipeId={recipe.id}
+            recipeName={recipe.title}
+            isOpen={showAddToCollection}
+            onClose={() => setShowAddToCollection(false)}
           />
         )}
       </div>

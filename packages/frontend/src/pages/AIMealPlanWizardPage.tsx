@@ -3,8 +3,8 @@ import type { ReactNode, ErrorInfo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sparkles, AlertTriangle } from 'lucide-react';
 import { Button, Card } from '../components/ui';
-import StepPreferences from '../components/ai-meal-plan/StepPreferences';
-import StepNutrition from '../components/ai-meal-plan/StepNutrition';
+import StepPlanSetup from '../components/ai-meal-plan/StepPlanSetup';
+import StepTasteDiet from '../components/ai-meal-plan/StepTasteDiet';
 import StepReviewPlan from '../components/ai-meal-plan/StepReviewPlan';
 import StepCreateRecipes from '../components/ai-meal-plan/StepCreateRecipes';
 import StepConfirmation from '../components/ai-meal-plan/StepConfirmation';
@@ -65,12 +65,12 @@ class WizardErrorBoundary extends Component<
   }
 }
 
-export type WizardStep = 'preferences' | 'nutrition' | 'review' | 'recipes' | 'confirmation';
+export type WizardStep = 'setup' | 'taste' | 'review' | 'recipes' | 'confirmation';
 
-const STEP_ORDER: WizardStep[] = ['preferences', 'nutrition', 'review', 'recipes', 'confirmation'];
+const STEP_ORDER: WizardStep[] = ['setup', 'taste', 'review', 'recipes', 'confirmation'];
 const STEP_LABELS: Record<WizardStep, string> = {
-  preferences: 'Preferences',
-  nutrition: 'Targets',
+  setup: 'Plan Setup',
+  taste: 'Taste & Diet',
   review: 'Review',
   recipes: 'Recipes',
   confirmation: 'Create',
@@ -108,6 +108,7 @@ const defaultPreferences: CreatePreferenceInput = {
   carbsPercent: null,
   fatPercent: null,
   cookDaysPerWeek: null,
+  cookingFreeDays: '',
   quickMealMaxMinutes: null,
   defaultServings: 4,
   durationWeeks: 1,
@@ -115,6 +116,7 @@ const defaultPreferences: CreatePreferenceInput = {
   repeatWeekly: false,
   mealVariety: 3,
   includedMeals: ['breakfast', 'lunch', 'dinner'] as MealType[],
+  preferredMethods: [],
 };
 
 export default function AIMealPlanWizardPage() {
@@ -125,7 +127,7 @@ export default function AIMealPlanWizardPage() {
   const returnedRecipeId = (location.state as any)?.createdRecipeId;
   const returnedTempKey = (location.state as any)?.tempKey;
 
-  const [step, setStep] = useState<WizardStep>('preferences');
+  const [step, setStep] = useState<WizardStep>('setup');
   const [state, setState] = useState<WizardState>(() => {
     // Try to restore from sessionStorage
     const saved = sessionStorage.getItem(SESSION_KEY);
@@ -254,20 +256,25 @@ export default function AIMealPlanWizardPage() {
           createdRecipeIds: {},
           planDescription: '',
         });
-        setStep('preferences');
+        setStep('setup');
       }}>
-      {step === 'preferences' && (
-        <StepPreferences
+      {step === 'setup' && (
+        <StepPlanSetup
           preferences={state.preferences}
           preferenceId={state.preferenceId}
+          startDate={state.startDate}
+          endDate={state.endDate}
+          pinnedMeals={state.pinnedMeals}
           onUpdate={(prefs) => updateState({ preferences: prefs })}
           onPreferenceIdChange={(id) => updateState({ preferenceId: id })}
-          onNext={() => goToStep('nutrition')}
+          onDatesChange={(start, end) => updateState({ startDate: start, endDate: end })}
+          onPinnedMealsChange={(pins) => updateState({ pinnedMeals: pins })}
+          onNext={() => goToStep('taste')}
         />
       )}
 
-      {step === 'nutrition' && (
-        <StepNutrition
+      {step === 'taste' && (
+        <StepTasteDiet
           preferences={state.preferences}
           startDate={state.startDate}
           endDate={state.endDate}
@@ -276,8 +283,7 @@ export default function AIMealPlanWizardPage() {
           onPreferenceIdChange={(id) => updateState({ preferenceId: id })}
           onUpdate={(prefs) => updateState({ preferences: prefs })}
           onDatesChange={(start, end) => updateState({ startDate: start, endDate: end })}
-          onPinnedMealsChange={(pins) => updateState({ pinnedMeals: pins })}
-          onBack={() => goToStep('preferences')}
+          onBack={() => goToStep('setup')}
           onGenerate={(plan) => {
             // Collect meal types per unique new recipe title
             const titleMealTypes = new Map<string, Set<string>>();
@@ -333,7 +339,7 @@ export default function AIMealPlanWizardPage() {
           onPlanUpdate={(plan) => updateState({ generatedPlan: plan })}
           onDescriptionChange={(desc) => updateState({ planDescription: desc })}
           onRecipeQueueUpdate={(queue) => updateState({ recipeQueue: queue })}
-          onBack={() => goToStep('nutrition')}
+          onBack={() => goToStep('taste')}
           onNext={() => {
             // If no new recipes to create, skip to confirmation
             const pendingRecipes = state.recipeQueue.filter(r => r.status === 'pending');

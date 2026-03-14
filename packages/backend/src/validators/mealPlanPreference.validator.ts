@@ -19,8 +19,10 @@ export const createPreferenceSchema = z.object({
   carbsPercent: z.number().int().min(0).max(100).nullable().optional(),
   fatPercent: z.number().int().min(0).max(100).nullable().optional(),
   cookDaysPerWeek: z.number().int().min(1).max(7).nullable().optional(),
+  cookingFreeDays: z.string().default(''), // Comma-separated YYYY-MM-DD dates
   quickMealMaxMinutes: z.number().int().min(0).nullable().optional(),
   defaultServings: z.number().int().min(1).max(12).default(4),
+  preferredMethods: z.array(z.string()).default([]),
   durationWeeks: z.number().int().min(1).max(4).default(1),
   durationDays: z.number().int().min(1).max(28).nullable().optional(),
   repeatWeekly: z.boolean().default(false),
