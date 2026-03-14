@@ -24,6 +24,7 @@ export default function MealPlanDetailPage() {
   const addFromMealPlan = useAddFromMealPlan();
   const { data: existingLists } = useShoppingLists('active');
   const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false);
+  const [addRecipeDate, setAddRecipeDate] = useState<string | undefined>(undefined);
   const [shoppingDropdownOpen, setShoppingDropdownOpen] = useState(false);
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
   const [copyState, setCopyState] = useState<CopyState | null>(null);
@@ -270,7 +271,7 @@ export default function MealPlanDetailPage() {
               <p className="text-text-muted mt-1">{mealPlan.meals.length} meals planned</p>
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap">
-              <Button onClick={() => setIsAddRecipeModalOpen(true)}>
+              <Button onClick={() => { setAddRecipeDate(undefined); setIsAddRecipeModalOpen(true); }}>
                 Add Recipe
               </Button>
 
@@ -424,9 +425,19 @@ export default function MealPlanDetailPage() {
           <div className="space-y-6">
             {Object.entries(mealsByDate).map(([dateKey, meals]) => (
               <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300 bg-detail-mealplans border border-detail-mealplans-border">
-                <h3 className="text-lg font-semibold text-text-primary mb-4">
-                  {format(new Date(dateKey), 'EEEE, MMMM d')}
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-text-primary">
+                    {format(new Date(dateKey), 'EEEE, MMMM d')}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
+                    className="p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors"
+                    title="Add meal to this day"
+                  >
+                    <PlusCircle size={20} />
+                  </button>
+                </div>
                 <div className="space-y-3">
                   {meals.map((meal) => (
                     <div
@@ -490,7 +501,8 @@ export default function MealPlanDetailPage() {
           <AddRecipeModal
             mealPlanId={id}
             isOpen={isAddRecipeModalOpen}
-            onClose={() => setIsAddRecipeModalOpen(false)}
+            onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); }}
+            defaultDate={addRecipeDate}
           />
         )}
 

@@ -58,6 +58,8 @@ interface AddRecipeModalProps {
   mealPlanId: string;
   isOpen: boolean;
   onClose: () => void;
+  /** Pre-fill the date picker with this date (YYYY-MM-DD) */
+  defaultDate?: string;
 }
 
 type Step = 'browse' | 'details';
@@ -69,7 +71,7 @@ interface QuickAddState {
   servings: number;
 }
 
-export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecipeModalProps) {
+export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate }: AddRecipeModalProps) {
   const addRecipe = useAddRecipeToMealPlan();
 
   const [step, setStep] = useState<Step>('browse');
@@ -97,13 +99,13 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
       setStep('browse');
       setSearchTerm('');
       setSelectedRecipe(null);
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate(defaultDate || new Date().toISOString().split('T')[0]);
       setMealType('dinner');
       setServings(2);
       setNotes('');
       setQuickAdd(null);
     }
-  }, [isOpen]);
+  }, [isOpen, defaultDate]);
 
   const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
@@ -138,7 +140,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose }: AddRecip
     e.stopPropagation();
     setQuickAdd({
       recipeId: recipe.id,
-      date: new Date().toISOString().split('T')[0],
+      date: defaultDate || new Date().toISOString().split('T')[0],
       mealType: 'dinner',
       servings: recipe.servings,
     });

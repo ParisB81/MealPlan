@@ -22,10 +22,10 @@ export default function PreferencesPage() {
             Preference Profiles
           </h1>
         </div>
-        <Link to="/ai-meal-plan">
+        <Link to="/preferences/new">
           <Button variant="primary" className="bg-purple-600 hover:bg-purple-700">
             <Plus className="w-4 h-4 mr-1.5" />
-            New Plan
+            New Profile
           </Button>
         </Link>
       </div>
@@ -39,9 +39,9 @@ export default function PreferencesPage() {
           <div className="text-center py-8">
             <Sparkles className="w-10 h-10 text-purple-300 mx-auto mb-3" />
             <p className="text-text-secondary mb-3">No preference profiles yet</p>
-            <Link to="/ai-meal-plan">
+            <Link to="/preferences/new">
               <Button variant="primary" className="bg-purple-600 hover:bg-purple-700">
-                Create your first AI meal plan
+                Create your first preference profile
               </Button>
             </Link>
           </div>
@@ -73,7 +73,7 @@ export default function PreferencesPage() {
                 </p>
               </div>
               <div className="flex gap-1.5 shrink-0">
-                <Link to={`/ai-meal-plan`} state={{ loadPreferenceId: pref.id }}>
+                <Link to={`/preferences/${pref.id}`}>
                   <Button variant="ghost" size="sm">
                     <Edit className="w-4 h-4" />
                   </Button>

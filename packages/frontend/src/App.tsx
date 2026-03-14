@@ -34,6 +34,7 @@ import AIRecipeGeneratorPage from './pages/AIRecipeGeneratorPage';
 import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import PreferencesPage from './pages/PreferencesPage';
+import PreferenceEditPage from './pages/PreferenceEditPage';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -76,6 +77,8 @@ function AppContent() {
         <Route path="/ai-meal-plan" element={<AIMealPlanWizardPage />} />
         <Route path="/recipes/ai-generate" element={<AIRecipeGeneratorPage />} />
         <Route path="/preferences" element={<PreferencesPage />} />
+        <Route path="/preferences/new" element={<PreferenceEditPage />} />
+        <Route path="/preferences/:id" element={<PreferenceEditPage />} />
         <Route path="/developer" element={<DeveloperPage />} />
         <Route path="/developer/assets" element={<AssetsLibraryPage />} />
         <Route path="/developer/tags" element={<TagManagerPage />} />

@@ -136,7 +136,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── RecipePicker.tsx        # Modal to search/select existing recipe
 │   │   │   │   ├── MealPlanPicker.tsx      # Modal to select a meal plan
 │   │   │   │   ├── MealPlanCalendar.tsx    # Interactive monthly calendar for meal plan dates
-│   │   │   │   ├── AddRecipeModal.tsx      # Modal to add recipe to meal plan (from MealPlanDetailPage)
+│   │   │   │   ├── AddRecipeModal.tsx      # Modal to add recipe to meal plan (supports defaultDate prop for per-day add)
 │   │   │   │   ├── AddToMealPlanModal.tsx # Modal to add recipe to any meal plan (from RecipesPage/RecipeDetailPage)
 │   │   │   │   ├── AddToCollectionModal.tsx # Toggle-on-check modal to add/remove recipe from collections
 │   │   │   │   ├── IngredientAutocomplete.tsx  # Autocomplete for ingredient names
@@ -168,7 +168,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── AIRecipeGeneratorPage.tsx   # AI recipe generator wizard (4 steps)
 │   │   │   │   ├── CollectionsPage.tsx         # List/create recipe collections (active/deleted)
 │   │   │   │   ├── CollectionDetailPage.tsx    # View collection with recipe grid, add/remove/edit
-│   │   │   │   └── PreferencesPage.tsx         # User preferences page
+│   │   │   │   ├── PreferencesPage.tsx         # List saved preference profiles
+│   │   │   │   └── PreferenceEditPage.tsx     # Create/edit preference profile (standalone form)
 │   │   │   ├── contexts/
 │   │   │   │   ├── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
 │   │   │   │   └── ThemeContext.tsx        # Theme provider: predefined + custom themes, inline CSS injection
@@ -768,6 +769,9 @@ Located in `packages/frontend/src/components/ui/`:
 | `/collections/:id` | CollectionDetailPage | View collection with recipe grid, add/remove |
 | `/ai-meal-plan` | AIMealPlanWizardPage | AI-powered meal plan generation wizard (5 steps) |
 | `/recipes/ai-generate` | AIRecipeGeneratorPage | AI recipe generator wizard (4 steps) |
+| `/preferences` | PreferencesPage | List saved preference profiles with edit/delete |
+| `/preferences/new` | PreferenceEditPage | Create new preference profile |
+| `/preferences/:id` | PreferenceEditPage | Edit existing preference profile |
 | `/developer` | DeveloperPage | Developer tools hub |
 | `/developer/assets` | AssetsLibraryPage | UI component showcase with live demos |
 | `/developer/tags` | TagManagerPage | Drag-and-drop tag assignment for recipes |
@@ -1123,6 +1127,10 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Recipe Advanced Filters** - Collapsible filter panel on RecipesPage with 6 client-side filters: Max Calories (per serving), Min Protein (g), Max Carbs (g), Max Fat (g), Max Total Time (min), Max Prep Time (min). Uses `useMemo` to filter the already-fetched full recipe array (no backend changes). Recipes without nutrition/time data are excluded when the corresponding filter is active. Filter toggle button with `SlidersHorizontal` icon + active count badge; smooth CSS grid animation for panel expand/collapse; "Showing X of Y" counter + "Clear all filters" link. Responsive grid: 6 cols desktop, 3 tablet, 2 mobile. Theme-aware inputs with `bg-surface text-text-primary`.
 
+**Standalone Preference Profiles Page** - Dedicated page at `/preferences` for managing AI meal plan preference profiles independently of the wizard. PreferencesPage lists saved profiles with badges (recipe source, dietary restrictions, cuisines) and edit/delete actions. PreferenceEditPage (`/preferences/new` and `/preferences/:id`) provides full create/edit form with 5 collapsible sections: Meals & Servings (included meals, recipe source, default servings, meal variety), Taste & Diet (5 shared ai-shared selector components), Cooking Time Limits (weekday/weekend prep/cook), Nutrition Targets (calorie range, macro split with sum validation), Plan Defaults (duration presets, repeat weekly, quick meal max time). Reuses all existing backend CRUD endpoints and React Query hooks — no backend changes needed. "Preferences" card added to HomePage secondary utilities grid (expanded to 3 columns). `cookingFreeDays` field preserved but not editable (requires plan date range context for calendar picker).
+
+**Per-Day Add Meal Button** - Each day card on MealPlanDetailPage now has a `PlusCircle` button in the top-right corner. Clicking it opens the AddRecipeModal with that day's date pre-filled. AddRecipeModal gained an optional `defaultDate` prop that sets the initial date for both the detail form (step 2) and quick-add inline form (step 1). The header "Add Recipe" button continues to default to today's date.
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1313,5 +1321,5 @@ Items within each category are sorted **alphabetically** by ingredient name.
 ---
 
 **Last Updated:** 2026-03-14
-**Project Version:** 2.5.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters**)
+**Project Version:** 2.6.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button**)
