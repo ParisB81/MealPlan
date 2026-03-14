@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import StepConcept from '../components/ai-recipes/StepConcept';
 import StepRecipePreferences from '../components/ai-recipes/StepRecipePreferences';
@@ -47,7 +47,6 @@ const defaultInput: GenerateRecipeSuggestionsInput = {
 };
 
 export default function AIRecipeGeneratorPage() {
-  const navigate = useNavigate();
   const location = useLocation();
   const generateSuggestions = useGenerateRecipeSuggestions();
 

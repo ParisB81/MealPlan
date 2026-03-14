@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Button, Card } from '../ui';
-import { useRecipes } from '../../hooks/useRecipes';
 import RecipePicker from '../RecipePicker';
 import type { Recipe } from '../../types/recipe';
 import { ChevronRight, X } from 'lucide-react';
