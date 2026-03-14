@@ -1,11 +1,20 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecipes, useBulkDeleteRecipes, useRestoreRecipe, usePermanentDeleteRecipe } from '../hooks/useRecipes';
 import { useCollections } from '../hooks/useCollections';
 import { Button, Input, Badge, Alert } from '../components/ui';
-import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus } from 'lucide-react';
+import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus, SlidersHorizontal } from 'lucide-react';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 import AddToCollectionModal from '../components/AddToCollectionModal';
+
+interface RecipeFilters {
+  maxCalories: string;
+  minProtein: string;
+  maxTotalTime: string;
+  maxPrepTime: string;
+  maxCarbs: string;
+  maxFat: string;
+}
 
 type TabType = 'active' | 'deleted';
 
@@ -16,6 +25,10 @@ export default function RecipesPage() {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [addToMealPlan, setAddToMealPlan] = useState<{ id: string; title: string } | null>(null);
   const [addToCollection, setAddToCollection] = useState<{ id: string; title: string } | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState<RecipeFilters>({
+    maxCalories: '', minProtein: '', maxTotalTime: '', maxPrepTime: '', maxCarbs: '', maxFat: '',
+  });
   const navigate = useNavigate();
   const { data: collections } = useCollections('active');
 
@@ -31,7 +44,58 @@ export default function RecipesPage() {
   const restoreRecipe = useRestoreRecipe();
   const permanentDeleteRecipe = usePermanentDeleteRecipe();
 
-  const recipes = data?.recipes || [];
+  const allRecipes = data?.recipes || [];
+
+  // Count active filters
+  const activeFilterCount = Object.values(filters).filter(v => v !== '').length;
+
+  // Apply client-side filters to already-fetched recipes
+  const recipes = useMemo(() => {
+    if (activeFilterCount === 0) return allRecipes;
+
+    return allRecipes.filter((recipe) => {
+      const n = recipe.nutrition;
+      const maxCal = filters.maxCalories ? Number(filters.maxCalories) : null;
+      const minProt = filters.minProtein ? Number(filters.minProtein) : null;
+      const maxTime = filters.maxTotalTime ? Number(filters.maxTotalTime) : null;
+      const maxPrep = filters.maxPrepTime ? Number(filters.maxPrepTime) : null;
+      const maxCarbs = filters.maxCarbs ? Number(filters.maxCarbs) : null;
+      const maxFat = filters.maxFat ? Number(filters.maxFat) : null;
+
+      // Nutrition filters: skip recipes without nutrition data when a nutrition filter is active
+      if (maxCal !== null) {
+        if (!n?.calories || n.calories > maxCal) return false;
+      }
+      if (minProt !== null) {
+        if (!n?.protein || n.protein < minProt) return false;
+      }
+      if (maxCarbs !== null) {
+        if (!n?.carbs || n.carbs > maxCarbs) return false;
+      }
+      if (maxFat !== null) {
+        if (!n?.fat || n.fat > maxFat) return false;
+      }
+
+      // Time filters
+      if (maxTime !== null) {
+        const total = (recipe.prepTime ?? 0) + (recipe.cookTime ?? 0);
+        if (total === 0 || total > maxTime) return false;
+      }
+      if (maxPrep !== null) {
+        if (!recipe.prepTime || recipe.prepTime > maxPrep) return false;
+      }
+
+      return true;
+    });
+  }, [allRecipes, filters, activeFilterCount]);
+
+  const clearFilters = () => {
+    setFilters({ maxCalories: '', minProtein: '', maxTotalTime: '', maxPrepTime: '', maxCarbs: '', maxFat: '' });
+  };
+
+  const updateFilter = (key: keyof RecipeFilters, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab);
@@ -110,6 +174,7 @@ export default function RecipesPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Recipes</h1>
             <p className="text-text-secondary mt-1">
               {data?.pagination.total || 0} recipes total
+              {activeFilterCount > 0 && ` • ${recipes.length} matching filters`}
               {selectedRecipes.size > 0 && ` • ${selectedRecipes.size} selected`}
             </p>
           </div>
@@ -219,8 +284,8 @@ export default function RecipesPage() {
           </div>
         )}
 
-        {/* Search Bar + Collection Dropdown */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-3">
+        {/* Search Bar + Filters + Collection Dropdown */}
+        <div className="mb-4 flex flex-col sm:flex-row gap-3">
           <div className="flex-1">
             <Input
               type="text"
@@ -230,6 +295,22 @@ export default function RecipesPage() {
               className="px-4 py-3"
             />
           </div>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-colors min-h-[44px] ${
+              showFilters || activeFilterCount > 0
+                ? 'bg-accent text-white border-accent'
+                : 'bg-surface text-text-primary border-border-default hover:bg-hover-bg'
+            }`}
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            <span className="hidden sm:inline">Filters</span>
+            {activeFilterCount > 0 && (
+              <span className="bg-white text-accent text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
           {collections && collections.length > 0 && (
             <select
               className="px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm min-w-[180px]"
@@ -245,6 +326,100 @@ export default function RecipesPage() {
               ))}
             </select>
           )}
+        </div>
+
+        {/* Filter Panel */}
+        <div
+          className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+            showFilters ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="mb-6 bg-surface border border-border-default rounded-lg p-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Max Calories</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 500"
+                    value={filters.maxCalories}
+                    onChange={(e) => updateFilter('maxCalories', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Min Protein (g)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 10"
+                    value={filters.minProtein}
+                    onChange={(e) => updateFilter('minProtein', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Max Carbs (g)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 50"
+                    value={filters.maxCarbs}
+                    onChange={(e) => updateFilter('maxCarbs', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Max Fat (g)</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 20"
+                    value={filters.maxFat}
+                    onChange={(e) => updateFilter('maxFat', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Max Total Time</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 30 min"
+                    value={filters.maxTotalTime}
+                    onChange={(e) => updateFilter('maxTotalTime', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-text-secondary mb-1">Max Prep Time</label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 15 min"
+                    value={filters.maxPrepTime}
+                    onChange={(e) => updateFilter('maxPrepTime', e.target.value)}
+                    className="w-full px-3 py-2 rounded-lg border border-border-default bg-surface text-text-primary text-sm"
+                    min="0"
+                  />
+                </div>
+              </div>
+              {activeFilterCount > 0 && (
+                <div className="mt-3 flex items-center justify-between">
+                  <p className="text-sm text-text-secondary">
+                    Showing {recipes.length} of {allRecipes.length} recipes
+                  </p>
+                  <button
+                    onClick={clearFilters}
+                    className="text-sm text-accent hover:text-accent-dark font-medium flex items-center gap-1"
+                  >
+                    <X className="w-3 h-3" />
+                    Clear all filters
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Error State */}
