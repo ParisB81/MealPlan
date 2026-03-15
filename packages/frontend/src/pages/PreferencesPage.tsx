@@ -1,16 +1,53 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Card, Button, Badge } from '../components/ui';
 import { usePreferences, useDeletePreference } from '../hooks/useMealPlanPreferences';
-import { Sparkles, Trash2, Edit, Plus } from 'lucide-react';
+import type { MealPlanPreference } from '../types/mealPlanPreference';
+import { Sparkles, Trash2, Edit, Plus, Copy } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function PreferencesPage() {
   const { data: preferences = [], isLoading } = usePreferences();
   const deletePref = useDeletePreference();
+  const navigate = useNavigate();
 
   const handleDelete = (id: string, name: string) => {
     if (!confirm(`Delete preference profile "${name}"?`)) return;
     deletePref.mutate(id);
+  };
+
+  const handleDuplicate = (pref: MealPlanPreference) => {
+    navigate('/preferences/new', {
+      state: {
+        prefill: {
+          name: `${pref.name} (copy)`,
+          recipeSource: pref.recipeSource,
+          dietaryRestrictions: pref.dietaryRestrictions,
+          cuisinePreferences: pref.cuisinePreferences,
+          allergies: pref.allergies,
+          ingredientLikes: pref.ingredientLikes,
+          ingredientDislikes: pref.ingredientDislikes,
+          weekdayMaxPrep: pref.weekdayMaxPrep,
+          weekdayMaxCook: pref.weekdayMaxCook,
+          weekendMaxPrep: pref.weekendMaxPrep,
+          weekendMaxCook: pref.weekendMaxCook,
+          caloriesMin: pref.caloriesMin,
+          caloriesMax: pref.caloriesMax,
+          proteinPercent: pref.proteinPercent,
+          carbsPercent: pref.carbsPercent,
+          fatPercent: pref.fatPercent,
+          cookDaysPerWeek: pref.cookDaysPerWeek,
+          cookingFreeDays: pref.cookingFreeDays,
+          quickMealMaxMinutes: pref.quickMealMaxMinutes,
+          defaultServings: pref.defaultServings,
+          durationWeeks: pref.durationWeeks,
+          durationDays: pref.durationDays,
+          repeatWeekly: pref.repeatWeekly,
+          mealVariety: pref.mealVariety,
+          includedMeals: pref.includedMeals,
+          preferredMethods: pref.preferredMethods,
+        },
+      },
+    });
   };
 
   return (
@@ -73,8 +110,16 @@ export default function PreferencesPage() {
                 </p>
               </div>
               <div className="flex gap-1.5 shrink-0">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDuplicate(pref)}
+                  title="Duplicate profile"
+                >
+                  <Copy className="w-4 h-4" />
+                </Button>
                 <Link to={`/preferences/${pref.id}`}>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" title="Edit profile">
                     <Edit className="w-4 h-4" />
                   </Button>
                 </Link>
@@ -82,6 +127,7 @@ export default function PreferencesPage() {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleDelete(pref.id, pref.name)}
+                  title="Delete profile"
                 >
                   <Trash2 className="w-4 h-4 text-red-500" />
                 </Button>

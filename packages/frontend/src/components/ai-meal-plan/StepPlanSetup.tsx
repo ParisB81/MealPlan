@@ -62,6 +62,11 @@ export default function StepPlanSetup({
   const createPref = useCreatePreference();
   const updatePref = useUpdatePreference();
   const [selectedProfileId, setSelectedProfileId] = useState<string>(preferenceId || '');
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (key: string) => {
+    setOpenSection(prev => prev === key ? null : key);
+  };
 
   // Recipe picker for pinned meals
   const [showRecipePicker, setShowRecipePicker] = useState(false);
@@ -217,7 +222,7 @@ export default function StepPlanSetup({
       </div>
 
       {/* Section 1: Plan Dates & Duration */}
-      <Collapsible title="Plan Dates" subtitle={effectiveStartDate ? `${days}d from ${effectiveStartDate}` : ''} defaultOpen={true}>
+      <Collapsible title="Plan Dates" subtitle={effectiveStartDate ? `${days}d from ${effectiveStartDate}` : ''} open={openSection === 'dates'} onToggle={() => toggleSection('dates')}>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -275,7 +280,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 2: Meals & Servings */}
-      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.defaultServings || 4} servings`} defaultOpen={true}>
+      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.defaultServings || 4} servings`} open={openSection === 'meals'} onToggle={() => toggleSection('meals')}>
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-text-secondary mb-3 block">Meals to include</label>
@@ -367,7 +372,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 3: Pinned Meals */}
-      <Collapsible title="Pre-assign Meals" subtitle={pinnedMeals.length > 0 ? `${pinnedMeals.length} pinned` : 'optional'}>
+      <Collapsible title="Pre-assign Meals" subtitle={pinnedMeals.length > 0 ? `${pinnedMeals.length} pinned` : 'optional'} open={openSection === 'pins'} onToggle={() => toggleSection('pins')}>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <p className="text-xs text-text-muted">
@@ -465,7 +470,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 4: Cooking-Free Days */}
-      <Collapsible title="Cooking Schedule" subtitle={cookingFreeDaysList.length > 0 ? `${cookingFreeDaysList.length} free days` : 'optional'}>
+      <Collapsible title="Cooking Schedule" subtitle={cookingFreeDaysList.length > 0 ? `${cookingFreeDaysList.length} free days` : 'optional'} open={openSection === 'schedule'} onToggle={() => toggleSection('schedule')}>
         <div className="space-y-4">
           {effectiveStartDate && effectiveEndDate ? (
             <CookingFreeDaysPicker
@@ -495,7 +500,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 5: Cooking Time Limits */}
-      <Collapsible title="Cooking Time Limits" subtitle="optional">
+      <Collapsible title="Cooking Time Limits" subtitle="optional" open={openSection === 'time'} onToggle={() => toggleSection('time')}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <div className="text-xs font-medium text-text-muted mb-2 uppercase">Weekday</div>
@@ -555,7 +560,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 6: Nutrition Targets */}
-      <Collapsible title="Nutrition Targets" subtitle="optional">
+      <Collapsible title="Nutrition Targets" subtitle="optional" open={openSection === 'nutrition'} onToggle={() => toggleSection('nutrition')}>
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-text-secondary mb-3 block">Daily calorie target</label>

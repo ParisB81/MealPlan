@@ -1,4 +1,5 @@
-import { Button, Card } from '../ui';
+import { useState } from 'react';
+import { Button, Card, Collapsible } from '../ui';
 import { usePreferences } from '../../hooks/useMealPlanPreferences';
 import {
   DietaryRestrictionsSelector,
@@ -34,6 +35,11 @@ export default function StepRecipePreferences({
   isGenerating,
 }: Props) {
   const { data: savedProfiles = [] } = usePreferences();
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (key: string) => {
+    setOpenSection(prev => prev === key ? null : key);
+  };
 
   const handleLoadProfile = (profileId: string) => {
     if (!profileId) return;
@@ -64,7 +70,7 @@ export default function StepRecipePreferences({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Load from saved profile */}
       {savedProfiles.length > 0 && (
         <Card>
@@ -87,153 +93,187 @@ export default function StepRecipePreferences({
         </Card>
       )}
 
-      {/* Meal types */}
-      <Card>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
-          Meal types (optional)
-        </label>
-        <div className="flex flex-wrap gap-2">
-          {MEAL_TYPES.map(m => (
-            <button
-              key={m.value}
-              type="button"
-              onClick={() => toggleMealType(m.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                (input.mealTypes || []).includes(m.value)
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-surface-alt text-text-secondary hover:bg-emerald-100'
-              }`}
-            >
-              {m.label}
-            </button>
-          ))}
+      {/* Meal Types & Taste */}
+      <Collapsible
+        title="Meal Types & Taste"
+        subtitle={(input.mealTypes || []).length > 0 ? `${(input.mealTypes || []).length} selected` : 'optional'}
+        open={openSection === 'meals'}
+        onToggle={() => toggleSection('meals')}
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-3">
+              Meal types
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {MEAL_TYPES.map(m => (
+                <button
+                  key={m.value}
+                  type="button"
+                  onClick={() => toggleMealType(m.value)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    (input.mealTypes || []).includes(m.value)
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-surface-alt text-text-secondary hover:bg-emerald-100'
+                  }`}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              Specific taste or flavor profile
+            </label>
+            <textarea
+              value={input.specificTaste || ''}
+              onChange={(e) => onUpdate({ ...input, specificTaste: e.target.value })}
+              placeholder="e.g., smoky and spicy, light and refreshing, rich and creamy"
+              rows={2}
+              className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+              maxLength={500}
+            />
+          </div>
         </div>
-      </Card>
+      </Collapsible>
 
-      {/* Specific taste */}
-      <Card>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
-          Specific taste or flavor profile (optional)
-        </label>
-        <textarea
-          value={input.specificTaste || ''}
-          onChange={(e) => onUpdate({ ...input, specificTaste: e.target.value })}
-          placeholder="e.g., smoky and spicy, light and refreshing, rich and creamy"
-          rows={2}
-          className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
-          maxLength={500}
-        />
-      </Card>
-
-      {/* Dietary restrictions */}
-      <Card>
-        <DietaryRestrictionsSelector
-          selected={input.dietaryRestrictions || []}
-          onChange={(val) => onUpdate({ ...input, dietaryRestrictions: val })}
-        />
-      </Card>
-
-      {/* Allergies */}
-      <Card>
-        <AllergiesSelector
-          selected={input.allergies || []}
-          onChange={(val) => onUpdate({ ...input, allergies: val })}
-        />
-      </Card>
+      {/* Dietary Restrictions & Allergies */}
+      <Collapsible
+        title="Dietary Restrictions & Allergies"
+        subtitle="optional"
+        open={openSection === 'dietary'}
+        onToggle={() => toggleSection('dietary')}
+      >
+        <div className="space-y-6">
+          <DietaryRestrictionsSelector
+            selected={input.dietaryRestrictions || []}
+            onChange={(val) => onUpdate({ ...input, dietaryRestrictions: val })}
+          />
+          <AllergiesSelector
+            selected={input.allergies || []}
+            onChange={(val) => onUpdate({ ...input, allergies: val })}
+          />
+        </div>
+      </Collapsible>
 
       {/* Cuisines */}
-      <Card>
+      <Collapsible
+        title="Cuisine Preferences"
+        subtitle={(input.cuisinePreferences || []).length > 0 ? `${(input.cuisinePreferences || []).length} selected` : 'optional'}
+        open={openSection === 'cuisines'}
+        onToggle={() => toggleSection('cuisines')}
+      >
         <CuisineSelector
           selected={input.cuisinePreferences || []}
           onChange={(val) => onUpdate({ ...input, cuisinePreferences: val })}
         />
-      </Card>
+      </Collapsible>
 
       {/* Ingredient preferences */}
-      <Card>
+      <Collapsible
+        title="Ingredient Preferences"
+        subtitle="optional"
+        open={openSection === 'ingredients'}
+        onToggle={() => toggleSection('ingredients')}
+      >
         <IngredientPreferencesFields
           likes={input.ingredientLikes || ''}
           dislikes={input.ingredientDislikes || ''}
           onLikesChange={(val) => onUpdate({ ...input, ingredientLikes: val })}
           onDislikesChange={(val) => onUpdate({ ...input, ingredientDislikes: val })}
         />
-      </Card>
+      </Collapsible>
 
       {/* Cooking methods */}
-      <Card>
+      <Collapsible
+        title="Cooking Methods"
+        subtitle={(input.preferredMethods || []).length > 0 ? `${(input.preferredMethods || []).length} selected` : 'optional'}
+        open={openSection === 'methods'}
+        onToggle={() => toggleSection('methods')}
+      >
         <CookingMethodSelector
           selected={input.preferredMethods || []}
           onChange={(val) => onUpdate({ ...input, preferredMethods: val })}
         />
-      </Card>
+      </Collapsible>
 
-      {/* Calorie range */}
-      <Card>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
-          Calorie range per serving (optional)
-        </label>
-        <div className="flex items-center gap-3">
-          <input
-            type="number"
-            min="100"
-            max="2000"
-            step="50"
-            value={input.caloriesMin ?? ''}
-            onChange={(e) => onUpdate({ ...input, caloriesMin: e.target.value ? Number(e.target.value) : null })}
-            placeholder="Min"
-            className="w-28 border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
-          />
-          <span className="text-text-muted">to</span>
-          <input
-            type="number"
-            min="100"
-            max="2000"
-            step="50"
-            value={input.caloriesMax ?? ''}
-            onChange={(e) => onUpdate({ ...input, caloriesMax: e.target.value ? Number(e.target.value) : null })}
-            placeholder="Max"
-            className="w-28 border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
-          />
-          <span className="text-sm text-text-muted">kcal</span>
-        </div>
-      </Card>
-
-      {/* Time limits */}
-      <Card>
-        <label className="block text-sm font-medium text-text-secondary mb-3">
-          Time limits (optional)
-        </label>
-        <div className="grid grid-cols-2 gap-4">
+      {/* Calorie range & Time limits */}
+      <Collapsible
+        title="Calories & Time Limits"
+        subtitle="optional"
+        open={openSection === 'limits'}
+        onToggle={() => toggleSection('limits')}
+      >
+        <div className="space-y-4">
           <div>
-            <label className="text-xs text-text-muted mb-1 block">Max prep time (min)</label>
-            <input
-              type="number"
-              min="0"
-              value={input.maxPrepTime ?? ''}
-              onChange={(e) => onUpdate({ ...input, maxPrepTime: e.target.value ? Number(e.target.value) : null })}
-              placeholder="—"
-              className="w-full border border-border-default rounded px-2 py-1 text-sm text-text-primary bg-surface"
-            />
+            <label className="block text-sm font-medium text-text-secondary mb-3">
+              Calorie range per serving
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min="100"
+                max="2000"
+                step="50"
+                value={input.caloriesMin ?? ''}
+                onChange={(e) => onUpdate({ ...input, caloriesMin: e.target.value ? Number(e.target.value) : null })}
+                placeholder="Min"
+                className="w-28 border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+              />
+              <span className="text-text-muted">to</span>
+              <input
+                type="number"
+                min="100"
+                max="2000"
+                step="50"
+                value={input.caloriesMax ?? ''}
+                onChange={(e) => onUpdate({ ...input, caloriesMax: e.target.value ? Number(e.target.value) : null })}
+                placeholder="Max"
+                className="w-28 border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+              />
+              <span className="text-sm text-text-muted">kcal</span>
+            </div>
           </div>
           <div>
-            <label className="text-xs text-text-muted mb-1 block">Max cook time (min)</label>
-            <input
-              type="number"
-              min="0"
-              value={input.maxCookTime ?? ''}
-              onChange={(e) => onUpdate({ ...input, maxCookTime: e.target.value ? Number(e.target.value) : null })}
-              placeholder="—"
-              className="w-full border border-border-default rounded px-2 py-1 text-sm text-text-primary bg-surface"
-            />
+            <label className="block text-sm font-medium text-text-secondary mb-3">
+              Time limits
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs text-text-muted mb-1 block">Max prep time (min)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={input.maxPrepTime ?? ''}
+                  onChange={(e) => onUpdate({ ...input, maxPrepTime: e.target.value ? Number(e.target.value) : null })}
+                  placeholder="—"
+                  className="w-full border border-border-default rounded px-2 py-1 text-sm text-text-primary bg-surface"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-text-muted mb-1 block">Max cook time (min)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={input.maxCookTime ?? ''}
+                  onChange={(e) => onUpdate({ ...input, maxCookTime: e.target.value ? Number(e.target.value) : null })}
+                  placeholder="—"
+                  className="w-full border border-border-default rounded px-2 py-1 text-sm text-text-primary bg-surface"
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </Card>
+      </Collapsible>
 
       {/* Other remarks */}
-      <Card>
-        <label className="block text-sm font-medium text-text-secondary mb-2">
-          Any other remarks? (optional)
-        </label>
+      <Collapsible
+        title="Other Remarks"
+        subtitle="optional"
+        open={openSection === 'remarks'}
+        onToggle={() => toggleSection('remarks')}
+      >
         <textarea
           value={input.otherRemarks || ''}
           onChange={(e) => onUpdate({ ...input, otherRemarks: e.target.value })}
@@ -242,7 +282,7 @@ export default function StepRecipePreferences({
           className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
           maxLength={1000}
         />
-      </Card>
+      </Collapsible>
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-4">

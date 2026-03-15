@@ -1,4 +1,5 @@
-import { Button, Card } from '../ui';
+import { useState } from 'react';
+import { Button, Collapsible } from '../ui';
 import { useGenerateMealPlan } from '../../hooks/useAIMealPlan';
 import { useCreatePreference, useUpdatePreference } from '../../hooks/useMealPlanPreferences';
 import {
@@ -40,6 +41,11 @@ export default function StepTasteDiet({
   const generatePlan = useGenerateMealPlan();
   const createPref = useCreatePreference();
   const updatePref = useUpdatePreference();
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (key: string) => {
+    setOpenSection(prev => prev === key ? null : key);
+  };
 
   // Compute effective dates (same logic as StepPlanSetup)
   const days = preferences.durationDays || (preferences.durationWeeks || 1) * 7;
@@ -89,48 +95,66 @@ export default function StepTasteDiet({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Dietary restrictions */}
-      <Card>
-        <DietaryRestrictionsSelector
-          selected={preferences.dietaryRestrictions || []}
-          onChange={(val) => onUpdate({ ...preferences, dietaryRestrictions: val })}
-        />
-      </Card>
-
-      {/* Allergies */}
-      <Card>
-        <AllergiesSelector
-          selected={preferences.allergies || []}
-          onChange={(val) => onUpdate({ ...preferences, allergies: val })}
-        />
-      </Card>
+    <div className="space-y-4">
+      {/* Dietary Restrictions & Allergies */}
+      <Collapsible
+        title="Dietary Restrictions & Allergies"
+        subtitle="optional"
+        open={openSection === 'dietary'}
+        onToggle={() => toggleSection('dietary')}
+      >
+        <div className="space-y-6">
+          <DietaryRestrictionsSelector
+            selected={preferences.dietaryRestrictions || []}
+            onChange={(val) => onUpdate({ ...preferences, dietaryRestrictions: val })}
+          />
+          <AllergiesSelector
+            selected={preferences.allergies || []}
+            onChange={(val) => onUpdate({ ...preferences, allergies: val })}
+          />
+        </div>
+      </Collapsible>
 
       {/* Cuisine preferences */}
-      <Card>
+      <Collapsible
+        title="Cuisine Preferences"
+        subtitle={(preferences.cuisinePreferences || []).length > 0 ? `${(preferences.cuisinePreferences || []).length} selected` : 'optional'}
+        open={openSection === 'cuisines'}
+        onToggle={() => toggleSection('cuisines')}
+      >
         <CuisineSelector
           selected={preferences.cuisinePreferences || []}
           onChange={(val) => onUpdate({ ...preferences, cuisinePreferences: val })}
         />
-      </Card>
+      </Collapsible>
 
       {/* Ingredient preferences */}
-      <Card>
+      <Collapsible
+        title="Ingredient Preferences"
+        subtitle="optional"
+        open={openSection === 'ingredients'}
+        onToggle={() => toggleSection('ingredients')}
+      >
         <IngredientPreferencesFields
           likes={preferences.ingredientLikes || ''}
           dislikes={preferences.ingredientDislikes || ''}
           onLikesChange={(val) => onUpdate({ ...preferences, ingredientLikes: val })}
           onDislikesChange={(val) => onUpdate({ ...preferences, ingredientDislikes: val })}
         />
-      </Card>
+      </Collapsible>
 
       {/* Preferred cooking methods */}
-      <Card>
+      <Collapsible
+        title="Cooking Methods"
+        subtitle={(preferences.preferredMethods || []).length > 0 ? `${(preferences.preferredMethods || []).length} selected` : 'optional'}
+        open={openSection === 'methods'}
+        onToggle={() => toggleSection('methods')}
+      >
         <CookingMethodSelector
           selected={preferences.preferredMethods || []}
           onChange={(val) => onUpdate({ ...preferences, preferredMethods: val })}
         />
-      </Card>
+      </Collapsible>
 
       {/* Actions */}
       <div className="flex items-center justify-between pt-4">

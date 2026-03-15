@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMealPlans, useCreateMealPlan, useUpdateMealPlanStatus, useDeleteMealPlan } from '../hooks/useMealPlans';
 import { format, addDays } from 'date-fns';
 import type { MealPlanStatus } from '../types/mealPlan';
 import { Button, Card, Input, Modal } from '../components/ui';
+import { Sparkles } from 'lucide-react';
 
 export default function MealPlansPage() {
   const [activeTab, setActiveTab] = useState<MealPlanStatus>('active');
@@ -64,9 +65,18 @@ export default function MealPlansPage() {
               {mealPlans?.length || 0} meal plans
             </p>
           </div>
-          <Button onClick={() => setShowCreateForm(true)}>
-            + Create Meal Plan
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setShowCreateForm(true)}>
+              + Create Meal Plan
+            </Button>
+            <Link
+              to="/ai-meal-plan"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-purple-600 text-white hover:bg-purple-700"
+            >
+              <Sparkles className="w-4 h-4 mr-1" />
+              AI Generate
+            </Link>
+          </div>
         </div>
 
         {/* Tabs */}

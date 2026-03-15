@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { Button, Collapsible } from '../components/ui';
 import {
   usePreference,
+  usePreferences,
   useCreatePreference,
   useUpdatePreference,
 } from '../hooks/useMealPlanPreferences';
@@ -66,14 +67,23 @@ const DEFAULT_FORM: CreatePreferenceInput = {
 export default function PreferenceEditPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const isNew = !id;
 
+  const prefill = isNew ? (location.state as any)?.prefill as CreatePreferenceInput | undefined : undefined;
+
   const { data: existingPref, isLoading } = usePreference(isNew ? null : id!);
+  const { data: savedProfiles = [] } = usePreferences();
   const createPref = useCreatePreference();
   const updatePref = useUpdatePreference();
 
-  const [form, setForm] = useState<CreatePreferenceInput>({ ...DEFAULT_FORM });
-  const [hasLoaded, setHasLoaded] = useState(false);
+  const [form, setForm] = useState<CreatePreferenceInput>(prefill ? { ...DEFAULT_FORM, ...prefill } : { ...DEFAULT_FORM });
+  const [hasLoaded, setHasLoaded] = useState(!!prefill);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+
+  const toggleSection = (key: string) => {
+    setOpenSection(prev => prev === key ? null : key);
+  };
 
   useEffect(() => {
     if (existingPref && !hasLoaded) {
@@ -111,6 +121,40 @@ export default function PreferenceEditPage() {
 
   const update = (partial: Partial<CreatePreferenceInput>) => {
     setForm(prev => ({ ...prev, ...partial }));
+  };
+
+  const handleLoadFromProfile = (profileId: string) => {
+    if (!profileId) return;
+    const profile = savedProfiles.find(p => p.id === profileId);
+    if (!profile) return;
+    setForm({
+      name: form.name || `${profile.name} (copy)`,
+      recipeSource: profile.recipeSource,
+      dietaryRestrictions: profile.dietaryRestrictions,
+      cuisinePreferences: profile.cuisinePreferences,
+      allergies: profile.allergies,
+      ingredientLikes: profile.ingredientLikes,
+      ingredientDislikes: profile.ingredientDislikes,
+      weekdayMaxPrep: profile.weekdayMaxPrep,
+      weekdayMaxCook: profile.weekdayMaxCook,
+      weekendMaxPrep: profile.weekendMaxPrep,
+      weekendMaxCook: profile.weekendMaxCook,
+      caloriesMin: profile.caloriesMin,
+      caloriesMax: profile.caloriesMax,
+      proteinPercent: profile.proteinPercent,
+      carbsPercent: profile.carbsPercent,
+      fatPercent: profile.fatPercent,
+      cookDaysPerWeek: profile.cookDaysPerWeek,
+      cookingFreeDays: profile.cookingFreeDays,
+      quickMealMaxMinutes: profile.quickMealMaxMinutes,
+      defaultServings: profile.defaultServings,
+      durationWeeks: profile.durationWeeks,
+      durationDays: profile.durationDays,
+      repeatWeekly: profile.repeatWeekly,
+      mealVariety: profile.mealVariety,
+      includedMeals: profile.includedMeals,
+      preferredMethods: profile.preferredMethods,
+    });
   };
 
   const toggleMealType = (meal: MealType) => {
@@ -178,11 +222,34 @@ export default function PreferenceEditPage() {
           />
         </div>
 
+        {/* Start from existing profile (only when creating new) */}
+        {isNew && savedProfiles.length > 0 && (
+          <div className="bg-surface rounded-lg shadow px-6 py-4">
+            <label className="block text-sm font-medium text-text-secondary mb-2">
+              Start from existing profile (optional)
+            </label>
+            <select
+              onChange={(e) => handleLoadFromProfile(e.target.value)}
+              defaultValue=""
+              className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+            >
+              <option value="">Select a profile to copy from...</option>
+              {savedProfiles.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+            <p className="text-xs text-text-muted mt-1">
+              Loads all settings from the selected profile. You can then customize and save as a new profile.
+            </p>
+          </div>
+        )}
+
         {/* Section 1: Meals & Servings */}
         <Collapsible
           title="Meals & Servings"
           subtitle={`${(form.includedMeals || ['breakfast', 'lunch', 'dinner']).length} meals, ${form.defaultServings || 4} servings`}
-          defaultOpen={true}
+          open={openSection === 'meals'}
+          onToggle={() => toggleSection('meals')}
         >
           <div className="space-y-4">
             <div>
@@ -275,7 +342,7 @@ export default function PreferenceEditPage() {
         </Collapsible>
 
         {/* Section 2: Taste & Diet */}
-        <Collapsible title="Taste & Diet" defaultOpen={true}>
+        <Collapsible title="Taste & Diet" open={openSection === 'taste'} onToggle={() => toggleSection('taste')}>
           <div className="space-y-6">
             <DietaryRestrictionsSelector
               selected={form.dietaryRestrictions || []}
@@ -303,7 +370,7 @@ export default function PreferenceEditPage() {
         </Collapsible>
 
         {/* Section 3: Cooking Time Limits */}
-        <Collapsible title="Cooking Time Limits" subtitle="optional">
+        <Collapsible title="Cooking Time Limits" subtitle="optional" open={openSection === 'time'} onToggle={() => toggleSection('time')}>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="text-xs font-medium text-text-muted mb-2 uppercase">Weekday</div>
@@ -364,7 +431,7 @@ export default function PreferenceEditPage() {
         </Collapsible>
 
         {/* Section 4: Nutrition Targets */}
-        <Collapsible title="Nutrition Targets" subtitle="optional">
+        <Collapsible title="Nutrition Targets" subtitle="optional" open={openSection === 'nutrition'} onToggle={() => toggleSection('nutrition')}>
           <div className="space-y-4">
             <div>
               <label className="text-sm font-medium text-text-secondary mb-3 block">Daily calorie target</label>
@@ -443,7 +510,7 @@ export default function PreferenceEditPage() {
         </Collapsible>
 
         {/* Section 5: Plan Defaults */}
-        <Collapsible title="Plan Defaults" subtitle="optional">
+        <Collapsible title="Plan Defaults" subtitle="optional" open={openSection === 'defaults'} onToggle={() => toggleSection('defaults')}>
           <div className="space-y-4">
             <div>
               <label className="text-xs text-text-muted mb-1 block">Default duration (days)</label>
