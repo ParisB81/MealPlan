@@ -2,10 +2,14 @@ import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecipes, useBulkDeleteRecipes, useRestoreRecipe, usePermanentDeleteRecipe } from '../hooks/useRecipes';
 import { useCollections } from '../hooks/useCollections';
+import { useGenerateFromRecipes } from '../hooks/useShoppingLists';
+import { collectionsService } from '../services/collections.service';
+import toast from 'react-hot-toast';
 import { Button, Input, Badge, Alert } from '../components/ui';
-import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus, SlidersHorizontal } from 'lucide-react';
+import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus, ShoppingCart, SlidersHorizontal, Tag } from 'lucide-react';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 import AddToCollectionModal from '../components/AddToCollectionModal';
+import AddToShoppingListModal from '../components/AddToShoppingListModal';
 
 interface RecipeFilters {
   maxCalories: string;
@@ -25,6 +29,8 @@ export default function RecipesPage() {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [addToMealPlan, setAddToMealPlan] = useState<{ id: string; title: string } | null>(null);
   const [addToCollection, setAddToCollection] = useState<{ id: string; title: string } | null>(null);
+  const [addToShoppingList, setAddToShoppingList] = useState<{ id: string; title: string } | null>(null);
+  const [showBulkCollectionPicker, setShowBulkCollectionPicker] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<RecipeFilters>({
     maxCalories: '', minProtein: '', maxTotalTime: '', maxPrepTime: '', maxCarbs: '', maxFat: '',
@@ -41,6 +47,7 @@ export default function RecipesPage() {
     status: activeTab
   });
   const bulkDelete = useBulkDeleteRecipes();
+  const generateFromRecipes = useGenerateFromRecipes();
   const restoreRecipe = useRestoreRecipe();
   const permanentDeleteRecipe = usePermanentDeleteRecipe();
 
@@ -165,6 +172,32 @@ export default function RecipesPage() {
     }
   };
 
+  const handleBulkShoppingList = async () => {
+    if (selectedRecipes.size === 0) return;
+    try {
+      const list = await generateFromRecipes.mutateAsync({
+        recipeIds: Array.from(selectedRecipes),
+        name: `Shopping List (${selectedRecipes.size} recipes)`,
+      });
+      setSelectedRecipes(new Set());
+      setShowBulkActions(false);
+      navigate(`/shopping-lists/${list.id}`);
+    } catch { /* hook handles error toast */ }
+  };
+
+  const handleBulkAddToCollection = async (collectionId: string) => {
+    if (selectedRecipes.size === 0) return;
+    try {
+      const result = await collectionsService.addRecipes(collectionId, Array.from(selectedRecipes));
+      toast.success(`Added ${result.added} recipe(s) to collection`);
+      setShowBulkCollectionPicker(false);
+      setSelectedRecipes(new Set());
+      setShowBulkActions(false);
+    } catch {
+      toast.error('Failed to add recipes to collection');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
@@ -192,13 +225,19 @@ export default function RecipesPage() {
               <Sparkles className="w-4 h-4 mr-1" />
               AI Generate
             </Link>
+            <Link
+              to="/developer/tags"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-surface border border-border-default text-text-primary hover:bg-hover-bg"
+            >
+              <Tag className="w-4 h-4 mr-1" />
+              Manage Tags
+            </Link>
             {!showBulkActions && (
               <Button
-                variant="danger"
+                variant="secondary"
                 onClick={() => setShowBulkActions(true)}
               >
-                <Trash2 className="w-4 h-4 mr-1 inline" />
-                {activeTab === 'deleted' ? 'Select to Delete Forever' : 'Select to Delete'}
+                Bulk Actions
               </Button>
             )}
             <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
@@ -243,8 +282,8 @@ export default function RecipesPage() {
 
         {/* Bulk Selection Bar */}
         {showBulkActions && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
-            <div className="flex justify-between items-center">
+          <div className="mb-6 bg-surface-alt border border-border-default rounded-lg px-4 py-3">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div className="flex items-center gap-4">
                 <Button variant="ghost" size="sm" onClick={handleSelectAll}>
                   {selectedRecipes.size === recipes.length ? 'Deselect All' : 'Select All'}
@@ -253,9 +292,34 @@ export default function RecipesPage() {
                   {selectedRecipes.size} of {recipes.length} selected
                 </span>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                {activeTab === 'active' && (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => setShowBulkCollectionPicker(true)}
+                      disabled={selectedRecipes.size === 0}
+                    >
+                      <FolderPlus className="w-4 h-4 mr-1 inline" />
+                      Collection
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleBulkShoppingList}
+                      disabled={selectedRecipes.size === 0}
+                      loading={generateFromRecipes.isPending}
+                      className="!bg-hero-shopping hover:!opacity-90 !text-white !border-hero-shopping-border"
+                    >
+                      <ShoppingCart className="w-4 h-4 mr-1 inline" />
+                      Shopping List
+                    </Button>
+                  </>
+                )}
                 <Button
                   variant="danger"
+                  size="sm"
                   onClick={handleBulkDelete}
                   disabled={selectedRecipes.size === 0}
                   loading={bulkDelete.isPending}
@@ -264,8 +328,8 @@ export default function RecipesPage() {
                   {bulkDelete.isPending
                     ? 'Deleting...'
                     : activeTab === 'deleted'
-                      ? `Permanently Delete ${selectedRecipes.size} Recipe${selectedRecipes.size !== 1 ? 's' : ''}`
-                      : `Delete ${selectedRecipes.size} Recipe${selectedRecipes.size !== 1 ? 's' : ''}`
+                      ? `Perm. Delete (${selectedRecipes.size})`
+                      : `Delete (${selectedRecipes.size})`
                   }
                 </Button>
                 <Button
@@ -280,6 +344,36 @@ export default function RecipesPage() {
                   Cancel
                 </Button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Collection Picker Modal */}
+        {showBulkCollectionPicker && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowBulkCollectionPicker(false)}>
+            <div className="bg-surface rounded-lg shadow-xl max-w-sm w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">
+                Add {selectedRecipes.size} recipe(s) to collection
+              </h3>
+              <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
+                {collections && collections.length > 0 ? (
+                  collections.map((c) => (
+                    <button
+                      key={c.id}
+                      onClick={() => handleBulkAddToCollection(c.id)}
+                      className="w-full text-left px-4 py-3 rounded-lg border border-border-default hover:border-accent hover:bg-accent-light transition-colors"
+                    >
+                      <span className="font-medium text-text-primary">{c.name}</span>
+                      <span className="text-xs text-text-muted ml-2">({c.recipeCount} recipes)</span>
+                    </button>
+                  ))
+                ) : (
+                  <p className="text-text-muted text-sm">No collections. Create one first.</p>
+                )}
+              </div>
+              <Button variant="ghost" fullWidth onClick={() => setShowBulkCollectionPicker(false)}>
+                Cancel
+              </Button>
             </div>
           </div>
         )}
@@ -544,6 +638,19 @@ export default function RecipesPage() {
                         <FolderPlus className="w-4 h-4 mr-1 inline" />
                         Collection
                       </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        fullWidth
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAddToShoppingList({ id: recipe.id, title: recipe.title });
+                        }}
+                        className="!bg-hero-shopping hover:!opacity-90 !text-white !border-hero-shopping-border"
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-1 inline" />
+                        Shopping
+                      </Button>
                     </div>
                   )}
 
@@ -597,6 +704,16 @@ export default function RecipesPage() {
             recipeName={addToCollection.title}
             isOpen={true}
             onClose={() => setAddToCollection(null)}
+          />
+        )}
+
+        {/* Add to Shopping List Modal */}
+        {addToShoppingList && (
+          <AddToShoppingListModal
+            recipeId={addToShoppingList.id}
+            recipeName={addToShoppingList.title}
+            isOpen={true}
+            onClose={() => setAddToShoppingList(null)}
           />
         )}
       </div>

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { format, eachDayOfInterval, parseISO, isBefore, isEqual } from 'date-fns';
 import { useMealPlans, useMealPlan } from '../hooks/useMealPlans';
 import { useCookingPlan, useCreateCookingPlan } from '../hooks/useCookingPlans';
@@ -17,6 +17,7 @@ interface CookDaySchedule {
 
 export default function CookingPlanPage() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isViewMode = !!id;
 
@@ -81,6 +82,15 @@ export default function CookingPlanPage() {
       setHydrated(true);
     }
   }, [savedPlan, hydrated]);
+
+  // Pre-select meal plan from URL query param (e.g., /cooking-plan/new?planId=xxx)
+  useEffect(() => {
+    if (isViewMode || hydrated) return; // only in create mode
+    const planId = searchParams.get('planId');
+    if (planId && !selectedPlanIds.includes(planId)) {
+      setSelectedPlanIds([planId]);
+    }
+  }, [searchParams, isViewMode, hydrated]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Generate the cooking plan schedule
   const generateSchedule = useCallback(() => {

@@ -35,42 +35,38 @@ export default function ShoppingListsPage() {
   const generateSplitShoppingList = useGenerateSplitShoppingList();
   const navigate = useNavigate();
 
-  const handleCreateFromMealPlans = (mealPlanIds: string[], name?: string) => {
-    generateShoppingList.mutate(
-      { mealPlanIds, name },
-      {
-        onSuccess: () => {
-          setShowBuilder(false);
-        },
+  const handleCreateFromMealPlans = async (mealPlanIds: string[], name?: string) => {
+    try {
+      const list = await generateShoppingList.mutateAsync({ mealPlanIds, name });
+      setShowBuilder(false);
+      navigate(`/shopping-lists/${list.id}`);
+    } catch { /* hook handles error toast */ }
+  };
+
+  const handleCreateFromRecipes = async (input: CreateShoppingListFromRecipesInput) => {
+    try {
+      const list = await generateFromRecipes.mutateAsync(input);
+      setShowBuilder(false);
+      navigate(`/shopping-lists/${list.id}`);
+    } catch { /* hook handles error toast */ }
+  };
+
+  const handleCreateCustom = async (input: CreateCustomShoppingListInput) => {
+    try {
+      const list = await createCustomShoppingList.mutateAsync(input);
+      setShowBuilder(false);
+      navigate(`/shopping-lists/${list.id}`);
+    } catch { /* hook handles error toast */ }
+  };
+
+  const handleCreateSplit = async (mealPlanIds: string[], trips: ShoppingTrip[]) => {
+    try {
+      const lists = await generateSplitShoppingList.mutateAsync({ mealPlanIds, trips });
+      setShowBuilder(false);
+      if (lists.length > 0) {
+        navigate(`/shopping-lists/${lists[0].id}`);
       }
-    );
-  };
-
-  const handleCreateFromRecipes = (input: CreateShoppingListFromRecipesInput) => {
-    generateFromRecipes.mutate(input, {
-      onSuccess: () => {
-        setShowBuilder(false);
-      },
-    });
-  };
-
-  const handleCreateCustom = (input: CreateCustomShoppingListInput) => {
-    createCustomShoppingList.mutate(input, {
-      onSuccess: () => {
-        setShowBuilder(false);
-      },
-    });
-  };
-
-  const handleCreateSplit = (mealPlanIds: string[], trips: ShoppingTrip[]) => {
-    generateSplitShoppingList.mutate(
-      { mealPlanIds, trips },
-      {
-        onSuccess: () => {
-          setShowBuilder(false);
-        },
-      }
-    );
+    } catch { /* hook handles error toast */ }
   };
 
   const handleDelete = (id: string, listName?: string) => {

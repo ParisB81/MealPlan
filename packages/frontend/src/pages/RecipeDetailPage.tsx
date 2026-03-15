@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useRecipe, useDeleteRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 import { useCollectionsForRecipe } from '../hooks/useCollections';
-import { CalendarPlus, FolderPlus, ExternalLink } from 'lucide-react';
+import { CalendarPlus, FolderPlus, ShoppingCart, ExternalLink } from 'lucide-react';
 import { Badge } from '../components/ui';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 import AddToCollectionModal from '../components/AddToCollectionModal';
+import AddToShoppingListModal from '../components/AddToShoppingListModal';
 import ImageUpload from '../components/ImageUpload';
 
 export default function RecipeDetailPage() {
@@ -16,6 +17,7 @@ export default function RecipeDetailPage() {
   const updateRecipe = useUpdateRecipe();
   const [showAddToMealPlan, setShowAddToMealPlan] = useState(false);
   const [showAddToCollection, setShowAddToCollection] = useState(false);
+  const [showAddToShoppingList, setShowAddToShoppingList] = useState(false);
   const { data: collectionMemberships } = useCollectionsForRecipe(id);
 
   const handleImageUpload = (imageUrl: string) => {
@@ -108,6 +110,13 @@ export default function RecipeDetailPage() {
                 >
                   <FolderPlus className="w-4 h-4 mr-1" />
                   Collection
+                </button>
+                <button
+                  onClick={() => setShowAddToShoppingList(true)}
+                  className="inline-flex items-center px-4 py-2 bg-hero-shopping text-white rounded-lg hover:opacity-90"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-1" />
+                  Shopping List
                 </button>
                 <Link
                   to={`/recipes/${id}/edit`}
@@ -278,6 +287,16 @@ export default function RecipeDetailPage() {
             recipeName={recipe.title}
             isOpen={showAddToCollection}
             onClose={() => setShowAddToCollection(false)}
+          />
+        )}
+
+        {/* Add to Shopping List Modal */}
+        {recipe && (
+          <AddToShoppingListModal
+            recipeId={recipe.id}
+            recipeName={recipe.title}
+            isOpen={showAddToShoppingList}
+            onClose={() => setShowAddToShoppingList(false)}
           />
         )}
       </div>

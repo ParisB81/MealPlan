@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { ShoppingCart, ChevronDown, PlusCircle, ListPlus } from 'lucide-react';
+import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useMealPlan, useDeleteMealPlan, useMealPlanNutrition, useRemoveRecipeFromMealPlan, useUpdateMealPlanStatus } from '../hooks/useMealPlans';
@@ -9,6 +9,7 @@ import { useGenerateShoppingList, useShoppingLists, useAddFromMealPlan } from '.
 import { mealPlansService } from '../services/mealPlans.service';
 import AddRecipeModal from '../components/AddRecipeModal';
 import MealPlanCalendar from '../components/MealPlanCalendar';
+import WeekGridView from '../components/WeekGridView';
 import { Button, Card, Badge, Modal } from '../components/ui';
 import type { CopyState, MealType } from '../types/mealPlan';
 
@@ -29,6 +30,7 @@ export default function MealPlanDetailPage() {
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
   const [copyState, setCopyState] = useState<CopyState | null>(null);
   const [isPasting, setIsPasting] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'grid'>('cards');
   const queryClient = useQueryClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -102,7 +104,25 @@ export default function MealPlanDetailPage() {
     setShoppingDropdownOpen(false);
     generateShoppingList.mutate(
       { mealPlanIds: [id], name: `${mealPlan?.name || 'Meal Plan'} — Shopping List` },
-      { onSuccess: (list) => navigate(`/shopping-lists/${list.id}`) }
+      {
+        onSuccess: (list) => {
+          toast(
+            (t) => (
+              <span className="flex items-center gap-2">
+                Shopping list created!
+                <a
+                  href={`/shopping-lists/${list.id}`}
+                  onClick={(e) => { e.preventDefault(); toast.dismiss(t.id); navigate(`/shopping-lists/${list.id}`); }}
+                  className="font-semibold text-accent underline whitespace-nowrap"
+                >
+                  View list →
+                </a>
+              </span>
+            ),
+            { duration: 5000, icon: '✅' }
+          );
+        },
+      }
     );
   };
 
@@ -111,7 +131,25 @@ export default function MealPlanDetailPage() {
     setIsAddToListModalOpen(false);
     addFromMealPlan.mutate(
       { shoppingListId, mealPlanId: id },
-      { onSuccess: () => navigate(`/shopping-lists/${shoppingListId}`) }
+      {
+        onSuccess: () => {
+          toast(
+            (t) => (
+              <span className="flex items-center gap-2">
+                Ingredients added to list!
+                <a
+                  href={`/shopping-lists/${shoppingListId}`}
+                  onClick={(e) => { e.preventDefault(); toast.dismiss(t.id); navigate(`/shopping-lists/${shoppingListId}`); }}
+                  className="font-semibold text-accent underline whitespace-nowrap"
+                >
+                  View list →
+                </a>
+              </span>
+            ),
+            { duration: 5000, icon: '✅' }
+          );
+        },
+      }
     );
   };
 
@@ -275,6 +313,14 @@ export default function MealPlanDetailPage() {
                 Add Recipe
               </Button>
 
+              <Button
+                variant="secondary"
+                onClick={() => navigate(`/cooking-plan/new?planId=${id}`)}
+              >
+                <CookingPot size={16} className="mr-1.5" />
+                Cooking Plan
+              </Button>
+
               {/* Shopping List dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <Button
@@ -420,62 +466,107 @@ export default function MealPlanDetailPage() {
           </Card>
         )}
 
-        {/* Meals by Date */}
+        {/* View Mode Toggle + Meals */}
         {Object.keys(mealsByDate).length > 0 && (
-          <div className="space-y-6">
-            {Object.entries(mealsByDate).map(([dateKey, meals]) => (
-              <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300 bg-detail-mealplans border border-detail-mealplans-border">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-text-primary">
-                    {format(new Date(dateKey), 'EEEE, MMMM d')}
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
-                    className="p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors"
-                    title="Add meal to this day"
-                  >
-                    <PlusCircle size={20} />
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {meals.map((meal) => (
-                    <div
-                      key={meal.id}
-                      className="flex items-center justify-between p-4 bg-surface rounded-lg"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3">
-                          <Badge variant="blue" className="uppercase">
-                            {meal.mealType}
-                          </Badge>
-                          <Link
-                            to={`/recipes/${meal.recipe.id}`}
-                            className="text-lg font-medium text-text-primary hover:text-accent"
-                          >
-                            {meal.recipe.title}
-                          </Link>
-                        </div>
-                        <p className="text-sm text-text-secondary mt-1">
-                          {meal.servings} serving{meal.servings > 1 ? 's' : ''}
-                          {meal.notes && ` \u2022 ${meal.notes}`}
-                        </p>
-                      </div>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        onClick={() => handleRemoveRecipe(meal.id)}
-                        disabled={removeRecipe.isPending}
-                        className="ml-4 text-red-600 hover:text-red-700 no-underline hover:bg-red-50"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                </div>
+          <>
+            {/* View toggle */}
+            <div className="flex items-center justify-end gap-1 mb-4">
+              <button
+                type="button"
+                onClick={() => setViewMode('cards')}
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'cards'
+                    ? 'bg-accent text-white'
+                    : 'text-text-muted hover:bg-hover-bg hover:text-text-secondary'
+                }`}
+                title="Card view"
+              >
+                <LayoutList size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-2 rounded-lg transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-accent text-white'
+                    : 'text-text-muted hover:bg-hover-bg hover:text-text-secondary'
+                }`}
+                title="Week grid view"
+              >
+                <Grid3X3 size={18} />
+              </button>
+            </div>
+
+            {/* Grid View */}
+            {viewMode === 'grid' && (
+              <Card className="mb-6">
+                <WeekGridView
+                  mealsByDate={mealsByDate}
+                  startDate={mealPlan.startDate}
+                  endDate={mealPlan.endDate}
+                  onDateClick={handleDateClick}
+                />
               </Card>
-            ))}
-          </div>
+            )}
+
+            {/* Card View (existing day cards) */}
+            {viewMode === 'cards' && (
+              <div className="space-y-6">
+                {Object.entries(mealsByDate).map(([dateKey, meals]) => (
+                  <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300 bg-detail-mealplans border border-detail-mealplans-border">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-semibold text-text-primary">
+                        {format(new Date(dateKey), 'EEEE, MMMM d')}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
+                        className="p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors"
+                        title="Add meal to this day"
+                      >
+                        <PlusCircle size={20} />
+                      </button>
+                    </div>
+                    <div className="space-y-3">
+                      {meals.map((meal) => (
+                        <div
+                          key={meal.id}
+                          className="flex items-center justify-between p-4 bg-surface rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <Badge variant="blue" className="uppercase">
+                                {meal.mealType}
+                              </Badge>
+                              <Link
+                                to={`/recipes/${meal.recipe.id}`}
+                                className="text-lg font-medium text-text-primary hover:text-accent"
+                              >
+                                {meal.recipe.title}
+                              </Link>
+                            </div>
+                            <p className="text-sm text-text-secondary mt-1">
+                              {meal.servings} serving{meal.servings > 1 ? 's' : ''}
+                              {meal.notes && ` \u2022 ${meal.notes}`}
+                            </p>
+                          </div>
+                          <Button
+                            variant="link"
+                            size="sm"
+                            onClick={() => handleRemoveRecipe(meal.id)}
+                            disabled={removeRecipe.isPending}
+                            className="ml-4 text-red-600 hover:text-red-700 no-underline hover:bg-red-50"
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {/* Calendar */}

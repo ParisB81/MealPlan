@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { scraperService, ScrapedRecipeTemplate } from '../services/scraper.service';
 import { CreateRecipeInput } from '../types/recipe';
 import { Button, Card, TextArea, Alert } from '../components/ui';
-import { Upload, Download, Pencil } from 'lucide-react';
+import { Upload, Download, Pencil, Check } from 'lucide-react';
 
 type ImportStatus = 'idle' | 'loading' | 'success' | 'error' | 'stuck';
 
@@ -14,6 +14,10 @@ const MAX_URLS = 25;
 const MAX_PUPPETEER_URLS = 1; // Only 1 Puppeteer URL at a time (async job-based)
 const PUPPETEER_JOB_POLL_INTERVAL = 2000; // Poll every 2 seconds
 const PUPPETEER_JOB_TIMEOUT = 90000; // 90 second timeout
+
+// SessionStorage keys for persisting import state across navigation
+const SESSION_KEY_RESULTS = 'urlImportResults';
+const SESSION_KEY_IMPORTED = 'urlImportImported';
 
 interface SourceBox {
   label: string;
@@ -51,6 +55,7 @@ const SOURCES: SourceBox[] = [
 
 export default function UrlImportPage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Per-source URL lists
   const [sourceUrls, setSourceUrls] = useState<Record<string, string[]>>(
@@ -58,7 +63,20 @@ export default function UrlImportPage() {
   );
   const [status, setStatus] = useState<ImportStatus>('idle');
   const [progress, setProgress] = useState({ current: 0, total: 0 });
-  const [results, setResults] = useState<ScrapedRecipeTemplate[]>([]);
+  const [results, setResults] = useState<ScrapedRecipeTemplate[]>(() => {
+    const saved = sessionStorage.getItem(SESSION_KEY_RESULTS);
+    if (saved) {
+      try { return JSON.parse(saved); } catch { /* fall through */ }
+    }
+    return [];
+  });
+  const [importedIndices, setImportedIndices] = useState<Set<number>>(() => {
+    const saved = sessionStorage.getItem(SESSION_KEY_IMPORTED);
+    if (saved) {
+      try { return new Set(JSON.parse(saved)); } catch { /* fall through */ }
+    }
+    return new Set();
+  });
   const [error, setError] = useState<string | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState(0);
@@ -82,6 +100,30 @@ export default function UrlImportPage() {
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
+
+  // Handle return from RecipeFormPage after importing a recipe
+  useEffect(() => {
+    const importedIndex = (location.state as any)?.importedIndex;
+    if (importedIndex !== undefined && typeof importedIndex === 'number') {
+      setImportedIndices(prev => new Set([...prev, importedIndex]));
+      // Clear location state to prevent re-triggering on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  // Persist results to sessionStorage
+  useEffect(() => {
+    if (results.length > 0) {
+      sessionStorage.setItem(SESSION_KEY_RESULTS, JSON.stringify(results));
+    } else {
+      sessionStorage.removeItem(SESSION_KEY_RESULTS);
+    }
+  }, [results]);
+
+  // Persist imported indices to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem(SESSION_KEY_IMPORTED, JSON.stringify([...importedIndices]));
+  }, [importedIndices]);
 
   // Handle Excel file upload for a specific source
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, hostname: string) => {
@@ -758,6 +800,14 @@ export default function UrlImportPage() {
     };
   };
 
+  const handleClearSession = () => {
+    sessionStorage.removeItem(SESSION_KEY_RESULTS);
+    sessionStorage.removeItem(SESSION_KEY_IMPORTED);
+    setResults([]);
+    setImportedIndices(new Set());
+    setStatus('idle');
+  };
+
   const handleClearSource = (hostname: string) => {
     setSourceUrls((prev) => ({ ...prev, [hostname]: [] }));
     setResults([]);
@@ -1051,10 +1101,15 @@ export default function UrlImportPage() {
           <Card>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold">Results</h2>
-              <Button onClick={handleDownload} variant="ghost" size="sm">
-                <Download className="w-4 h-4 mr-1" />
-                Download Excel
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button onClick={handleDownload} variant="ghost" size="sm">
+                  <Download className="w-4 h-4 mr-1" />
+                  Download Excel
+                </Button>
+                <Button onClick={handleClearSession} variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                  Clear session
+                </Button>
+              </div>
             </div>
             <Alert variant="info" className="mb-4">
               Review each recipe before importing — scraped data often needs corrections to tags, ingredients, and units.
@@ -1068,7 +1123,9 @@ export default function UrlImportPage() {
               </div>
               <div className="bg-green-50 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-green-600">{successCount}</div>
-                <div className="text-sm text-green-700">Successful</div>
+                <div className="text-sm text-green-700">
+                  Successful{importedIndices.size > 0 && ` (${importedIndices.size} imported)`}
+                </div>
               </div>
               <div className="bg-red-50 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold text-red-600">{failedCount}</div>
@@ -1078,49 +1135,59 @@ export default function UrlImportPage() {
 
             {/* Recipe List */}
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {results.map((recipe, index) => (
-                <div
-                  key={index}
-                  className={`p-4 rounded-lg border ${
-                    recipe.Error
-                      ? 'bg-red-50 border-red-200'
-                      : 'bg-green-50 border-green-200'
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                      <h3 className="font-medium">
-                        {recipe.Title || 'Failed to scrape'}
-                      </h3>
-                      <p className="text-sm text-text-secondary truncate">
-                        {recipe.SourceUrl}
-                      </p>
-                    </div>
-                    {recipe.Error ? (
-                      <span className="text-sm text-red-600 flex-shrink-0">{recipe.Error}</span>
-                    ) : (
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        <span className="text-sm text-green-600 hidden sm:inline">
-                          {recipe.Servings} servings | {recipe.Ingredients.split(';').length} ingredients
-                        </span>
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => {
-                            const recipeInput = convertToRecipeInput(recipe);
-                            if (recipeInput) {
-                              navigate('/recipes/new', { state: { prefill: recipeInput } });
-                            }
-                          }}
-                        >
-                          <Pencil className="w-3.5 h-3.5 mr-1" />
-                          Review & Import
-                        </Button>
+              {results.map((recipe, index) => {
+                const isImported = importedIndices.has(index);
+                return (
+                  <div
+                    key={index}
+                    className={`p-4 rounded-lg border ${
+                      recipe.Error
+                        ? 'bg-red-50 border-red-200'
+                        : isImported
+                          ? 'bg-emerald-50 border-emerald-300 opacity-60'
+                          : 'bg-green-50 border-green-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-medium">
+                          {recipe.Title || 'Failed to scrape'}
+                        </h3>
+                        <p className="text-sm text-text-secondary truncate">
+                          {recipe.SourceUrl}
+                        </p>
                       </div>
-                    )}
+                      {recipe.Error ? (
+                        <span className="text-sm text-red-600 flex-shrink-0">{recipe.Error}</span>
+                      ) : isImported ? (
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Check className="w-5 h-5 text-emerald-600" />
+                          <span className="text-sm font-medium text-emerald-600">Imported</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          <span className="text-sm text-green-600 hidden sm:inline">
+                            {recipe.Servings} servings | {recipe.Ingredients.split(';').length} ingredients
+                          </span>
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => {
+                              const recipeInput = convertToRecipeInput(recipe);
+                              if (recipeInput) {
+                                navigate('/recipes/new', { state: { prefill: recipeInput, source: 'urlImport', importIndex: index } });
+                              }
+                            }}
+                          >
+                            <Pencil className="w-3.5 h-3.5 mr-1" />
+                            Review & Import
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </Card>
         )}

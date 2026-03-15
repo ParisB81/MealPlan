@@ -71,10 +71,10 @@ export default function TagManagerPage() {
     <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
         <Link
-          to="/developer"
+          to="/recipes"
           className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
-          ← Back to Developer Tools
+          ← Back to Recipes
         </Link>
 
         <header className="text-center mb-8">

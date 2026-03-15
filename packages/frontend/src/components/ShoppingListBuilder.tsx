@@ -3,6 +3,7 @@ import { useMealPlans } from '../hooks/useMealPlans';
 import { useRecipes } from '../hooks/useRecipes';
 import { useIngredients } from '../hooks/useIngredients';
 import UnitAutocomplete from './UnitAutocomplete';
+import { TAG_CATEGORIES } from '../data/tagDefinitions';
 import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput, ShoppingTrip } from '../types/shoppingList';
 import { addDays, format, parseISO, differenceInDays } from 'date-fns';
 
@@ -36,6 +37,7 @@ export default function ShoppingListBuilder({
   const [customIngredients, setCustomIngredients] = useState<AddItemToListInput[]>([]);
   const [listName, setListName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [recipeTagFilter, setRecipeTagFilter] = useState('');
   const [splitMode, setSplitMode] = useState<SplitMode>('single');
   const [tripFrequency, setTripFrequency] = useState(3);
 
@@ -161,6 +163,7 @@ export default function ShoppingListBuilder({
     setCustomIngredients([]);
     setListName('');
     setSearchQuery('');
+    setRecipeTagFilter('');
     setIngredientSearch('');
     setIngredientCategory('');
     setSplitMode('single');
@@ -172,9 +175,13 @@ export default function ShoppingListBuilder({
     onClose();
   };
 
-  const filteredRecipes = recipes.filter(recipe =>
-    recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRecipes = recipes.filter(recipe => {
+    const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTag = recipeTagFilter
+      ? recipe.tags.some(t => t.toLowerCase() === recipeTagFilter.toLowerCase())
+      : true;
+    return matchesSearch && matchesTag;
+  });
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -213,6 +220,11 @@ export default function ShoppingListBuilder({
             }`}
           >
             Recipes
+            {selectedRecipeIds.length > 0 && (
+              <span className="ml-1 bg-accent text-white text-xs rounded-full px-1.5 py-0.5">
+                {selectedRecipeIds.length}
+              </span>
+            )}
           </button>
           <button
             onClick={() => setMode('custom')}
@@ -383,7 +395,7 @@ export default function ShoppingListBuilder({
             </div>
 
             {/* Search */}
-            <div className="mb-4">
+            <div className="mb-3">
               <input
                 type="text"
                 value={searchQuery}
@@ -391,6 +403,52 @@ export default function ShoppingListBuilder({
                 placeholder="Search recipes..."
                 className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
               />
+            </div>
+
+            {/* Tag Filter */}
+            <div className="mb-3">
+              <select
+                value={recipeTagFilter}
+                onChange={(e) => setRecipeTagFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm"
+              >
+                <option value="">All tags</option>
+                {TAG_CATEGORIES.map((cat) => (
+                  <optgroup key={cat.name} label={cat.name}>
+                    {cat.tags.map((tag) => (
+                      <option key={tag} value={tag}>{tag}</option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            {/* Quick Selection Actions */}
+            <div className="mb-3 flex items-center justify-between text-sm">
+              <span className="text-text-muted">
+                {filteredRecipes.length} recipe{filteredRecipes.length !== 1 ? 's' : ''} shown
+              </span>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const shown = filteredRecipes.map(r => r.id);
+                    setSelectedRecipeIds(prev => [...new Set([...prev, ...shown])]);
+                  }}
+                  className="text-accent hover:text-accent-hover font-medium"
+                >
+                  Select all shown
+                </button>
+                {selectedRecipeIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedRecipeIds([])}
+                    className="text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Clear ({selectedRecipeIds.length})
+                  </button>
+                )}
+              </div>
             </div>
 
             {filteredRecipes.length === 0 ? (

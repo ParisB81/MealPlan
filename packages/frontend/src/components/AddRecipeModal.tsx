@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useRecipes } from '../hooks/useRecipes';
 import { useAddRecipeToMealPlan } from '../hooks/useMealPlans';
 import type { Recipe } from '../types/recipe';
 import type { AddRecipeToMealPlanInput } from '../types/mealPlan';
 import { Modal, Input, TextArea, Select, Button } from './ui';
-import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { getRecipeImageUrl } from '../utils/recipeImage';
 
 /** Shift a YYYY-MM-DD string by ±1 day */
@@ -87,6 +88,11 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
   // Quick-add inline form state (Step 1)
   const [quickAdd, setQuickAdd] = useState<QuickAddState | null>(null);
 
+  // Keep-open toggle: when enabled, modal stays open after adding a recipe
+  const [keepOpen, setKeepOpen] = useState(false);
+  // Track total added count for user feedback
+  const [addedCount, setAddedCount] = useState(0);
+
   const hasComma = searchTerm.includes(',');
   const { data, isLoading } = useRecipes({
     search: !hasComma && searchTerm ? searchTerm : undefined,
@@ -95,7 +101,13 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
   const recipes = data?.recipes || [];
 
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen) {
+      // When opening, apply defaultDate if provided
+      if (defaultDate) {
+        setDate(defaultDate);
+      }
+    } else {
+      // When closing, reset all state
       setStep('browse');
       setSearchTerm('');
       setSelectedRecipe(null);
@@ -104,8 +116,20 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       setServings(2);
       setNotes('');
       setQuickAdd(null);
+      setAddedCount(0);
     }
   }, [isOpen, defaultDate]);
+
+  /** Reset to browse step for the next add — preserves mealType, advances date by 1 day */
+  const resetForNextAdd = (addedDate: string) => {
+    setStep('browse');
+    setSelectedRecipe(null);
+    setNotes('');
+    setQuickAdd(null);
+    setDate(shiftDate(addedDate, 1));
+    setAddedCount((c) => c + 1);
+    toast.success('Recipe added! Pick another');
+  };
 
   const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe);
@@ -132,7 +156,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
 
     addRecipe.mutate(
       { mealPlanId, input },
-      { onSuccess: () => onClose() }
+      { onSuccess: () => keepOpen ? resetForNextAdd(date) : onClose() }
     );
   };
 
@@ -159,7 +183,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
 
     addRecipe.mutate(
       { mealPlanId, input },
-      { onSuccess: () => onClose() }
+      { onSuccess: () => keepOpen ? resetForNextAdd(quickAdd.date) : onClose() }
     );
   };
 
@@ -174,9 +198,31 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       title={step === 'browse' ? 'Add Recipe to Meal Plan' : 'Recipe Details'}
       size="xl"
       footer={
-        <Button variant="ghost" fullWidth onClick={onClose}>
-          Cancel
-        </Button>
+        <div className="flex flex-col gap-3 w-full">
+          <label className="flex items-center gap-2 cursor-pointer justify-center select-none">
+            <div
+              role="checkbox"
+              aria-checked={keepOpen}
+              tabIndex={0}
+              onClick={() => setKeepOpen(!keepOpen)}
+              onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); setKeepOpen(!keepOpen); } }}
+              className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                keepOpen ? 'bg-accent border-accent' : 'border-border-strong bg-surface'
+              }`}
+            >
+              {keepOpen && <Check size={14} className="text-white" />}
+            </div>
+            <span className="text-sm text-text-secondary">
+              Keep open to add more
+              {addedCount > 0 && (
+                <span className="text-accent font-medium ml-1">({addedCount} added)</span>
+              )}
+            </span>
+          </label>
+          <Button variant="ghost" fullWidth onClick={onClose}>
+            {addedCount > 0 ? 'Done' : 'Cancel'}
+          </Button>
+        </div>
       }
     >
       {step === 'browse' ? (

@@ -9,6 +9,7 @@ import UnitAutocomplete from '../components/UnitAutocomplete';
 import TagAutocomplete from '../components/TagAutocomplete';
 import { getCategoryForTag } from '../data/tagDefinitions';
 import { Button, Card, Input, TextArea, Badge, Alert } from '../components/ui';
+import toast from 'react-hot-toast';
 
 /**
  * Converts a Zod error path like "ingredients.0.unit" into a human-readable label
@@ -112,6 +113,10 @@ export default function RecipeFormPage() {
   // Store returnTo info from location state (for AI wizard round-trip)
   const [returnTo] = useState(() => location.state?.returnTo as string | undefined);
   const [returnTempKey] = useState(() => location.state?.tempKey as string | undefined);
+
+  // Store source info from location state (for URL import round-trip)
+  const [importSource] = useState(() => location.state?.source as string | undefined);
+  const [importIndex] = useState(() => location.state?.importIndex as number | undefined);
 
   // Prefill form from URL import or AI wizard (via React Router location state)
   useEffect(() => {
@@ -239,6 +244,12 @@ export default function RecipeFormPage() {
                 createdRecipeId: data.id,
                 tempKey: returnTempKey,
               },
+            });
+          } else if (importSource === 'urlImport') {
+            // Navigate back to URL import page with imported index
+            toast.success('Recipe saved! Returning to import page...');
+            navigate('/recipes/import-urls', {
+              state: { importedIndex: importIndex },
             });
           } else {
             navigate(`/recipes/${data.id}`);
