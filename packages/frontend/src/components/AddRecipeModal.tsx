@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useRecipes } from '../hooks/useRecipes';
 import { useAddRecipeToMealPlan } from '../hooks/useMealPlans';
+import { useCollections, useCollection } from '../hooks/useCollections';
 import type { Recipe } from '../types/recipe';
 import type { AddRecipeToMealPlanInput } from '../types/mealPlan';
 import { Modal, Input, TextArea, Select, Button } from './ui';
-import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight, Check, SlidersHorizontal } from 'lucide-react';
 import { getRecipeImageUrl } from '../utils/recipeImage';
 
 /** Shift a YYYY-MM-DD string by ±1 day */
@@ -93,12 +94,81 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
   // Track total added count for user feedback
   const [addedCount, setAddedCount] = useState(0);
 
+  // Collection filter
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>('');
+  // Advanced filters
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    maxCalories: '', minProtein: '', maxCarbs: '',
+    maxFat: '', maxTotalTime: '', maxPrepTime: '',
+  });
+
   const hasComma = searchTerm.includes(',');
   const { data, isLoading } = useRecipes({
     search: !hasComma && searchTerm ? searchTerm : undefined,
     tags: hasComma ? searchTerm : undefined,
   });
   const recipes = data?.recipes || [];
+
+  // Collection data for dropdown + filtering
+  const { data: collections } = useCollections('active');
+  const { data: selectedCollection } = useCollection(selectedCollectionId || undefined);
+
+  // Build Set of recipe IDs in the selected collection for fast lookup
+  const collectionRecipeIds = useMemo(() => {
+    if (!selectedCollectionId || !selectedCollection) return null;
+    return new Set(selectedCollection.recipes.map((r) => r.id));
+  }, [selectedCollectionId, selectedCollection]);
+
+  // Count active advanced filters
+  const activeFilterCount = Object.values(filters).filter(v => v !== '').length;
+
+  // Apply all filters: collection → nutrition → time
+  const filteredRecipes = useMemo(() => {
+    let result = recipes;
+
+    // 1. Collection filter
+    if (collectionRecipeIds) {
+      result = result.filter(r => collectionRecipeIds.has(r.id));
+    }
+
+    // 2. Nutrition + time filters (same logic as RecipesPage)
+    if (activeFilterCount > 0) {
+      result = result.filter((recipe) => {
+        const n = recipe.nutrition;
+        const maxCal = filters.maxCalories ? Number(filters.maxCalories) : null;
+        const minProt = filters.minProtein ? Number(filters.minProtein) : null;
+        const maxCarbs = filters.maxCarbs ? Number(filters.maxCarbs) : null;
+        const maxFat = filters.maxFat ? Number(filters.maxFat) : null;
+        const maxTime = filters.maxTotalTime ? Number(filters.maxTotalTime) : null;
+        const maxPrep = filters.maxPrepTime ? Number(filters.maxPrepTime) : null;
+
+        if (maxCal !== null && (!n?.calories || n.calories > maxCal)) return false;
+        if (minProt !== null && (!n?.protein || n.protein < minProt)) return false;
+        if (maxCarbs !== null && (!n?.carbs || n.carbs > maxCarbs)) return false;
+        if (maxFat !== null && (!n?.fat || n.fat > maxFat)) return false;
+        if (maxTime !== null) {
+          const total = (recipe.prepTime ?? 0) + (recipe.cookTime ?? 0);
+          if (total === 0 || total > maxTime) return false;
+        }
+        if (maxPrep !== null && (!recipe.prepTime || recipe.prepTime > maxPrep)) return false;
+
+        return true;
+      });
+    }
+
+    return result;
+  }, [recipes, collectionRecipeIds, filters, activeFilterCount]);
+
+  const hasAnyFilter = activeFilterCount > 0 || !!selectedCollectionId;
+
+  const clearFilters = () => {
+    setFilters({ maxCalories: '', minProtein: '', maxCarbs: '', maxFat: '', maxTotalTime: '', maxPrepTime: '' });
+  };
+
+  const updateFilter = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -117,6 +187,10 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       setNotes('');
       setQuickAdd(null);
       setAddedCount(0);
+      // Reset collection & filter state
+      setSelectedCollectionId('');
+      setShowFilters(false);
+      setFilters({ maxCalories: '', minProtein: '', maxCarbs: '', maxFat: '', maxTotalTime: '', maxPrepTime: '' });
     }
   }, [isOpen, defaultDate]);
 
@@ -235,15 +309,148 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
+          {/* Collection dropdown + Filter toggle */}
+          <div className="flex gap-2">
+            {collections && collections.length > 0 && (
+              <select
+                value={selectedCollectionId}
+                onChange={(e) => setSelectedCollectionId(e.target.value)}
+                className="flex-1 min-w-0 px-3 py-2 rounded-lg border border-border-strong bg-surface text-text-primary text-sm"
+              >
+                <option value="">All Recipes</option>
+                {collections.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name} ({c.recipeCount})
+                  </option>
+                ))}
+              </select>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowFilters(!showFilters)}
+              className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium transition-colors whitespace-nowrap ${
+                showFilters || activeFilterCount > 0
+                  ? 'bg-accent text-white border-accent'
+                  : 'bg-surface text-text-primary border-border-strong hover:bg-hover-bg'
+              }`}
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="hidden sm:inline">Filters</span>
+              {activeFilterCount > 0 && (
+                <span className="bg-white text-accent text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Collapsible filter panel */}
+          <div
+            className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+              showFilters ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+            }`}
+          >
+            <div className="overflow-hidden">
+              <div className="bg-surface-alt border border-border-default rounded-lg p-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Max Calories</label>
+                    <input
+                      type="number" placeholder="e.g. 500"
+                      value={filters.maxCalories}
+                      onChange={(e) => updateFilter('maxCalories', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Min Protein (g)</label>
+                    <input
+                      type="number" placeholder="e.g. 10"
+                      value={filters.minProtein}
+                      onChange={(e) => updateFilter('minProtein', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Max Carbs (g)</label>
+                    <input
+                      type="number" placeholder="e.g. 50"
+                      value={filters.maxCarbs}
+                      onChange={(e) => updateFilter('maxCarbs', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Max Fat (g)</label>
+                    <input
+                      type="number" placeholder="e.g. 20"
+                      value={filters.maxFat}
+                      onChange={(e) => updateFilter('maxFat', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Max Total Time</label>
+                    <input
+                      type="number" placeholder="min"
+                      value={filters.maxTotalTime}
+                      onChange={(e) => updateFilter('maxTotalTime', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-text-secondary mb-1">Max Prep Time</label>
+                    <input
+                      type="number" placeholder="min"
+                      value={filters.maxPrepTime}
+                      onChange={(e) => updateFilter('maxPrepTime', e.target.value)}
+                      className="w-full px-2 py-1.5 rounded border border-border-default bg-surface text-text-primary text-sm"
+                      min="0"
+                    />
+                  </div>
+                </div>
+                {activeFilterCount > 0 && (
+                  <div className="mt-2 flex items-center justify-end">
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="text-xs text-accent hover:text-accent-dark font-medium flex items-center gap-1"
+                    >
+                      <X size={12} />
+                      Clear all
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Result counter when any filter is active */}
+          {hasAnyFilter && (
+            <p className="text-xs text-text-muted">
+              Showing {filteredRecipes.length} of {recipes.length} recipes
+              {selectedCollectionId && selectedCollection && (
+                <span> in <span className="font-medium text-text-secondary">{selectedCollection.name}</span></span>
+              )}
+            </p>
+          )}
+
           {isLoading ? (
             <div className="text-center py-12 text-text-muted">Loading recipes...</div>
-          ) : recipes.length === 0 ? (
+          ) : filteredRecipes.length === 0 ? (
             <div className="text-center py-12 text-text-muted">
-              {searchTerm ? 'No recipes found matching your search.' : 'No recipes available.'}
+              {searchTerm || hasAnyFilter
+                ? 'No recipes found matching your criteria.'
+                : 'No recipes available.'}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {recipes.map((recipe) => {
+              {filteredRecipes.map((recipe) => {
                 const time = (recipe.prepTime || 0) + (recipe.cookTime || 0);
                 const isQuickAdding = quickAdd?.recipeId === recipe.id;
                 return (
