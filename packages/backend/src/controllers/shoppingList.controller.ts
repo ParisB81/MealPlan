@@ -31,6 +31,30 @@ export class ShoppingListController {
     });
   }
 
+  // Generate split shopping lists by date range trips
+  async generateSplit(req: Request, res: Response) {
+    const { mealPlanIds, trips } = req.body;
+
+    if (!Array.isArray(mealPlanIds) || mealPlanIds.length === 0) {
+      throw new AppError(400, 'mealPlanIds must be a non-empty array');
+    }
+    if (!Array.isArray(trips) || trips.length === 0) {
+      throw new AppError(400, 'trips must be a non-empty array');
+    }
+    for (const trip of trips) {
+      if (!trip.name || !trip.startDate || !trip.endDate) {
+        throw new AppError(400, 'Each trip must have name, startDate, and endDate');
+      }
+    }
+
+    const shoppingLists = await shoppingListService.generateSplitFromMealPlans(mealPlanIds, trips);
+
+    res.json({
+      status: 'success',
+      data: shoppingLists,
+    });
+  }
+
   // Get single shopping list by ID
   async getById(req: Request, res: Response) {
     const { id } = req.params;

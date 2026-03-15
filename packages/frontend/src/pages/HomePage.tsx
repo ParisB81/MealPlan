@@ -70,6 +70,17 @@ export default function HomePage() {
             </p>
           </Card>
         </Link>
+
+        <Link to="/preferences">
+          <Card hoverable className="bg-gradient-to-r from-amber-600 to-orange-600 border border-amber-500">
+            <h2 className="text-2xl font-semibold text-white mb-2">
+              Preferences
+            </h2>
+            <p className="text-white/80">
+              Manage your taste &amp; diet profiles for AI generation
+            </p>
+          </Card>
+        </Link>
       </div>
 
       {/* AI features — two featured cards */}
@@ -97,18 +108,7 @@ export default function HomePage() {
       </div>
 
       {/* Secondary utilities — aligned row below */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 max-w-2xl mx-auto mt-8">
-        <Link to="/preferences">
-          <Card hoverable className="bg-surface-alt border border-border-default">
-            <h2 className="text-lg font-semibold text-text-muted mb-1">
-              Preferences
-            </h2>
-            <p className="text-sm text-text-muted">
-              Manage taste &amp; diet profiles
-            </p>
-          </Card>
-        </Link>
-
+      <div className="grid grid-cols-2 gap-6 max-w-lg mx-auto mt-8">
         <Link to="/ingredients">
           <Card hoverable className="bg-surface-alt border border-border-default">
             <h2 className="text-lg font-semibold text-text-muted mb-1">

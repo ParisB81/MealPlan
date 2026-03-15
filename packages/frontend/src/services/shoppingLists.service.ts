@@ -1,5 +1,5 @@
 import { api } from './api';
-import type { ShoppingList, CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput } from '../types/shoppingList';
+import type { ShoppingList, CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput, GenerateSplitShoppingListInput } from '../types/shoppingList';
 
 export interface GenerateShoppingListInput {
   mealPlanIds: string[];
@@ -105,5 +105,11 @@ export const shoppingListsService = {
   // Permanent delete shopping list (remove from database)
   async permanentDelete(shoppingListId: string): Promise<void> {
     await api.delete(`/shopping-lists/${shoppingListId}/permanent`);
+  },
+
+  // Generate split shopping lists by date-range trips
+  async generateSplit(input: GenerateSplitShoppingListInput): Promise<ShoppingList[]> {
+    const { data } = await api.post('/shopping-lists/generate-split', input);
+    return data.data;
   },
 };

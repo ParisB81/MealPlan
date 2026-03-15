@@ -199,6 +199,7 @@ model MealPlanPreference {
   quickMealMaxMinutes  Int?  // max total prep+cook time for non-cook-day meals (e.g., 10)
   defaultServings      Int   @default(4) // default servings per recipe (1 for single-person)
   preferredMethods     String  @default("[]") // JSON array of preferred cooking methods
+  season               String? // "Spring" | "Summer" | "Autumn" | "Winter" | null
 
   // Meal plan structure
   durationWeeks Int     @default(1)

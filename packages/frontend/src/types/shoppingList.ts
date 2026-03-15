@@ -48,3 +48,14 @@ export interface AddItemToListInput {
   quantity: number;
   unit: string;
 }
+
+export interface ShoppingTrip {
+  name: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface GenerateSplitShoppingListInput {
+  mealPlanIds: string[];
+  trips: ShoppingTrip[];
+}

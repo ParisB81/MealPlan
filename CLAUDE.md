@@ -123,6 +123,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   │   ├── CuisineSelector.tsx
 │   │   │   │   │   ├── IngredientPreferencesFields.tsx
 │   │   │   │   │   ├── CookingMethodSelector.tsx
+│   │   │   │   │   ├── SeasonSelector.tsx         # Single-select season picker (Spring/Summer/Autumn/Winter)
 │   │   │   │   │   └── CookingFreeDaysPicker.tsx  # Calendar-based cooking-free day picker
 │   │   │   │   ├── ai-recipes/             # AI Recipe Generator step components
 │   │   │   │   │   ├── StepConcept.tsx
@@ -142,7 +143,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── IngredientAutocomplete.tsx  # Autocomplete for ingredient names
 │   │   │   │   ├── UnitAutocomplete.tsx    # Autocomplete for measurement units
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
-│   │   │   │   └── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom)
+│   │   │   │   ├── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom + split mode)
+│   │   │   │   └── DietGoalCalculator.tsx # Mifflin-St Jeor TDEE calculator (frontend-only)
 │   │   │   ├── data/
 │   │   │   │   ├── tagDefinitions.ts       # 97 predefined tags in 6 categories
 │   │   │   │   └── themes.ts              # 5 predefined themes + custom theme types/helpers
@@ -432,6 +434,7 @@ cd "C:\00 Paris\MealPlan"
 - **Add from recipes (with conversion):** `POST /:id/add-from-recipes` endpoint runs recipes through `aggregateIngredients()` pipeline before adding to an existing list — ensures imperial→metric conversion and ingredient-specific overrides are applied (e.g., `1.5 lb` → `680.39 g`)
 - **Status management:** active / completed / deleted with restore
 - **Print-optimized layout:** Portrait mode with `@media print` styles — progress bar hidden, print-friendly checkboxes (□/☑ Unicode), tightened spacing, dotted leader lines connecting ingredient names to quantities, category cards with minimal padding
+- **Split by shopping trips:** In the ShoppingListBuilder modal (Meal Plans tab), toggle between "One list" and "Split by shopping trips". Split mode shows frequency presets (every 2/3/4/7 days) + custom input. Computes date-range trips from selected meal plans' combined date range. Each trip generates a separate shopping list containing only ingredients for meals within that date range. Uses existing `aggregateIngredients()` pipeline per trip — no changes to aggregation logic. Backend: `POST /generate-split` with `{ mealPlanIds, trips: [{name, startDate, endDate}] }`.
 
 ### 6. Unit Conversion System
 Located in `packages/backend/src/utils/unitConversion.ts`. Uses 7 unified measurement systems with metric output for shopping lists:
@@ -592,7 +595,7 @@ Located in `packages/frontend/src/components/ui/`:
 ### 16. AI-Powered Meal Plan Generation (Complete)
 - **Multi-step wizard** at `/ai-meal-plan` with 5 steps: Plan Setup → Taste & Diet → Review Plan → Create Recipes → Confirm & Save
 - **Anthropic Claude integration:** Uses `@anthropic-ai/sdk` with `claude-sonnet-4-20250514` model for plan generation, meal swapping, and recipe detail generation
-- **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only or library+AI), meal variety (1-5 scale), cooking-free days, preferred cooking methods
+- **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only or library+AI), meal variety (1-5 scale), cooking-free days, preferred cooking methods, seasonal preference (Spring/Summer/Autumn/Winter)
 - **Step 1 — Plan Setup** (collapsible accordion sections): Profile management (load/save), plan dates with duration presets (1-28 days), meals & servings, recipe source, pinned meals, meal variety (1-5 slider), cooking-free days (calendar picker), cooking time limits (weekday/weekend), nutrition targets (calories + macro split)
 - **Step 2 — Taste & Diet** (uses shared components): Dietary restrictions, allergies, cuisine preferences, ingredient likes/dislikes, preferred cooking methods + **Generate Plan** button
 - **Cooking-free days:** Calendar-based picker replaces legacy `cookDaysPerWeek`; user selects specific dates when cooking is not possible. AI generates only quick/no-cook/leftover meals for those dates.
@@ -609,7 +612,7 @@ Located in `packages/frontend/src/components/ui/`:
 - **Key files:**
   - Backend: `aiMealPlan.service.ts` (3 AI endpoints), `mealPlanPreference.service.ts` (CRUD), `mealPlanPreference.validator.ts` (Zod schemas)
   - Frontend: `AIMealPlanWizardPage.tsx` (wizard state machine), `StepPlanSetup.tsx`, `StepTasteDiet.tsx`, `StepReviewPlan.tsx`, `StepCreateRecipes.tsx`, `StepConfirmation.tsx`
-  - Shared: `components/ai-shared/` (DietaryRestrictionsSelector, AllergiesSelector, CuisineSelector, IngredientPreferencesFields, CookingMethodSelector, CookingFreeDaysPicker)
+  - Shared: `components/ai-shared/` (DietaryRestrictionsSelector, AllergiesSelector, CuisineSelector, IngredientPreferencesFields, CookingMethodSelector, CookingFreeDaysPicker, SeasonSelector)
   - Types: `mealPlanPreference.ts` (GeneratedPlan, GeneratedMeal, PinnedMeal, SwapAlternative, etc.)
 
 ### 17. AI Recipe Generator (Complete)
@@ -680,6 +683,7 @@ Located in `packages/frontend/src/components/ui/`:
 - `GET /:id` - Get shopping list with items grouped by category
 - `POST /generate` - Generate from meal plan(s)
 - `POST /generate-from-recipes` - Generate from recipe IDs
+- `POST /generate-split` - Generate split shopping lists by date-range trips (body: `{ mealPlanIds, trips: [{name, startDate, endDate}] }`)
 - `POST /custom` - Create custom shopping list
 - `GET /meal-plan/:mealPlanId` - Get or auto-create for meal plan
 - `PUT /:id` - Update shopping list name
@@ -791,7 +795,7 @@ Located in `packages/frontend/src/components/ui/`:
 | CookingPlan | cooking_plans | name, mealPlanIds (comma-separated), cookDays (comma-separated dates), status | Status: active/deleted. Schedule computed client-side. |
 | ShoppingList | shopping_lists | name, mealPlanId (optional), status | Can be linked to meal plan or standalone |
 | ShoppingListItem | shopping_list_items | shoppingListId, ingredientId, quantity, unit, checked | Checked = purchased |
-| MealPlanPreference | meal_plan_preferences | userId, profileName, dietaryRestrictions, allergies, cuisinePreferences, caloriesMin/Max, proteinPercent, carbsPercent, fatPercent, recipeSource, mealVariety, durationWeeks, durationDays, repeatWeekly, includedMeals, maxPrepTimeWeekday/Weekend, maxCookTimeWeekday/Weekend, cookDaysPerWeek, quickMealMaxMinutes, defaultServings, cookingFreeDays, preferredMethods | AI meal plan preferences profile |
+| MealPlanPreference | meal_plan_preferences | userId, profileName, dietaryRestrictions, allergies, cuisinePreferences, caloriesMin/Max, proteinPercent, carbsPercent, fatPercent, recipeSource, mealVariety, durationWeeks, durationDays, repeatWeekly, includedMeals, maxPrepTimeWeekday/Weekend, maxCookTimeWeekday/Weekend, cookDaysPerWeek, quickMealMaxMinutes, defaultServings, cookingFreeDays, preferredMethods, season | AI meal plan preferences profile |
 | RecipeCollection | recipe_collections | userId, name, description?, status | User-organized recipe groups |
 | RecipeCollectionItem | recipe_collection_items | collectionId, recipeId, addedAt | Junction: recipes in a collection, @@unique([collectionId, recipeId]) |
 
@@ -843,7 +847,7 @@ Hardcoded user ID: `temp-user-1`, email: `demo@mealplan.app`. Created by seed sc
 `useMealPlans()`, `useMealPlan(id)`, `useCreateMealPlan()`, `useUpdateMealPlan()`, `useDeleteMealPlan()`, `useAddRecipeToMealPlan()`, `useUpdateMealPlanRecipe()`, `useRemoveRecipeFromMealPlan()`, `useGetMealPlanNutrition()`, `useUpdateMealPlanStatus()`
 
 ### useShoppingLists.ts
-`useShoppingLists()`, `useShoppingListById(id)`, `useShoppingList(mealPlanId)`, `useGenerateShoppingList()`, `useGenerateFromRecipes()`, `useCreateCustomShoppingList()`, `useToggleShoppingListItem()`, `useUpdateShoppingListItem()`, `useAddItemToList()`, `useRemoveItemFromList()`, `useUpdateShoppingList()`, `useDeleteShoppingList()`, `usePermanentDeleteShoppingList()`, `useCompleteShoppingList()`, `useRestoreShoppingList()`
+`useShoppingLists()`, `useShoppingListById(id)`, `useShoppingList(mealPlanId)`, `useGenerateShoppingList()`, `useGenerateFromRecipes()`, `useCreateCustomShoppingList()`, `useGenerateSplitShoppingList()`, `useToggleShoppingListItem()`, `useUpdateShoppingListItem()`, `useAddItemToList()`, `useRemoveItemFromList()`, `useUpdateShoppingList()`, `useDeleteShoppingList()`, `usePermanentDeleteShoppingList()`, `useCompleteShoppingList()`, `useRestoreShoppingList()`
 
 ### useCookingPlans.ts
 `useCookingPlans()`, `useCookingPlan(id)`, `useCreateCookingPlan()`, `useUpdateCookingPlan()`, `useDeleteCookingPlan()`, `usePermanentDeleteCookingPlan()`, `useRestoreCookingPlan()`
@@ -1137,6 +1141,12 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Preference Profile Duplication** - Two entry points for creating a profile from an existing one: (1) **Duplicate button** (Copy icon) on PreferencesPage profile cards — navigates to `/preferences/new` with all data pre-filled via `location.state.prefill`, name appended with " (copy)". (2) **"Start from existing profile" dropdown** on PreferenceEditPage (shown only when creating new) — loads selected profile's settings into the form, preserves any name already typed. Both create new profiles without modifying the source.
 
+**Diet Goal Calculator** - Self-contained frontend-only component (`DietGoalCalculator.tsx`) that calculates TDEE using the Mifflin-St Jeor equation (BMR = 10×weight + 6.25×height − 5×age ± gender constant, × activity multiplier). Goal presets: Lose weight (−500 kcal, 30/40/30 macros), Maintain (0, 25/50/25), Build muscle (+300, 35/40/25). Hidden by default behind "Need help figuring out your targets?" link in PreferenceEditPage's Nutrition Targets section. On Apply, fills existing calorie and macro form fields — no backend, no database, no persistence.
+
+**Season-Aware Ingredient Suggestions** - `season` field (Spring/Summer/Autumn/Winter, nullable) added to `MealPlanPreference` model via Prisma migration. `SeasonSelector` component in `ai-shared/` (single-select, teal accent, follows chip button pattern). Wired into both StepTasteDiet (AI wizard) and PreferenceEditPage (standalone). Backend `formatPreferenceForPrompt()` in `aiMealPlan.service.ts` injects seasonal context into the AI prompt with Greece-specific prioritize/avoid ingredient lists per season (e.g., Spring: prioritize artichokes, peas, asparagus; avoid watermelon, figs). Key files: `SeasonSelector.tsx`, `aiMealPlan.service.ts` (SEASONAL_INGREDIENTS), `mealPlanPreference.service.ts`, `mealPlanPreference.validator.ts`, `mealPlanPreference.ts` (types).
+
+**Shopping List Splitting by Date Range** - In ShoppingListBuilder modal (Meal Plans tab), after selecting plans, toggle between "One list" and "Split by shopping trips". Split mode shows frequency presets (every 2/3/4/7 days) + custom input. `useMemo` computes trip date ranges from selected plans' combined date range ÷ frequency, with live preview. Backend `POST /generate-split` endpoint receives `{ mealPlanIds, trips: [{name, startDate, endDate}] }`, filters `MealPlanRecipe` rows by date range per trip, calls existing `aggregateIngredients()` per trip (no aggregation changes), creates one `ShoppingList` per trip. Key files: `ShoppingListBuilder.tsx` (split UI), `ShoppingListsPage.tsx` (wiring), `shoppingList.service.ts` (backend generateSplitFromMealPlans), `shoppingList.controller.ts`, `shoppingLists.ts` (route).
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1327,5 +1337,5 @@ Items within each category are sorted **alphabetically** by ingredient name.
 ---
 
 **Last Updated:** 2026-03-15
-**Project Version:** 2.7.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication**)
+**Project Version:** 2.8.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication** + **Diet Goal Calculator** + **Season-Aware Ingredient Suggestions** + **Shopping List Splitting by Date Range**)

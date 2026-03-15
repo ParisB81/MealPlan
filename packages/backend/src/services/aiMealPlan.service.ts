@@ -80,6 +80,34 @@ function formatPreferenceForPrompt(pref: any): string {
   const methods = JSON.parse(pref.preferredMethods || '[]');
   if (methods.length) parts.push(`Preferred cooking methods: ${methods.join(', ')}. Favor recipes using these methods.`);
 
+  // Seasonal context
+  if (pref.season) {
+    const SEASONAL_INGREDIENTS: Record<string, { prioritize: string[]; avoid: string[] }> = {
+      Spring: {
+        prioritize: ['artichokes', 'peas', 'fava beans', 'fresh dill', 'spring onions', 'asparagus', 'strawberries', 'lettuce', 'radishes', 'lamb', 'lemons', 'oranges'],
+        avoid: ['watermelon', 'figs', 'pomegranates', 'chestnuts', 'pumpkin'],
+      },
+      Summer: {
+        prioritize: ['tomatoes', 'zucchini', 'eggplant', 'peppers', 'watermelon', 'peaches', 'figs', 'green beans', 'cucumbers', 'corn', 'basil'],
+        avoid: ['butternut squash', 'chestnuts', 'pomegranates'],
+      },
+      Autumn: {
+        prioritize: ['mushrooms', 'pumpkin', 'chestnuts', 'pomegranates', 'grapes', 'quince', 'cauliflower', 'sweet potato', 'pears', 'apples'],
+        avoid: ['strawberries', 'watermelon', 'peaches', 'fresh basil'],
+      },
+      Winter: {
+        prioritize: ['cabbage', 'leeks', 'citrus fruits', 'root vegetables', 'dried legumes', 'kale', 'Brussels sprouts', 'clementines', 'oranges'],
+        avoid: ['tomatoes', 'zucchini', 'eggplant', 'strawberries', 'watermelon'],
+      },
+    };
+    const seasonData = SEASONAL_INGREDIENTS[pref.season];
+    if (seasonData) {
+      parts.push(`SEASONAL CONTEXT: This plan is for ${pref.season} in Greece.`);
+      parts.push(`Prioritize these seasonal ingredients: ${seasonData.prioritize.join(', ')}.`);
+      parts.push(`Avoid out-of-season ingredients where possible: ${seasonData.avoid.join(', ')}.`);
+    }
+  }
+
   // Cooking-free days (specific dates) — takes priority over legacy cookDaysPerWeek
   const cookingFreeDays = (pref.cookingFreeDays || '').split(',').filter((d: string) => d.trim());
   if (cookingFreeDays.length > 0) {

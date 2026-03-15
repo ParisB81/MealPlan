@@ -9,9 +9,10 @@ import {
   usePermanentDeleteShoppingList,
   useGenerateFromRecipes,
   useCreateCustomShoppingList,
+  useGenerateSplitShoppingList,
 } from '../hooks/useShoppingLists';
 import ShoppingListBuilder from '../components/ShoppingListBuilder';
-import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput } from '../types/shoppingList';
+import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, ShoppingTrip } from '../types/shoppingList';
 import { Trash2, X } from 'lucide-react';
 
 type ShoppingListStatus = 'active' | 'completed' | 'deleted';
@@ -31,6 +32,7 @@ export default function ShoppingListsPage() {
   const permanentDeleteShoppingList = usePermanentDeleteShoppingList();
   const generateFromRecipes = useGenerateFromRecipes();
   const createCustomShoppingList = useCreateCustomShoppingList();
+  const generateSplitShoppingList = useGenerateSplitShoppingList();
   const navigate = useNavigate();
 
   const handleCreateFromMealPlans = (mealPlanIds: string[], name?: string) => {
@@ -58,6 +60,17 @@ export default function ShoppingListsPage() {
         setShowBuilder(false);
       },
     });
+  };
+
+  const handleCreateSplit = (mealPlanIds: string[], trips: ShoppingTrip[]) => {
+    generateSplitShoppingList.mutate(
+      { mealPlanIds, trips },
+      {
+        onSuccess: () => {
+          setShowBuilder(false);
+        },
+      }
+    );
   };
 
   const handleDelete = (id: string, listName?: string) => {
@@ -273,10 +286,12 @@ export default function ShoppingListsPage() {
           onCreateFromMealPlans={handleCreateFromMealPlans}
           onCreateFromRecipes={handleCreateFromRecipes}
           onCreateCustom={handleCreateCustom}
+          onCreateSplit={handleCreateSplit}
           isCreating={
             generateShoppingList.isPending ||
             generateFromRecipes.isPending ||
-            createCustomShoppingList.isPending
+            createCustomShoppingList.isPending ||
+            generateSplitShoppingList.isPending
           }
         />
 

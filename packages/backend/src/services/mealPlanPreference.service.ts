@@ -30,6 +30,7 @@ export class MealPlanPreferenceService {
         quickMealMaxMinutes: data.quickMealMaxMinutes ?? null,
         defaultServings: data.defaultServings ?? 4,
         preferredMethods: JSON.stringify(data.preferredMethods ?? []),
+        season: data.season ?? null,
         durationWeeks: data.durationWeeks,
         durationDays: data.durationDays ?? null,
         repeatWeekly: data.repeatWeekly,
@@ -98,6 +99,7 @@ export class MealPlanPreferenceService {
     if (data.quickMealMaxMinutes !== undefined) updateData.quickMealMaxMinutes = data.quickMealMaxMinutes;
     if (data.defaultServings !== undefined) updateData.defaultServings = data.defaultServings;
     if (data.preferredMethods !== undefined) updateData.preferredMethods = JSON.stringify(data.preferredMethods);
+    if (data.season !== undefined) updateData.season = data.season;
     if (data.durationWeeks !== undefined) updateData.durationWeeks = data.durationWeeks;
     if (data.durationDays !== undefined) updateData.durationDays = data.durationDays;
     if (data.repeatWeekly !== undefined) updateData.repeatWeekly = data.repeatWeekly;

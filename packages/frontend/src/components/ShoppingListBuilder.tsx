@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useMealPlans } from '../hooks/useMealPlans';
 import { useRecipes } from '../hooks/useRecipes';
 import { useIngredients } from '../hooks/useIngredients';
 import UnitAutocomplete from './UnitAutocomplete';
-import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput } from '../types/shoppingList';
+import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput, ShoppingTrip } from '../types/shoppingList';
+import { addDays, format, parseISO, differenceInDays } from 'date-fns';
 
 const CATEGORIES = ['produce', 'pulses', 'dairy', 'meat', 'seafood', 'pantry', 'grains', 'oils', 'nuts', 'herbs', 'spices'];
 
 type BuilderMode = 'meal-plans' | 'recipes' | 'custom';
+type SplitMode = 'single' | 'split';
 
 interface ShoppingListBuilderProps {
   isOpen: boolean;
@@ -15,6 +17,7 @@ interface ShoppingListBuilderProps {
   onCreateFromMealPlans: (mealPlanIds: string[], name?: string) => void;
   onCreateFromRecipes: (input: CreateShoppingListFromRecipesInput) => void;
   onCreateCustom: (input: CreateCustomShoppingListInput) => void;
+  onCreateSplit?: (mealPlanIds: string[], trips: ShoppingTrip[]) => void;
   isCreating?: boolean;
 }
 
@@ -24,6 +27,7 @@ export default function ShoppingListBuilder({
   onCreateFromMealPlans,
   onCreateFromRecipes,
   onCreateCustom,
+  onCreateSplit,
   isCreating = false,
 }: ShoppingListBuilderProps) {
   const [mode, setMode] = useState<BuilderMode>('meal-plans');
@@ -32,6 +36,8 @@ export default function ShoppingListBuilder({
   const [customIngredients, setCustomIngredients] = useState<AddItemToListInput[]>([]);
   const [listName, setListName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [splitMode, setSplitMode] = useState<SplitMode>('single');
+  const [tripFrequency, setTripFrequency] = useState(3);
 
   // Ingredient search state for custom list
   const [ingredientSearch, setIngredientSearch] = useState('');
@@ -48,6 +54,39 @@ export default function ShoppingListBuilder({
 
   // Extract recipes array from the response
   const recipes = recipesData?.recipes || [];
+
+  // Compute trips from selected meal plans' date range + frequency
+  const computedTrips = useMemo((): ShoppingTrip[] => {
+    if (splitMode !== 'split' || selectedMealPlanIds.length === 0 || !mealPlans) return [];
+
+    const selected = mealPlans.filter(mp => selectedMealPlanIds.includes(mp.id));
+    if (selected.length === 0) return [];
+
+    // Find the overall date range across all selected plans
+    const allStarts = selected.map(mp => parseISO(mp.startDate));
+    const allEnds = selected.map(mp => parseISO(mp.endDate));
+    const overallStart = new Date(Math.min(...allStarts.map(d => d.getTime())));
+    const overallEnd = new Date(Math.max(...allEnds.map(d => d.getTime())));
+
+    const totalDays = differenceInDays(overallEnd, overallStart) + 1;
+    const trips: ShoppingTrip[] = [];
+    let current = overallStart;
+    let tripNum = 1;
+
+    while (differenceInDays(overallEnd, current) >= 0) {
+      const tripEnd = addDays(current, tripFrequency - 1);
+      const clampedEnd = tripEnd > overallEnd ? overallEnd : tripEnd;
+      trips.push({
+        name: `Shop ${tripNum} (${format(current, 'MMM d')} – ${format(clampedEnd, 'MMM d')})`,
+        startDate: format(current, 'yyyy-MM-dd'),
+        endDate: format(clampedEnd, 'yyyy-MM-dd'),
+      });
+      current = addDays(clampedEnd, 1);
+      tripNum++;
+    }
+
+    return trips;
+  }, [splitMode, selectedMealPlanIds, mealPlans, tripFrequency]);
 
   const handleToggleMealPlan = (id: string) => {
     setSelectedMealPlanIds(prev =>
@@ -83,7 +122,15 @@ export default function ShoppingListBuilder({
         alert('Please select at least one meal plan');
         return;
       }
-      onCreateFromMealPlans(selectedMealPlanIds, listName || undefined);
+      if (splitMode === 'split' && onCreateSplit) {
+        if (computedTrips.length === 0) {
+          alert('No trips computed — please select meal plans first');
+          return;
+        }
+        onCreateSplit(selectedMealPlanIds, computedTrips);
+      } else {
+        onCreateFromMealPlans(selectedMealPlanIds, listName || undefined);
+      }
     } else if (mode === 'recipes') {
       if (selectedRecipeIds.length === 0) {
         alert('Please select at least one recipe');
@@ -117,6 +164,8 @@ export default function ShoppingListBuilder({
     setSearchQuery('');
     setIngredientSearch('');
     setIngredientCategory('');
+    setSplitMode('single');
+    setTripFrequency(3);
   };
 
   const handleClose = () => {
@@ -185,19 +234,103 @@ export default function ShoppingListBuilder({
               Select one or more active meal plans to generate a shopping list
             </p>
 
-            {/* List Name Input */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-text-primary mb-1">
-                Shopping List Name (optional)
-              </label>
-              <input
-                type="text"
-                value={listName}
-                onChange={(e) => setListName(e.target.value)}
-                placeholder="My Shopping List"
-                className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
-              />
-            </div>
+            {/* List Name Input (only in single mode) */}
+            {splitMode === 'single' && (
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-text-primary mb-1">
+                  Shopping List Name (optional)
+                </label>
+                <input
+                  type="text"
+                  value={listName}
+                  onChange={(e) => setListName(e.target.value)}
+                  placeholder="My Shopping List"
+                  className="w-full px-3 py-2 border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-accent-ring"
+                />
+              </div>
+            )}
+
+            {/* Split Mode Toggle — shown when plans are selected */}
+            {selectedMealPlanIds.length > 0 && onCreateSplit && (
+              <div className="mb-4">
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSplitMode('single')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                      splitMode === 'single'
+                        ? 'bg-accent text-white border-accent'
+                        : 'bg-surface text-text-secondary border-border-strong hover:bg-hover-bg'
+                    }`}
+                  >
+                    One list
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSplitMode('split')}
+                    className={`flex-1 px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                      splitMode === 'split'
+                        ? 'bg-accent text-white border-accent'
+                        : 'bg-surface text-text-secondary border-border-strong hover:bg-hover-bg'
+                    }`}
+                  >
+                    Split by shopping trips
+                  </button>
+                </div>
+
+                {/* Frequency Picker */}
+                {splitMode === 'split' && (
+                  <div className="mt-3 space-y-3">
+                    <label className="block text-sm font-medium text-text-primary">
+                      Shop every...
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[2, 3, 4, 7].map(n => (
+                        <button
+                          key={n}
+                          type="button"
+                          onClick={() => setTripFrequency(n)}
+                          className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                            tripFrequency === n
+                              ? 'bg-teal-500 text-white border-teal-500'
+                              : 'bg-surface text-text-secondary border-border-strong hover:bg-hover-bg'
+                          }`}
+                        >
+                          {n} days
+                        </button>
+                      ))}
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={1}
+                          max={28}
+                          value={tripFrequency}
+                          onChange={(e) => setTripFrequency(Math.max(1, Math.min(28, parseInt(e.target.value) || 1)))}
+                          className="w-16 px-2 py-1.5 text-sm border border-border-strong rounded-lg text-text-primary bg-surface focus:outline-none focus:ring-2 focus:ring-teal-500"
+                        />
+                        <span className="text-sm text-text-muted">days</span>
+                      </div>
+                    </div>
+
+                    {/* Trip Preview */}
+                    {computedTrips.length > 0 && (
+                      <div className="bg-page-bg rounded-lg p-3">
+                        <p className="text-xs font-medium text-text-secondary mb-2">
+                          {computedTrips.length} shopping trip{computedTrips.length !== 1 ? 's' : ''}:
+                        </p>
+                        <div className="space-y-1 max-h-32 overflow-y-auto">
+                          {computedTrips.map((trip, i) => (
+                            <p key={i} className="text-sm text-text-primary">
+                              {trip.name}
+                            </p>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             {!mealPlans || mealPlans.length === 0 ? (
               <div className="text-center py-8">

@@ -30,6 +30,7 @@ export interface MealPlanPreference {
   mealVariety: number;
   includedMeals: MealType[];
   preferredMethods: string[];
+  season: 'Spring' | 'Summer' | 'Autumn' | 'Winter' | null;
   status: string;
   createdAt: string;
   updatedAt: string;
@@ -62,6 +63,7 @@ export interface CreatePreferenceInput {
   mealVariety?: number;
   includedMeals?: MealType[];
   preferredMethods?: string[];
+  season?: 'Spring' | 'Summer' | 'Autumn' | 'Winter' | null;
 }
 
 export type UpdatePreferenceInput = Partial<CreatePreferenceInput>;

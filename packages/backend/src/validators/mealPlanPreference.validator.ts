@@ -23,6 +23,7 @@ export const createPreferenceSchema = z.object({
   quickMealMaxMinutes: z.number().int().min(0).nullable().optional(),
   defaultServings: z.number().int().min(1).max(12).default(4),
   preferredMethods: z.array(z.string()).default([]),
+  season: z.enum(['Spring', 'Summer', 'Autumn', 'Winter']).nullable().optional(),
   durationWeeks: z.number().int().min(1).max(4).default(1),
   durationDays: z.number().int().min(1).max(28).nullable().optional(),
   repeatWeekly: z.boolean().default(false),

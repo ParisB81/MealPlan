@@ -12,6 +12,9 @@ router.post('/generate', (req, res) => shoppingListController.generate(req, res)
 // Create shopping list from recipes
 router.post('/generate-from-recipes', (req, res) => shoppingListController.generateFromRecipes(req, res));
 
+// Create split shopping lists from meal plan(s) by date range trips
+router.post('/generate-split', (req, res) => shoppingListController.generateSplit(req, res));
+
 // Create custom shopping list
 router.post('/custom', (req, res) => shoppingListController.createCustom(req, res));
 

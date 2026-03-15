@@ -154,6 +154,67 @@ export class ShoppingListService {
     };
   }
 
+  // Generate split shopping lists from meal plans by date range trips
+  async generateSplitFromMealPlans(
+    mealPlanIds: string[],
+    trips: Array<{ name: string; startDate: string; endDate: string }>
+  ) {
+    // Fetch all meal plan recipes (date is included as a scalar field)
+    const allMealPlanRecipes = await prisma.mealPlanRecipe.findMany({
+      where: { mealPlanId: { in: mealPlanIds } },
+      include: {
+        recipe: {
+          include: {
+            ingredients: { include: { ingredient: true } },
+          },
+        },
+      },
+    });
+
+    const results = [];
+    for (const trip of trips) {
+      const start = new Date(trip.startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(trip.endDate);
+      end.setHours(23, 59, 59, 999);
+
+      const filtered = allMealPlanRecipes.filter((r) => {
+        const d = new Date(r.date);
+        return d >= start && d <= end;
+      });
+
+      const aggregated = this.aggregateIngredients(filtered);
+
+      const shoppingList = await prisma.shoppingList.create({
+        data: {
+          name: trip.name,
+          mealPlanId: mealPlanIds[0],
+          items: {
+            create: aggregated.map((item) => ({
+              ingredientId: item.ingredientId,
+              quantity: Math.round(item.quantity * 100) / 100,
+              unit: item.unit,
+            })),
+          },
+        },
+        include: {
+          mealPlan: {
+            select: { id: true, name: true, startDate: true, endDate: true, status: true },
+          },
+          items: { include: { ingredient: true } },
+        },
+      });
+
+      results.push({
+        ...shoppingList,
+        itemsByCategory: this.groupByCategory(shoppingList.items),
+        mealPlanIds,
+      });
+    }
+
+    return results;
+  }
+
   // Generate or get shopping list for a meal plan
   async getOrCreateShoppingList(mealPlanId: string) {
     // Check if shopping list already exists

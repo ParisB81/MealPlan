@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { shoppingListsService, type GenerateShoppingListInput } from '../services/shoppingLists.service';
-import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput } from '../types/shoppingList';
+import type { CreateShoppingListFromRecipesInput, CreateCustomShoppingListInput, AddItemToListInput, GenerateSplitShoppingListInput } from '../types/shoppingList';
 import toast from 'react-hot-toast';
 
 const SHOPPING_LISTS_KEY = 'shopping-lists';
@@ -233,6 +233,22 @@ export function useAddFromMealPlan() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to add ingredients to shopping list');
+    },
+  });
+}
+
+// Generate split shopping lists by date-range trips
+export function useGenerateSplitShoppingList() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (input: GenerateSplitShoppingListInput) => shoppingListsService.generateSplit(input),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [SHOPPING_LISTS_KEY] });
+      toast.success(`Created ${data.length} shopping list(s) for your trips!`);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to generate split shopping lists');
     },
   });
 }

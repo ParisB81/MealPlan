@@ -8,6 +8,7 @@ import {
   CuisineSelector,
   IngredientPreferencesFields,
   CookingMethodSelector,
+  SeasonSelector,
 } from '../ai-shared';
 import type { CreatePreferenceInput, GeneratedPlan, PinnedMeal } from '../../types/mealPlanPreference';
 import { ChevronLeft, Loader2, Sparkles } from 'lucide-react';
@@ -115,17 +116,23 @@ export default function StepTasteDiet({
         </div>
       </Collapsible>
 
-      {/* Cuisine preferences */}
+      {/* Cuisine preferences & Season */}
       <Collapsible
-        title="Cuisine Preferences"
-        subtitle={(preferences.cuisinePreferences || []).length > 0 ? `${(preferences.cuisinePreferences || []).length} selected` : 'optional'}
+        title="Cuisine & Season"
+        subtitle={(preferences.cuisinePreferences || []).length > 0 ? `${(preferences.cuisinePreferences || []).length} cuisines${preferences.season ? `, ${preferences.season}` : ''}` : preferences.season || 'optional'}
         open={openSection === 'cuisines'}
         onToggle={() => toggleSection('cuisines')}
       >
-        <CuisineSelector
-          selected={preferences.cuisinePreferences || []}
-          onChange={(val) => onUpdate({ ...preferences, cuisinePreferences: val })}
-        />
+        <div className="space-y-6">
+          <CuisineSelector
+            selected={preferences.cuisinePreferences || []}
+            onChange={(val) => onUpdate({ ...preferences, cuisinePreferences: val })}
+          />
+          <SeasonSelector
+            selected={preferences.season ?? null}
+            onChange={(val) => onUpdate({ ...preferences, season: val })}
+          />
+        </div>
       </Collapsible>
 
       {/* Ingredient preferences */}

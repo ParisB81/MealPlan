@@ -13,8 +13,10 @@ import {
   CuisineSelector,
   IngredientPreferencesFields,
   CookingMethodSelector,
+  SeasonSelector,
 } from '../components/ai-shared';
 import type { CreatePreferenceInput, MealType } from '../types/mealPlanPreference';
+import DietGoalCalculator from '../components/DietGoalCalculator';
 import { ArrowLeft, Save, Loader2, Sparkles } from 'lucide-react';
 
 const MEAL_TYPES: { value: MealType; label: string }[] = [
@@ -62,6 +64,7 @@ const DEFAULT_FORM: CreatePreferenceInput = {
   mealVariety: 3,
   includedMeals: ['breakfast', 'lunch', 'dinner'],
   preferredMethods: [],
+  season: null,
 };
 
 export default function PreferenceEditPage() {
@@ -114,6 +117,7 @@ export default function PreferenceEditPage() {
         mealVariety: existingPref.mealVariety,
         includedMeals: existingPref.includedMeals,
         preferredMethods: existingPref.preferredMethods,
+        season: existingPref.season ?? null,
       });
       setHasLoaded(true);
     }
@@ -154,6 +158,7 @@ export default function PreferenceEditPage() {
       mealVariety: profile.mealVariety,
       includedMeals: profile.includedMeals,
       preferredMethods: profile.preferredMethods,
+      season: profile.season ?? null,
     });
   };
 
@@ -366,6 +371,10 @@ export default function PreferenceEditPage() {
               selected={form.preferredMethods || []}
               onChange={(val) => update({ preferredMethods: val })}
             />
+            <SeasonSelector
+              selected={form.season ?? null}
+              onChange={(val) => update({ season: val })}
+            />
           </div>
         </Collapsible>
 
@@ -433,6 +442,11 @@ export default function PreferenceEditPage() {
         {/* Section 4: Nutrition Targets */}
         <Collapsible title="Nutrition Targets" subtitle="optional" open={openSection === 'nutrition'} onToggle={() => toggleSection('nutrition')}>
           <div className="space-y-4">
+            <DietGoalCalculator
+              onApply={(calories, protein, carbs, fat) => {
+                update({ caloriesMin: calories, caloriesMax: calories, proteinPercent: protein, carbsPercent: carbs, fatPercent: fat });
+              }}
+            />
             <div>
               <label className="text-sm font-medium text-text-secondary mb-3 block">Daily calorie target</label>
               <div className="flex items-center gap-3">
