@@ -68,7 +68,6 @@ export default function ShoppingListBuilder({
     const overallStart = new Date(Math.min(...allStarts.map(d => d.getTime())));
     const overallEnd = new Date(Math.max(...allEnds.map(d => d.getTime())));
 
-    const totalDays = differenceInDays(overallEnd, overallStart) + 1;
     const trips: ShoppingTrip[] = [];
     let current = overallStart;
     let tripNum = 1;
