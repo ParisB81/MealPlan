@@ -1,13 +1,14 @@
 const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'] as const;
+type Season = (typeof SEASONS)[number];
 
 interface Props {
-  selected: string | null;
-  onChange: (season: string | null) => void;
+  selected: Season | null;
+  onChange: (season: Season | null) => void;
   label?: string;
 }
 
 export default function SeasonSelector({ selected, onChange, label = 'Season' }: Props) {
-  const toggle = (season: string) => {
+  const toggle = (season: Season) => {
     onChange(selected === season ? null : season);
   };
 
