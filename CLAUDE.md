@@ -950,9 +950,17 @@ Single Railway service: backend Express server serves the built frontend as stat
 | `ANTHROPIC_API_KEY` | Anthropic API key | Required for AI Meal Plan generation (Claude API) |
 
 ### Deployment Workflow
+
+**CRITICAL — Pre-push type check:** Always run `npx tsc --noEmit` in `packages/frontend` before committing and pushing. The dev server (`tsx`) transpiles without type-checking, so type errors (unused variables, type mismatches, missing imports) only surface during the production `tsc` build on Railway. This has caused multiple failed deployments. Common issues caught by `tsc` but not `tsx`:
+- `noUnusedLocals: true` — unused variables/imports cause build failure
+- Narrow union types (e.g., `'Spring' | 'Summer'`) vs generic `string` — strict assignability checks
+- Missing or mismatched prop types in component interfaces
+
 ```bash
-# Make changes locally, test on http://localhost:5173
-# Commit and push:
+# ALWAYS run before pushing:
+cd packages/frontend && npx tsc --noEmit
+
+# Then commit and push:
 git add <files> && git commit -m "feat: description"
 git push origin master
 # Railway auto-deploys within 2-3 minutes
@@ -1208,6 +1216,9 @@ After deploying fixes, users may see old cached versions:
 
 ### Dark theme: raw form inputs need explicit text color
 Raw `<input>`, `<select>`, `<textarea>` elements default to browser dark text — invisible on dark custom themes. Always add `text-text-primary bg-surface` to raw form elements. The UI library components (`Input.tsx`, `Select.tsx`) already have this. When adding new raw form elements, test against a dark custom theme before committing.
+
+### Railway build fails but dev server works fine
+The dev server uses `tsx` which **transpiles only** (no type checking). The production build uses `tsc` which enforces all strict checks. Always run `cd packages/frontend && npx tsc --noEmit` before pushing to catch type errors early.
 
 ### Backend must be manually restarted
 After backend code changes, kill and restart the process. Frontend HMR works automatically.
