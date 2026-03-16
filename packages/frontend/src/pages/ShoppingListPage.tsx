@@ -224,7 +224,7 @@ export default function ShoppingListPage() {
 
   return (
     <div className="min-h-screen bg-page-bg">
-      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl print:px-2 print:py-1">
+      <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl print:px-4 print:py-2 print:text-base">
         {/* Back Button & Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 print:hidden">
           <Link to={backUrl} className="text-accent hover:text-accent-hover">
@@ -259,7 +259,7 @@ export default function ShoppingListPage() {
         </div>
 
         {/* Header */}
-        <div className="bg-surface rounded-lg shadow p-6 mb-6 print:p-2 print:mb-2 print:shadow-none">
+        <div className="bg-surface rounded-lg shadow p-6 mb-6 print:p-3 print:mb-3 print:shadow-none">
           {/* Shopping List Name with Edit */}
           <div className="mb-4">
             {isEditingName ? (
@@ -351,18 +351,18 @@ export default function ShoppingListPage() {
         {/* Shopping List by Category */}
         {shoppingList.itemsByCategory &&
           Object.keys(shoppingList.itemsByCategory).length > 0 && (
-            <div className="space-y-6 print:space-y-2">
+            <div className="space-y-6 print:space-y-3">
               {Object.entries(shoppingList.itemsByCategory).map(
                 ([category, items]) => (
-                  <div key={category} className="bg-surface rounded-lg shadow p-6 print:p-2 print:shadow-none print:rounded-none print:border-b print:border-gray-200">
-                    <h2 className="text-xl font-bold text-text-primary mb-4 capitalize print:text-base print:mb-1">
+                  <div key={category} className="bg-surface rounded-lg shadow p-6 print:p-3 print:shadow-none print:rounded-none print:border-b print:border-gray-200">
+                    <h2 className="text-xl font-bold text-text-primary mb-4 capitalize print:text-lg print:mb-2">
                       {category}
                     </h2>
-                    <div className="space-y-1 print:space-y-0">
+                    <div className="space-y-1 print:space-y-0.5">
                       {items.map((item) => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-page-bg active:bg-hover-bg rounded-lg transition-colors print:p-1 print:min-h-0 print:gap-2"
+                          className="flex items-center gap-3 p-3 min-h-[48px] hover:bg-page-bg active:bg-hover-bg rounded-lg transition-colors print:p-1.5 print:min-h-0 print:gap-2"
                         >
                           {/* Screen checkbox */}
                           <input
@@ -372,7 +372,7 @@ export default function ShoppingListPage() {
                             className="w-6 h-6 text-accent rounded focus:ring-2 focus:ring-accent-ring cursor-pointer flex-shrink-0 print:hidden"
                           />
                           {/* Print checkbox — clean □ / ☑ */}
-                          <span className="hidden print:inline flex-shrink-0 text-base leading-none">
+                          <span className="hidden print:inline flex-shrink-0 text-lg leading-none">
                             {item.checked ? '☑' : '□'}
                           </span>
                           <span
@@ -380,7 +380,7 @@ export default function ShoppingListPage() {
                               item.checked
                                 ? 'line-through text-text-muted'
                                 : 'text-text-primary'
-                            } print:text-sm`}
+                            } print:text-base`}
                           >
                             {item.ingredient.name}
                           </span>
@@ -389,7 +389,7 @@ export default function ShoppingListPage() {
                           <span
                             className={`text-sm whitespace-nowrap ${
                               item.checked ? 'text-text-muted' : 'text-text-secondary'
-                            } print:text-xs`}
+                            } print:text-sm`}
                           >
                             {item.quantity} {item.unit}
                           </span>

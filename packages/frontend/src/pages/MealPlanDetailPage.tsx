@@ -391,27 +391,27 @@ export default function MealPlanDetailPage() {
               )}
             </div>
 
-            {/* Plan totals + daily average */}
+            {/* Daily average (primary) + plan totals (secondary) */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent">{nutrition.totalCalories}</div>
-                <div className="text-sm text-text-secondary">Total Calories</div>
-                <div className="text-xs text-text-muted">{Math.round(nutrition.totalCalories / dailyNutrition.length)}/day avg</div>
+                <div className="text-3xl font-bold text-accent">{Math.round(nutrition.totalCalories / dailyNutrition.length)}</div>
+                <div className="text-sm text-text-secondary">Calories / day</div>
+                <div className="text-xs text-text-muted">{nutrition.totalCalories} plan total</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">{nutrition.totalProtein}g</div>
-                <div className="text-sm text-text-secondary">Total Protein</div>
-                <div className="text-xs text-text-muted">{Math.round(nutrition.totalProtein / dailyNutrition.length)}g/day avg</div>
+                <div className="text-3xl font-bold text-green-600">{Math.round(nutrition.totalProtein / dailyNutrition.length)}g</div>
+                <div className="text-sm text-text-secondary">Protein / day</div>
+                <div className="text-xs text-text-muted">{nutrition.totalProtein}g plan total</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600">{nutrition.totalCarbs}g</div>
-                <div className="text-sm text-text-secondary">Total Carbs</div>
-                <div className="text-xs text-text-muted">{Math.round(nutrition.totalCarbs / dailyNutrition.length)}g/day avg</div>
+                <div className="text-3xl font-bold text-yellow-600">{Math.round(nutrition.totalCarbs / dailyNutrition.length)}g</div>
+                <div className="text-sm text-text-secondary">Carbs / day</div>
+                <div className="text-xs text-text-muted">{nutrition.totalCarbs}g plan total</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">{nutrition.totalFat}g</div>
-                <div className="text-sm text-text-secondary">Total Fat</div>
-                <div className="text-xs text-text-muted">{Math.round(nutrition.totalFat / dailyNutrition.length)}g/day avg</div>
+                <div className="text-3xl font-bold text-orange-600">{Math.round(nutrition.totalFat / dailyNutrition.length)}g</div>
+                <div className="text-sm text-text-secondary">Fat / day</div>
+                <div className="text-xs text-text-muted">{nutrition.totalFat}g plan total</div>
               </div>
             </div>
 

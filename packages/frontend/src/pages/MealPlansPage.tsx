@@ -16,21 +16,20 @@ export default function MealPlansPage() {
   const [newPlanName, setNewPlanName] = useState('');
   const navigate = useNavigate();
 
-  const handleCreateWeeklyPlan = () => {
+  const handleCreateWeeklyPlan = async () => {
     const today = new Date();
     const name = newPlanName || `Week of ${format(today, 'MMM d')}`;
     const startDate = today.toISOString();
     const endDate = addDays(today, 6).toISOString();
 
-    createMealPlan.mutate(
-      { name, startDate, endDate },
-      {
-        onSuccess: () => {
-          setShowCreateForm(false);
-          setNewPlanName('');
-        },
-      }
-    );
+    try {
+      const newPlan = await createMealPlan.mutateAsync({ name, startDate, endDate });
+      setShowCreateForm(false);
+      setNewPlanName('');
+      navigate(`/meal-plans/${newPlan.id}`);
+    } catch {
+      // error handled by hook's onError
+    }
   };
 
   const handleMoveToCompleted = (planId: string) => {
@@ -104,20 +103,6 @@ export default function MealPlansPage() {
           onClose={() => setShowCreateForm(false)}
           title="Create New Meal Plan"
           size="md"
-          footer={
-            <div className="flex gap-3">
-              <Button variant="ghost" fullWidth onClick={() => setShowCreateForm(false)}>
-                Cancel
-              </Button>
-              <Button
-                fullWidth
-                onClick={handleCreateWeeklyPlan}
-                loading={createMealPlan.isPending}
-              >
-                {createMealPlan.isPending ? 'Creating...' : 'Create'}
-              </Button>
-            </div>
-          }
         >
           <p className="text-text-secondary mb-4">
             Create a weekly meal plan starting today
@@ -128,6 +113,18 @@ export default function MealPlansPage() {
             onChange={(e) => setNewPlanName(e.target.value)}
             placeholder={`Week of ${format(new Date(), 'MMM d')}`}
           />
+          <div className="flex gap-3 mt-6">
+            <Button variant="ghost" fullWidth onClick={() => setShowCreateForm(false)}>
+              Cancel
+            </Button>
+            <Button
+              fullWidth
+              onClick={handleCreateWeeklyPlan}
+              loading={createMealPlan.isPending}
+            >
+              {createMealPlan.isPending ? 'Creating...' : 'Create'}
+            </Button>
+          </div>
         </Modal>
 
         {/* Loading State */}

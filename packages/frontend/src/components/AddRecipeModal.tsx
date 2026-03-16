@@ -7,7 +7,7 @@ import { useCollections, useCollection } from '../hooks/useCollections';
 import type { Recipe } from '../types/recipe';
 import type { AddRecipeToMealPlanInput } from '../types/mealPlan';
 import { Modal, Input, TextArea, Select, Button } from './ui';
-import { ArrowLeft, Clock, Users, ExternalLink, Plus, X, ChevronLeft, ChevronRight, Check, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, Clock, Users, ExternalLink, Plus, Minus, X, ChevronLeft, ChevronRight, Check, SlidersHorizontal } from 'lucide-react';
 import { getRecipeImageUrl } from '../utils/recipeImage';
 
 /** Shift a YYYY-MM-DD string by ±1 day */
@@ -51,6 +51,46 @@ function DateStepper({
         title="Next day"
       >
         <ChevronRight size={14} />
+      </button>
+    </div>
+  );
+}
+
+/** Servings input with − / + stepper buttons for easy mobile use */
+function ServingsStepper({
+  value,
+  onChange,
+  className = '',
+  size = 'md',
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  className?: string;
+  size?: 'sm' | 'md';
+}) {
+  const btnSize = size === 'sm' ? 'w-7 h-7' : 'w-9 h-9';
+  const iconSize = size === 'sm' ? 14 : 18;
+  const textSize = size === 'sm' ? 'text-sm' : 'text-base';
+  return (
+    <div className={`flex items-center gap-1 ${className}`}>
+      <button
+        type="button"
+        onClick={() => onChange(Math.max(1, value - 1))}
+        className={`${btnSize} flex items-center justify-center rounded-lg border border-border-strong bg-surface hover:bg-hover-bg text-text-primary transition-colors active:scale-95`}
+        aria-label="Decrease servings"
+      >
+        <Minus size={iconSize} />
+      </button>
+      <span className={`${textSize} font-semibold text-text-primary min-w-[2.5rem] text-center tabular-nums`}>
+        {value}
+      </span>
+      <button
+        type="button"
+        onClick={() => onChange(value + 1)}
+        className={`${btnSize} flex items-center justify-center rounded-lg border border-border-strong bg-surface hover:bg-hover-bg text-text-primary transition-colors active:scale-95`}
+        aria-label="Increase servings"
+      >
+        <Plus size={iconSize} />
       </button>
     </div>
   );
@@ -540,17 +580,10 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                         </select>
                         <div className="flex items-center gap-2">
                           <label className="text-xs text-text-muted whitespace-nowrap">Servings</label>
-                          <input
-                            type="number"
+                          <ServingsStepper
                             value={quickAdd.servings}
-                            onChange={(e) =>
-                              setQuickAdd({
-                                ...quickAdd,
-                                servings: parseInt(e.target.value) || 1,
-                              })
-                            }
-                            min={1}
-                            className="w-16 text-xs border border-border-strong rounded px-2 py-1 text-text-primary bg-surface"
+                            onChange={(v) => setQuickAdd({ ...quickAdd, servings: v })}
+                            size="sm"
                           />
                         </div>
                         <div className="flex gap-2">
@@ -719,14 +752,10 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                 <option value="snack">Snack</option>
               </Select>
 
-              <Input
-                label="Servings"
-                type="number"
-                value={servings}
-                onChange={(e) => setServings(parseInt(e.target.value))}
-                min={1}
-                required
-              />
+              <div>
+                <label className="block text-sm font-medium text-text-primary mb-1">Servings</label>
+                <ServingsStepper value={servings} onChange={setServings} />
+              </div>
 
               <TextArea
                 label="Notes (optional)"
