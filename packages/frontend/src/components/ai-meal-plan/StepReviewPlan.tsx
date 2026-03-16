@@ -343,48 +343,51 @@ export default function StepReviewPlan({
 
                 return (
                   <div key={`${day.date}-${meal.mealType}-${mealIndex}`}>
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-surface-alt">
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${MEAL_TYPE_COLORS[meal.mealType] || ''}`}>
-                        {meal.mealType}
-                      </span>
-                      <span className="flex-1 text-sm text-text-primary font-medium truncate flex items-center gap-1">
-                        {isPinned && <Pin className="w-3 h-3 text-purple-400 shrink-0" />}
-                        {title}
-                      </span>
-                      {isNew ? (
-                        <span className="flex items-center gap-1 text-xs text-purple-600">
-                          <Sparkles className="w-3 h-3" /> AI
+                    <div className="p-2 rounded-lg bg-surface-alt space-y-1">
+                      <div className="flex items-start gap-2">
+                        <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${MEAL_TYPE_COLORS[meal.mealType] || ''}`}>
+                          {meal.mealType}
                         </span>
-                      ) : (
-                        <span className="flex items-center gap-1 text-xs text-blue-600">
-                          <BookOpen className="w-3 h-3" /> Library
+                        <span className="flex-1 text-sm text-text-primary font-medium leading-snug flex items-start gap-1">
+                          {isPinned && <Pin className="w-3 h-3 text-purple-400 shrink-0 mt-0.5" />}
+                          {title}
                         </span>
-                      )}
-                      {/* Per-meal calorie display */}
-                      {mealCalDisplay && (
-                        <span className={`text-xs ${mealCalDisplay.isEstimate ? 'text-text-muted italic' : 'text-text-secondary'}`}
-                              title={mealCalDisplay.isEstimate ? 'AI estimate' : 'From recipe data'}>
-                          {mealCalDisplay.isEstimate ? '~' : ''}{mealCalDisplay.value} cal
-                        </span>
-                      )}
-                      {(meal.estimatedPrepTime || meal.estimatedCookTime) && (
-                        <span className="flex items-center gap-1 text-xs text-text-muted">
-                          <Clock className="w-3 h-3" />
-                          {(meal.estimatedPrepTime || 0) + (meal.estimatedCookTime || 0)}m
-                        </span>
-                      )}
-                      <button
-                        onClick={() => handleSwap(dayIndex, mealIndex)}
-                        disabled={swapMeal.isPending}
-                        className="p-1 hover:bg-purple-100 rounded transition-colors"
-                        title="Swap this meal"
-                      >
-                        {swapMeal.isPending && isSwapping ? (
-                          <Loader2 className="w-4 h-4 animate-spin text-purple-500" />
+                        <button
+                          onClick={() => handleSwap(dayIndex, mealIndex)}
+                          disabled={swapMeal.isPending}
+                          className="p-1 hover:bg-purple-100 rounded transition-colors shrink-0"
+                          title="Swap this meal"
+                        >
+                          {swapMeal.isPending && isSwapping ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-purple-500" />
+                          ) : (
+                            <ArrowLeftRight className="w-4 h-4 text-purple-500" />
+                          )}
+                        </button>
+                      </div>
+                      <div className="flex items-center gap-2 pl-1">
+                        {isNew ? (
+                          <span className="flex items-center gap-1 text-xs text-purple-600">
+                            <Sparkles className="w-3 h-3" /> AI
+                          </span>
                         ) : (
-                          <ArrowLeftRight className="w-4 h-4 text-purple-500" />
+                          <span className="flex items-center gap-1 text-xs text-blue-600">
+                            <BookOpen className="w-3 h-3" /> Library
+                          </span>
                         )}
-                      </button>
+                        {mealCalDisplay && (
+                          <span className={`text-xs ${mealCalDisplay.isEstimate ? 'text-text-muted italic' : 'text-text-secondary'}`}
+                                title={mealCalDisplay.isEstimate ? 'AI estimate' : 'From recipe data'}>
+                            {mealCalDisplay.isEstimate ? '~' : ''}{mealCalDisplay.value} cal
+                          </span>
+                        )}
+                        {(meal.estimatedPrepTime || meal.estimatedCookTime) && (
+                          <span className="flex items-center gap-1 text-xs text-text-muted">
+                            <Clock className="w-3 h-3" />
+                            {(meal.estimatedPrepTime || 0) + (meal.estimatedCookTime || 0)}m
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Swap alternatives popover */}
