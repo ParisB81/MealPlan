@@ -12,7 +12,9 @@ export interface ThemeDefinition {
   metaThemeColor: string;
 }
 
-/** The 6 key colors that fully define a custom theme */
+/** The key colors that fully define a custom theme.
+ *  Original 6 fields are required; 3 section fields are optional
+ *  (auto-derived when absent for backward compatibility). */
 export interface CustomThemeKeys {
   pageBg: string;
   accent: string;
@@ -20,6 +22,12 @@ export interface CustomThemeKeys {
   heroMealplans: string;
   heroShopping: string;
   heroCooking: string;
+  /** Preferences section color (default: desaturated purple) */
+  secPrefs?: string;
+  /** AI Meal Plan section color (default: vivid purple) */
+  secAi?: string;
+  /** AI Recipe Generator section color (default: emerald) */
+  secAiRecipes?: string;
 }
 
 /** A saved custom theme: name + 6 key colors */
@@ -72,12 +80,15 @@ export const THEMES: ThemeDefinition[] = [
  */
 export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
   classic: {
-    pageBg: '#f9fafb',
+    pageBg: '#f5f2ed',
     accent: '#2563eb',
-    heroRecipes: '#ea580c',
-    heroMealplans: '#2563eb',
-    heroShopping: '#9f1239',
-    heroCooking: '#1f2937',
+    heroRecipes: '#c2602a',
+    heroMealplans: '#4a7a6b',
+    heroShopping: '#3d6b5e',
+    heroCooking: '#2d5b4e',
+    secPrefs: '#8b7db8',
+    secAi: '#7c3aed',
+    secAiRecipes: '#059669',
   },
   ocean: {
     pageBg: '#f0f9ff',
@@ -86,6 +97,9 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroMealplans: '#0284c7',
     heroShopping: '#4338ca',
     heroCooking: '#334155',
+    secPrefs: '#64748b',
+    secAi: '#7c3aed',
+    secAiRecipes: '#059669',
   },
   forest: {
     pageBg: '#fafaf9',
@@ -94,6 +108,9 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroMealplans: '#047857',
     heroShopping: '#44403c',
     heroCooking: '#14532d',
+    secPrefs: '#57534e',
+    secAi: '#7c3aed',
+    secAiRecipes: '#059669',
   },
   sunset: {
     pageBg: '#fff7ed',
@@ -102,6 +119,9 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroMealplans: '#e11d48',
     heroShopping: '#a21caf',
     heroCooking: '#1e293b',
+    secPrefs: '#57534e',
+    secAi: '#9333ea',
+    secAiRecipes: '#059669',
   },
   midnight: {
     pageBg: '#0f172a',
@@ -110,6 +130,9 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroMealplans: '#3b82f6',
     heroShopping: '#f43f5e',
     heroCooking: '#475569',
+    secPrefs: '#94a3b8',
+    secAi: '#a78bfa',
+    secAiRecipes: '#34d399',
   },
 };
 

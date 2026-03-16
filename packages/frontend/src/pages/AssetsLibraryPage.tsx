@@ -39,8 +39,9 @@ export default function AssetsLibraryPage() {
           <section>
             <h2 className="text-2xl font-bold text-text-primary mb-1">Custom Themes</h2>
             <p className="text-sm text-text-muted mb-4">
-              Create up to 3 custom themes by picking 6 key colors. All other colors are derived automatically.
-              Custom themes appear in the theme picker alongside the 5 preset themes.
+              Create up to 3 custom themes by picking 9 key colors grouped by role. Section colors, buttons,
+              surfaces, and all other tokens are derived automatically following the design system rules.
+              See <code className="px-1 py-0.5 bg-hover-bg rounded text-xs">DESIGN_SYSTEM.md</code> for the full specification.
             </p>
 
             <Card>

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Trash2, Check, RotateCcw } from 'lucide-react';
+import { Trash2, Check, RotateCcw, UtensilsCrossed, CalendarDays, ShoppingCart, ChefHat, Sparkles, Zap, Settings, FolderHeart } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import {
   THEMES,
@@ -12,18 +12,59 @@ import {
 import { deriveAllVariables, isDark } from '../utils/colorUtils';
 import { Button } from './ui';
 
-/** Labels for the 6 key color pickers */
-const KEY_LABELS: { key: keyof CustomThemeKeys; label: string }[] = [
-  { key: 'pageBg', label: 'Page Background' },
-  { key: 'accent', label: 'Accent / Navigation' },
-  { key: 'heroRecipes', label: 'Recipes' },
-  { key: 'heroMealplans', label: 'Meal Plans' },
-  { key: 'heroShopping', label: 'Shopping Lists' },
-  { key: 'heroCooking', label: 'Cooking Plans' },
+/** Color picker groups following the design system */
+const COLOR_GROUPS: {
+  title: string;
+  description: string;
+  keys: { key: keyof CustomThemeKeys; label: string }[];
+}[] = [
+  {
+    title: 'Foundation',
+    description: 'Page background and primary accent (buttons, links, active states)',
+    keys: [
+      { key: 'pageBg', label: 'Page Background' },
+      { key: 'accent', label: 'Accent / Primary' },
+    ],
+  },
+  {
+    title: 'Recipe Sections',
+    description: 'Recipes & Collections share a color family (Collections auto-darkens)',
+    keys: [
+      { key: 'heroRecipes', label: 'Recipes' },
+    ],
+  },
+  {
+    title: 'Planning Sections',
+    description: 'Meal Plans, Shopping, and Cooking — use related hues for visual cohesion',
+    keys: [
+      { key: 'heroMealplans', label: 'Meal Plans' },
+      { key: 'heroShopping', label: 'Shopping Lists' },
+      { key: 'heroCooking', label: 'Cooking Plans' },
+    ],
+  },
+  {
+    title: 'AI & Preferences',
+    description: 'Distinct colors for AI features and preference profiles',
+    keys: [
+      { key: 'secAi', label: 'AI Meal Planner' },
+      { key: 'secAiRecipes', label: 'AI Recipes' },
+      { key: 'secPrefs', label: 'Preferences' },
+    ],
+  },
 ];
 
 /** Default keys when creating a new custom theme (Classic) */
 const DEFAULT_KEYS: CustomThemeKeys = PREDEFINED_THEME_KEYS.classic;
+
+/** Resolve optional fields with sensible defaults so pickers always have values */
+function resolveKeys(keys: CustomThemeKeys): CustomThemeKeys {
+  return {
+    ...keys,
+    secPrefs: keys.secPrefs || '#8b7db8',
+    secAi: keys.secAi || '#7c3aed',
+    secAiRecipes: keys.secAiRecipes || '#059669',
+  };
+}
 
 export default function CustomThemeEditor() {
   const { theme, customThemes, updateCustomTheme } = useTheme();
@@ -34,7 +75,7 @@ export default function CustomThemeEditor() {
   // Editing state for the active slot
   const existingData = customThemes[activeSlot];
   const [name, setName] = useState(existingData?.name || '');
-  const [keys, setKeys] = useState<CustomThemeKeys>(existingData?.keys || { ...DEFAULT_KEYS });
+  const [keys, setKeys] = useState<CustomThemeKeys>(resolveKeys(existingData?.keys || { ...DEFAULT_KEYS }));
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // When switching tabs, load existing data or defaults
@@ -42,7 +83,7 @@ export default function CustomThemeEditor() {
     setActiveSlot(slotId);
     const data = customThemes[slotId];
     setName(data?.name || '');
-    setKeys(data?.keys || { ...DEFAULT_KEYS });
+    setKeys(resolveKeys(data?.keys || { ...DEFAULT_KEYS }));
     setHasUnsavedChanges(false);
   }, [customThemes]);
 
@@ -54,12 +95,12 @@ export default function CustomThemeEditor() {
 
   // "Start from" a predefined theme
   const startFrom = useCallback((themeId: ThemeName) => {
-    setKeys({ ...PREDEFINED_THEME_KEYS[themeId] });
+    setKeys(resolveKeys({ ...PREDEFINED_THEME_KEYS[themeId] }));
     if (!name) setName(`My ${THEMES.find(t => t.id === themeId)?.label || 'Theme'}`);
     setHasUnsavedChanges(true);
   }, [name]);
 
-  // Save & apply — use activate=true to switch to this theme in the same React batch
+  // Save & apply
   const handleSave = useCallback(() => {
     const themeName = name.trim() || `Custom ${CUSTOM_SLOTS.indexOf(activeSlot) + 1}`;
     updateCustomTheme(activeSlot, { name: themeName, keys }, true);
@@ -71,7 +112,7 @@ export default function CustomThemeEditor() {
   const handleDelete = useCallback(() => {
     updateCustomTheme(activeSlot, null);
     setName('');
-    setKeys({ ...DEFAULT_KEYS });
+    setKeys(resolveKeys({ ...DEFAULT_KEYS }));
     setHasUnsavedChanges(false);
   }, [activeSlot, updateCustomTheme]);
 
@@ -79,11 +120,11 @@ export default function CustomThemeEditor() {
   const handleReset = useCallback(() => {
     const data = customThemes[activeSlot];
     setName(data?.name || '');
-    setKeys(data?.keys || { ...DEFAULT_KEYS });
+    setKeys(resolveKeys(data?.keys || { ...DEFAULT_KEYS }));
     setHasUnsavedChanges(false);
   }, [activeSlot, customThemes]);
 
-  // Derive all 55 CSS variables for the live preview
+  // Derive all CSS variables for the live preview
   const previewVars = useMemo(() => deriveAllVariables(keys), [keys]);
 
   // Convert CSS variable map to React inline style object
@@ -139,7 +180,7 @@ export default function CustomThemeEditor() {
             />
           </div>
 
-          {/* "Start from" dropdown */}
+          {/* "Start from" preset buttons */}
           <div>
             <label className="block text-sm font-medium text-text-primary mb-1">Start from preset</label>
             <div className="flex flex-wrap gap-2">
@@ -160,47 +201,45 @@ export default function CustomThemeEditor() {
             </div>
           </div>
 
-          {/* 6 color pickers */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-text-primary">Colors</label>
-            {KEY_LABELS.map(({ key, label }) => (
-              <div key={key} className="flex items-center gap-3">
-                <input
-                  type="color"
-                  value={keys[key]}
-                  onChange={(e) => updateKey(key, e.target.value)}
-                  className="w-10 h-10 rounded-lg border border-border-default cursor-pointer p-0.5 bg-surface"
-                  title={label}
-                />
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm text-text-primary">{label}</span>
-                </div>
-                <input
-                  type="text"
-                  value={keys[key]}
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    if (/^#[0-9a-fA-F]{6}$/.test(v)) updateKey(key, v);
-                    else if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
-                      // Allow typing but don't update color until valid
-                      setKeys(prev => ({ ...prev, [key]: v }));
-                      setHasUnsavedChanges(true);
-                    }
-                  }}
-                  className="w-24 px-2 py-1 text-xs font-mono border border-border-default rounded bg-surface text-text-primary text-center"
-                  placeholder="#000000"
-                />
+          {/* Grouped color pickers */}
+          {COLOR_GROUPS.map((group) => (
+            <div key={group.title}>
+              <label className="block text-sm font-medium text-text-primary mb-0.5">{group.title}</label>
+              <p className="text-xs text-text-muted mb-2">{group.description}</p>
+              <div className="space-y-2">
+                {group.keys.map(({ key, label }) => (
+                  <div key={key} className="flex items-center gap-3">
+                    <input
+                      type="color"
+                      value={keys[key] || '#888888'}
+                      onChange={(e) => updateKey(key, e.target.value)}
+                      className="w-9 h-9 rounded-lg border border-border-default cursor-pointer p-0.5 bg-surface"
+                      title={label}
+                    />
+                    <span className="text-sm text-text-primary flex-1 min-w-0">{label}</span>
+                    <input
+                      type="text"
+                      value={keys[key] || '#888888'}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (/^#[0-9a-fA-F]{6}$/.test(v)) updateKey(key, v);
+                        else if (/^#[0-9a-fA-F]{0,6}$/.test(v)) {
+                          setKeys(prev => ({ ...prev, [key]: v }));
+                          setHasUnsavedChanges(true);
+                        }
+                      }}
+                      className="w-20 px-2 py-1 text-xs font-mono border border-border-default rounded bg-surface text-text-primary text-center"
+                      placeholder="#000000"
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
 
           {/* Action buttons */}
           <div className="flex gap-3 pt-2">
-            <Button
-              variant="primary"
-              onClick={handleSave}
-              size="sm"
-            >
+            <Button variant="primary" onClick={handleSave} size="sm">
               <Check className="w-4 h-4 mr-1" />
               Apply & Save
             </Button>
@@ -239,11 +278,8 @@ export default function CustomThemeEditor() {
               borderColor: previewVars['--color-border'],
             }}
           >
-            <span
-              className="text-sm font-semibold"
-              style={{ color: previewVars['--color-text-primary'] }}
-            >
-              Preview
+            <span className="text-sm font-semibold" style={{ color: previewVars['--color-text-primary'] }}>
+              Live Preview
             </span>
             <span
               className="text-xs px-2 py-0.5 rounded"
@@ -257,32 +293,101 @@ export default function CustomThemeEditor() {
           </div>
 
           {/* Preview body */}
-          <div
-            className="p-4 space-y-3"
-            style={{ backgroundColor: previewVars['--color-page-bg'] }}
-          >
-            {/* Hero card previews */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { label: 'Recipes', bg: previewVars['--color-hero-recipes'], border: previewVars['--color-hero-recipes-border'] },
-                { label: 'Meal Plans', bg: previewVars['--color-hero-mealplans'], border: previewVars['--color-hero-mealplans-border'] },
-                { label: 'Shopping', bg: previewVars['--color-hero-shopping'], border: previewVars['--color-hero-shopping-border'] },
-                { label: 'Cooking', bg: previewVars['--color-hero-cooking'], border: previewVars['--color-hero-cooking-border'] },
-              ].map((card) => (
-                <div
-                  key={card.label}
-                  className="rounded-lg p-3 text-center text-xs font-medium text-white border"
-                  style={{
-                    backgroundColor: card.bg,
-                    borderColor: card.border,
-                  }}
-                >
-                  {card.label}
-                </div>
-              ))}
+          <div className="p-4 space-y-4" style={{ backgroundColor: previewVars['--color-page-bg'] }}>
+
+            {/* Landing page mockup: neutral cards with section icon squares */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: previewVars['--color-text-muted'] }}>
+                Landing Page Cards
+              </p>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[
+                  { label: 'Recipes', color: previewVars['--color-sec-recipes'], Icon: UtensilsCrossed },
+                  { label: 'Collections', color: previewVars['--color-sec-collections'], Icon: FolderHeart },
+                  { label: 'Meal Plans', color: previewVars['--color-sec-mealplans'], Icon: CalendarDays },
+                  { label: 'Shopping', color: previewVars['--color-sec-shopping'], Icon: ShoppingCart },
+                  { label: 'Cooking', color: previewVars['--color-sec-cooking'], Icon: ChefHat },
+                  { label: 'Prefs', color: previewVars['--color-sec-prefs'], Icon: Settings },
+                  { label: 'AI Plan', color: previewVars['--color-sec-ai'], Icon: Sparkles },
+                  { label: 'AI Recipe', color: previewVars['--color-sec-ai-recipes'], Icon: Zap },
+                ].map((card) => (
+                  <div
+                    key={card.label}
+                    className="rounded-lg p-2 border"
+                    style={{
+                      backgroundColor: previewVars['--color-surface'],
+                      borderColor: previewVars['--color-border'],
+                    }}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-md flex items-center justify-center mb-1"
+                      style={{ backgroundColor: card.color }}
+                    >
+                      <card.Icon size={12} color="#ffffff" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-[9px] font-medium leading-tight" style={{ color: previewVars['--color-text-primary'] }}>
+                      {card.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Surface card preview */}
+            {/* Button roles */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: previewVars['--color-text-muted'] }}>
+                Button Roles
+              </p>
+              <div className="flex gap-1.5 flex-wrap">
+                <button className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white"
+                  style={{ backgroundColor: previewVars['--color-btn-primary'] }}>
+                  Primary
+                </button>
+                <button className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white"
+                  style={{ backgroundColor: previewVars['--color-sec-mealplans'] }}>
+                  Section
+                </button>
+                <button className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white"
+                  style={{ backgroundColor: previewVars['--color-btn-secondary'] }}>
+                  Edit
+                </button>
+                <button className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white"
+                  style={{ backgroundColor: previewVars['--color-btn-success'] }}>
+                  Complete
+                </button>
+                <button className="px-2.5 py-1 rounded-md text-[10px] font-medium text-white"
+                  style={{ backgroundColor: previewVars['--color-btn-danger'] }}>
+                  Delete
+                </button>
+              </div>
+            </div>
+
+            {/* Section color buttons (cross-section actions) */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: previewVars['--color-text-muted'] }}>
+                Section Action Buttons
+              </p>
+              <div className="flex gap-1.5 flex-wrap">
+                {[
+                  { label: 'Meal Plan', color: previewVars['--color-sec-mealplans'] },
+                  { label: 'Collection', color: previewVars['--color-sec-collections'] },
+                  { label: 'Shopping', color: previewVars['--color-sec-shopping'] },
+                  { label: 'Cooking', color: previewVars['--color-sec-cooking'] },
+                  { label: 'AI Generate', color: previewVars['--color-sec-ai'] },
+                  { label: 'AI Recipe', color: previewVars['--color-sec-ai-recipes'] },
+                ].map((btn) => (
+                  <button
+                    key={btn.label}
+                    className="px-2 py-0.5 rounded text-[9px] font-medium text-white"
+                    style={{ backgroundColor: btn.color }}
+                  >
+                    {btn.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Surface card */}
             <div
               className="rounded-lg p-3 border"
               style={{
@@ -299,57 +404,6 @@ export default function CustomThemeEditor() {
               <p className="text-xs mt-0.5" style={{ color: previewVars['--color-text-muted'] }}>
                 Muted text for less important info
               </p>
-            </div>
-
-            {/* List card previews */}
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                { label: 'Recipe card', bg: previewVars['--color-card-recipes'], border: previewVars['--color-card-recipes-border'] },
-                { label: 'Plan card', bg: previewVars['--color-card-mealplans'], border: previewVars['--color-card-mealplans-border'] },
-              ].map((card) => (
-                <div
-                  key={card.label}
-                  className="rounded-lg p-2 text-xs border"
-                  style={{
-                    backgroundColor: card.bg,
-                    borderColor: card.border,
-                    color: previewVars['--color-text-primary'],
-                  }}
-                >
-                  {card.label}
-                </div>
-              ))}
-            </div>
-
-            {/* Button previews */}
-            <div className="flex gap-2 flex-wrap">
-              <button
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                style={{ backgroundColor: previewVars['--color-btn-primary'] }}
-              >
-                Primary
-              </button>
-              <button
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                style={{ backgroundColor: previewVars['--color-btn-secondary'] }}
-              >
-                Secondary
-              </button>
-              <button
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                style={{ backgroundColor: previewVars['--color-btn-danger'] }}
-              >
-                Danger
-              </button>
-              <button
-                className="px-3 py-1.5 rounded-lg text-xs font-medium border"
-                style={{
-                  borderColor: previewVars['--color-btn-ghost-border'],
-                  color: previewVars['--color-btn-ghost-text'],
-                }}
-              >
-                Ghost
-              </button>
             </div>
 
             {/* Accent link */}

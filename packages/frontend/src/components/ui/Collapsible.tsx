@@ -34,7 +34,7 @@ export default function Collapsible({
   };
 
   return (
-    <div className={twMerge('bg-surface rounded-lg shadow', className)}>
+    <div className={twMerge('bg-surface rounded-xl border border-border-default shadow-sm', className)}>
       <button
         type="button"
         onClick={toggle}

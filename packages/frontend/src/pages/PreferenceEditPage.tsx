@@ -206,7 +206,7 @@ export default function PreferenceEditPage() {
         <Link to="/preferences" className="text-text-muted hover:text-text-primary transition-colors">
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <Sparkles className="w-6 h-6 text-purple-500" />
+        <Sparkles className="w-6 h-6 text-sec-prefs" />
         <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
           {isNew ? 'New Preference Profile' : `Edit: ${existingPref?.name || ''}`}
         </h1>
@@ -267,8 +267,8 @@ export default function PreferenceEditPage() {
                     onClick={() => toggleMealType(m.value)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       (form.includedMeals || []).includes(m.value)
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-surface-alt text-text-secondary hover:bg-purple-100'
+                        ? 'bg-sec-prefs text-white'
+                        : 'bg-surface-alt text-text-secondary hover:bg-sec-prefs-light'
                     }`}
                   >
                     {m.label}
@@ -285,8 +285,8 @@ export default function PreferenceEditPage() {
                   onClick={() => update({ recipeSource: 'library_only' })}
                   className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                     form.recipeSource === 'library_only'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-border-default hover:border-purple-300'
+                      ? 'border-sec-prefs bg-sec-prefs-light'
+                      : 'border-border-default hover:border-sec-prefs'
                   }`}
                 >
                   <div className="font-medium text-text-primary">Library only</div>
@@ -297,8 +297,8 @@ export default function PreferenceEditPage() {
                   onClick={() => update({ recipeSource: 'library_and_ai' })}
                   className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                     form.recipeSource === 'library_and_ai'
-                      ? 'border-purple-500 bg-purple-50'
-                      : 'border-border-default hover:border-purple-300'
+                      ? 'border-sec-prefs bg-sec-prefs-light'
+                      : 'border-border-default hover:border-sec-prefs'
                   }`}
                 >
                   <div className="font-medium text-text-primary">Library + AI</div>
@@ -317,8 +317,8 @@ export default function PreferenceEditPage() {
                     onClick={() => update({ defaultServings: n })}
                     className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
                       (form.defaultServings || 4) === n
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-surface-alt text-text-secondary hover:bg-purple-100'
+                        ? 'bg-sec-prefs text-white'
+                        : 'bg-surface-alt text-text-secondary hover:bg-sec-prefs-light'
                     }`}
                   >
                     {n} {n === 1 ? 'serving' : 'servings'}
@@ -337,7 +337,7 @@ export default function PreferenceEditPage() {
                 max="5"
                 value={form.mealVariety || 3}
                 onChange={(e) => update({ mealVariety: Number(e.target.value) })}
-                className="w-full accent-purple-500"
+                className="w-full accent-sec-prefs"
               />
               <p className="text-sm text-text-muted mt-1">
                 {VARIETY_LABELS[form.mealVariety || 3]}
@@ -547,8 +547,8 @@ export default function PreferenceEditPage() {
                     onClick={() => update({ durationDays: d, durationWeeks: Math.ceil(d / 7) })}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                       days === d
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-surface-alt text-text-secondary hover:bg-purple-100'
+                        ? 'bg-sec-prefs text-white'
+                        : 'bg-surface-alt text-text-secondary hover:bg-sec-prefs-light'
                     }`}
                   >
                     {d}d{d === 7 ? ' (1w)' : d === 14 ? ' (2w)' : d === 21 ? ' (3w)' : ''}
@@ -597,7 +597,6 @@ export default function PreferenceEditPage() {
             variant="primary"
             onClick={handleSave}
             disabled={!canSave || isSaving}
-            className="bg-purple-600 hover:bg-purple-700"
           >
             {isSaving ? (
               <>

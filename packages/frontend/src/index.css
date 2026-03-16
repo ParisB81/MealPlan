@@ -10,71 +10,95 @@
 
 :root,
 [data-theme="classic"] {
-  /* — Base Surface & Text — */
-  --color-page-bg: #f9fafb;           /* gray-50 */
-  --color-surface: #ffffff;            /* white */
-  --color-surface-alt: #f9fafb;        /* gray-50 */
-  --color-text-primary: #111827;       /* gray-900 */
-  --color-text-secondary: #4b5563;     /* gray-600 */
-  --color-text-muted: #9ca3af;         /* gray-400 */
-  --color-border: #e5e7eb;             /* gray-200 */
-  --color-border-strong: #d1d5db;      /* gray-300 */
-  --color-hover-bg: #f9fafb;           /* gray-50 */
-  --color-shadow: rgba(0,0,0,0.1);
+  /* — Base Surface & Text (warm palette) — */
+  --color-page-bg: #faf8f5;           /* warm cream */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f2ed;        /* warm linen */
+  --color-text-primary: #2c2418;       /* warm espresso */
+  --color-text-secondary: #78716c;     /* stone-500 */
+  --color-text-muted: #a8a29e;         /* stone-400 */
+  --color-border: #e7e3dd;             /* warm sand */
+  --color-border-strong: #d6d0c8;      /* warm sand darker */
+  --color-hover-bg: #f5f2ed;           /* warm linen */
+  --color-shadow: rgba(120,80,40,0.08);
 
-  /* — Accent / Navigation — */
+  /* — Accent / Navigation (blue — matches primary CTA) — */
   --color-accent: #2563eb;             /* blue-600 */
   --color-accent-hover: #1d4ed8;       /* blue-700 */
   --color-accent-light: #eff6ff;       /* blue-50 */
-  --color-accent-ring: #3b82f6;        /* blue-500 */
+  --color-accent-ring: #2563eb;        /* blue-600 */
 
-  /* — Feature Hero Cards (landing page) — */
-  --color-hero-recipes: #ea580c;       /* orange-600 */
-  --color-hero-recipes-border: #c2410c;/* orange-700 */
-  --color-hero-mealplans: #2563eb;     /* blue-600 */
-  --color-hero-mealplans-border: #1d4ed8;/* blue-700 */
-  --color-hero-shopping: #9f1239;      /* rose-800 */
-  --color-hero-shopping-border: #881337;/* rose-900 */
-  --color-hero-cooking: #1f2937;       /* gray-800 */
-  --color-hero-cooking-border: #111827;/* gray-900 */
+  /* — Section Colors (parametrized per-section identity) — */
+  --color-sec-recipes: #c2602a;        /* terracotta */
+  --color-sec-recipes-light: #fdf3ed;
+  --color-sec-collections: #a04d22;    /* darker terracotta */
+  --color-sec-collections-light: #faf0e8;
+  --color-sec-mealplans: #4a7a6b;     /* sage green */
+  --color-sec-mealplans-light: #eef5f2;
+  --color-sec-shopping: #3d6b5e;      /* deeper sage */
+  --color-sec-shopping-light: #e8f3ef;
+  --color-sec-cooking: #2d5b4e;       /* darkest sage */
+  --color-sec-cooking-light: #e2f0ec;
+  --color-sec-prefs: #8b7db8;         /* light purple */
+  --color-sec-prefs-light: #f0ecf7;
+  --color-sec-ai: #7c3aed;            /* purple */
+  --color-sec-ai-light: #f3effc;
+  --color-sec-ai-recipes: #059669;    /* emerald-600 */
+  --color-sec-ai-recipes-light: #ecfdf5;
+
+  /* — Hero Card Backgrounds (kept for other themes) — */
+  --color-hero-recipes: #c2602a;
+  --color-hero-recipes-border: #a84e20;
+  --color-hero-collections: #a04d22;
+  --color-hero-collections-border: #8a4420;
+  --color-hero-mealplans: #4a7a6b;
+  --color-hero-mealplans-border: #3d6b5e;
+  --color-hero-shopping: #3d6b5e;
+  --color-hero-shopping-border: #2d5b4e;
+  --color-hero-cooking: #2d5b4e;
+  --color-hero-cooking-border: #22433a;
+  --color-hero-prefs: #8b7db8;
+  --color-hero-prefs-border: #7a6ca8;
+  --color-hero-ai: #7c3aed;
+  --color-hero-ai-border: #6d28d9;
 
   /* — Feature List Cards — */
-  --color-card-recipes: #fed7aa;       /* orange-200 */
-  --color-card-recipes-border: #fdba74;/* orange-300 */
-  --color-card-mealplans: #dbeafe;     /* blue-100 */
-  --color-card-mealplans-border: #bfdbfe;/* blue-200 */
-  --color-card-shopping: #fecdd3;      /* rose-200 */
-  --color-card-shopping-border: #fda4af;/* rose-300 */
-  --color-card-cooking: #9ca3af;       /* gray-400 */
-  --color-card-cooking-border: #6b7280;/* gray-500 */
+  --color-card-recipes: #fdf3ed;
+  --color-card-recipes-border: #e7d5c8;
+  --color-card-mealplans: #eef5f2;
+  --color-card-mealplans-border: #c8ddd4;
+  --color-card-shopping: #eef5f2;
+  --color-card-shopping-border: #c8ddd4;
+  --color-card-cooking: #eef5f2;
+  --color-card-cooking-border: #c8ddd4;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #93c5fd;   /* blue-300 */
-  --color-detail-mealplans-border: #3b82f6;/* blue-500 */
-  --color-detail-cooking-from: #374151;/* gray-700 */
-  --color-detail-cooking-to: #4b5563;  /* gray-600 */
-  --color-card-cooking-text: #ffffff;
-  --color-card-cooking-meta: #e5e7eb;  /* gray-200 */
+  --color-detail-mealplans: #c8ddd4;
+  --color-detail-mealplans-border: #4a7a6b;
+  --color-detail-cooking-from: #365e52;
+  --color-detail-cooking-to: #4a7a6b;
+  --color-card-cooking-text: #1c1917;
+  --color-card-cooking-meta: #78716c;
 
   /* — Buttons — */
-  --color-btn-primary: #2563eb;        /* blue-600 */
+  --color-btn-primary: #2563eb;        /* blue-600 — main CTA */
   --color-btn-primary-hover: #1d4ed8;  /* blue-700 */
-  --color-btn-secondary: #4b5563;      /* gray-600 */
-  --color-btn-secondary-hover: #374151;/* gray-700 */
+  --color-btn-secondary: #57534e;      /* stone-600 — dark grey */
+  --color-btn-secondary-hover: #44403c;/* stone-700 */
   --color-btn-danger: #dc2626;         /* red-600 */
   --color-btn-danger-hover: #b91c1c;   /* red-700 */
-  --color-btn-success: #16a34a;        /* green-600 */
+  --color-btn-success: #16a34a;        /* green-600 — vivid, distinct from sage */
   --color-btn-success-hover: #15803d;  /* green-700 */
-  --color-btn-warning: #ea580c;        /* orange-600 */
-  --color-btn-warning-hover: #c2410c;  /* orange-700 */
-  --color-btn-ghost-border: #d1d5db;   /* gray-300 */
-  --color-btn-ghost-text: #374151;     /* gray-700 */
-  --color-btn-ghost-hover: #f9fafb;    /* gray-50 */
+  --color-btn-warning: #d97706;        /* amber-600 */
+  --color-btn-warning-hover: #b45309;  /* amber-700 */
+  --color-btn-ghost-border: #d6d0c8;   /* warm sand */
+  --color-btn-ghost-text: #5c5347;     /* warm dark */
+  --color-btn-ghost-hover: #f5f2ed;    /* warm linen */
   --color-btn-link: #2563eb;           /* blue-600 */
   --color-btn-link-hover: #1d4ed8;     /* blue-700 */
 
   /* — Semantic — */
-  --color-progress: #16a34a;           /* green-600 */
+  --color-progress: #16a34a;           /* vivid green */
   --color-error-bg: #fef2f2;           /* red-50 */
   --color-error-border: #fecaca;       /* red-200 */
   --color-error-text: #b91c1c;         /* red-700 */
@@ -112,6 +136,30 @@
   --color-hero-shopping-border: #3730a3;/* indigo-800 */
   --color-hero-cooking: #334155;       /* slate-700 */
   --color-hero-cooking-border: #1e293b;/* slate-800 */
+  --color-hero-collections: #0d7b82;   /* teal-700 */
+  --color-hero-collections-border: #0a5f65;
+  --color-hero-prefs: #64748b;         /* slate-500 */
+  --color-hero-prefs-border: #475569;
+  --color-hero-ai: #7c3aed;           /* violet-600 */
+  --color-hero-ai-border: #6d28d9;
+
+  /* — Section Colors — */
+  --color-sec-recipes: #0d9488;
+  --color-sec-recipes-light: #ecfeff;
+  --color-sec-collections: #0f766e;
+  --color-sec-collections-light: #ccfbf1;
+  --color-sec-mealplans: #0284c7;
+  --color-sec-mealplans-light: #f0f9ff;
+  --color-sec-shopping: #0369a1;
+  --color-sec-shopping-light: #e0f2fe;
+  --color-sec-cooking: #075985;
+  --color-sec-cooking-light: #dbeafe;
+  --color-sec-prefs: #64748b;
+  --color-sec-prefs-light: #f8fafc;
+  --color-sec-ai: #7c3aed;
+  --color-sec-ai-light: #f5f3ff;
+  --color-sec-ai-recipes: #059669;
+  --color-sec-ai-recipes-light: #ecfdf5;
 
   /* — Feature List Cards — */
   --color-card-recipes: #99f6e4;       /* teal-200 */
@@ -187,6 +235,30 @@
   --color-hero-shopping-border: #292524;/* stone-800 */
   --color-hero-cooking: #14532d;       /* green-900 */
   --color-hero-cooking-border: #052e16;/* green-950 */
+  --color-hero-collections: #92400e;   /* amber-800 */
+  --color-hero-collections-border: #78350f;
+  --color-hero-prefs: #57534e;         /* stone-600 */
+  --color-hero-prefs-border: #44403c;
+  --color-hero-ai: #7c3aed;           /* violet-600 */
+  --color-hero-ai-border: #6d28d9;
+
+  /* — Section Colors — */
+  --color-sec-recipes: #b45309;
+  --color-sec-recipes-light: #fffbeb;
+  --color-sec-collections: #92400e;
+  --color-sec-collections-light: #fef3c7;
+  --color-sec-mealplans: #047857;
+  --color-sec-mealplans-light: #ecfdf5;
+  --color-sec-shopping: #065f46;
+  --color-sec-shopping-light: #d1fae5;
+  --color-sec-cooking: #064e3b;
+  --color-sec-cooking-light: #a7f3d0;
+  --color-sec-prefs: #57534e;
+  --color-sec-prefs-light: #fafaf9;
+  --color-sec-ai: #7c3aed;
+  --color-sec-ai-light: #f5f3ff;
+  --color-sec-ai-recipes: #059669;
+  --color-sec-ai-recipes-light: #ecfdf5;
 
   /* — Feature List Cards — */
   --color-card-recipes: #fde68a;       /* amber-200 */
@@ -262,6 +334,30 @@
   --color-hero-shopping-border: #86198f;/* fuchsia-800 */
   --color-hero-cooking: #1e293b;       /* slate-800 */
   --color-hero-cooking-border: #0f172a;/* slate-900 */
+  --color-hero-collections: #c2410c;   /* orange-700 */
+  --color-hero-collections-border: #9a3412;
+  --color-hero-prefs: #57534e;         /* stone-600 */
+  --color-hero-prefs-border: #44403c;
+  --color-hero-ai: #9333ea;           /* purple-600 */
+  --color-hero-ai-border: #7e22ce;
+
+  /* — Section Colors — */
+  --color-sec-recipes: #d97706;
+  --color-sec-recipes-light: #fffbeb;
+  --color-sec-collections: #c2410c;
+  --color-sec-collections-light: #fff7ed;
+  --color-sec-mealplans: #e11d48;
+  --color-sec-mealplans-light: #fff1f2;
+  --color-sec-shopping: #a21caf;
+  --color-sec-shopping-light: #fdf4ff;
+  --color-sec-cooking: #86198f;
+  --color-sec-cooking-light: #fae8ff;
+  --color-sec-prefs: #57534e;
+  --color-sec-prefs-light: #fafaf9;
+  --color-sec-ai: #9333ea;
+  --color-sec-ai-light: #faf5ff;
+  --color-sec-ai-recipes: #059669;
+  --color-sec-ai-recipes-light: #ecfdf5;
 
   /* — Feature List Cards — */
   --color-card-recipes: #fde68a;       /* amber-200 */
@@ -337,6 +433,30 @@
   --color-hero-shopping-border: #e11d48;/* rose-600 */
   --color-hero-cooking: #475569;       /* slate-600 */
   --color-hero-cooking-border: #334155;/* slate-700 */
+  --color-hero-collections: #ea580c;   /* orange-600 */
+  --color-hero-collections-border: #c2410c;
+  --color-hero-prefs: #64748b;         /* slate-500 */
+  --color-hero-prefs-border: #475569;
+  --color-hero-ai: #a78bfa;           /* violet-400 */
+  --color-hero-ai-border: #8b5cf6;
+
+  /* — Section Colors — */
+  --color-sec-recipes: #f97316;
+  --color-sec-recipes-light: #431407;
+  --color-sec-collections: #ea580c;
+  --color-sec-collections-light: #431407;
+  --color-sec-mealplans: #3b82f6;
+  --color-sec-mealplans-light: #172554;
+  --color-sec-shopping: #f43f5e;
+  --color-sec-shopping-light: #4c0519;
+  --color-sec-cooking: #475569;
+  --color-sec-cooking-light: #1e293b;
+  --color-sec-prefs: #94a3b8;
+  --color-sec-prefs-light: #1e293b;
+  --color-sec-ai: #a78bfa;
+  --color-sec-ai-light: #2e1065;
+  --color-sec-ai-recipes: #34d399;
+  --color-sec-ai-recipes-light: #064e3b;
 
   /* — Feature List Cards (same surface, colored borders) — */
   --color-card-recipes: #1e293b;       /* slate-800 (surface) */

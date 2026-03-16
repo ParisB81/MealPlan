@@ -54,13 +54,13 @@ export default function PreferencesPage() {
     <div className="container mx-auto px-4 py-4 md:py-8 max-w-3xl">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-6 h-6 text-purple-500" />
+          <Sparkles className="w-6 h-6 text-sec-prefs" />
           <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
             Preference Profiles
           </h1>
         </div>
         <Link to="/preferences/new">
-          <Button variant="primary" className="bg-purple-600 hover:bg-purple-700">
+          <Button variant="primary">
             <Plus className="w-4 h-4 mr-1.5" />
             New Profile
           </Button>
@@ -74,10 +74,10 @@ export default function PreferencesPage() {
       {!isLoading && preferences.length === 0 && (
         <Card>
           <div className="text-center py-8">
-            <Sparkles className="w-10 h-10 text-purple-300 mx-auto mb-3" />
+            <Sparkles className="w-10 h-10 text-sec-prefs mx-auto mb-3 opacity-50" />
             <p className="text-text-secondary mb-3">No preference profiles yet</p>
             <Link to="/preferences/new">
-              <Button variant="primary" className="bg-purple-600 hover:bg-purple-700">
+              <Button variant="primary">
                 Create your first preference profile
               </Button>
             </Link>
@@ -129,7 +129,7 @@ export default function PreferencesPage() {
                   onClick={() => handleDelete(pref.id, pref.name)}
                   title="Delete profile"
                 >
-                  <Trash2 className="w-4 h-4 text-red-500" />
+                  <Trash2 className="w-4 h-4 text-btn-danger" />
                 </Button>
               </div>
             </div>

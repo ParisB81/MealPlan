@@ -33,6 +33,33 @@ export default {
         'hero-shopping-border': 'var(--color-hero-shopping-border)',
         'hero-cooking': 'var(--color-hero-cooking)',
         'hero-cooking-border': 'var(--color-hero-cooking-border)',
+        'hero-collections': 'var(--color-hero-collections)',
+        'hero-collections-border': 'var(--color-hero-collections-border)',
+        'hero-prefs': 'var(--color-hero-prefs)',
+        'hero-prefs-border': 'var(--color-hero-prefs-border)',
+        'hero-ai': 'var(--color-hero-ai)',
+        'hero-ai-border': 'var(--color-hero-ai-border)',
+
+        // — Section Colors (per-section identity) —
+        'sec-recipes': 'var(--color-sec-recipes)',
+        'sec-recipes-light': 'var(--color-sec-recipes-light)',
+        'sec-collections': 'var(--color-sec-collections)',
+        'sec-collections-light': 'var(--color-sec-collections-light)',
+        'sec-mealplans': 'var(--color-sec-mealplans)',
+        'sec-mealplans-light': 'var(--color-sec-mealplans-light)',
+        'sec-shopping': 'var(--color-sec-shopping)',
+        'sec-shopping-light': 'var(--color-sec-shopping-light)',
+        'sec-cooking': 'var(--color-sec-cooking)',
+        'sec-cooking-light': 'var(--color-sec-cooking-light)',
+        'sec-prefs': 'var(--color-sec-prefs)',
+        'sec-prefs-light': 'var(--color-sec-prefs-light)',
+        'sec-ai': 'var(--color-sec-ai)',
+        'sec-ai-light': 'var(--color-sec-ai-light)',
+        'sec-ai-recipes': 'var(--color-sec-ai-recipes)',
+        'sec-ai-recipes-light': 'var(--color-sec-ai-recipes-light)',
+        // Legacy alias
+        'sec-planning': 'var(--color-sec-mealplans)',
+        'sec-planning-light': 'var(--color-sec-mealplans-light)',
 
         // — Feature List Cards —
         'card-recipes': 'var(--color-card-recipes)',

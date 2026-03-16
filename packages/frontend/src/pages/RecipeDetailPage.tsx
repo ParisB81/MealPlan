@@ -4,6 +4,7 @@ import { useRecipe, useDeleteRecipe, useUpdateRecipe } from '../hooks/useRecipes
 import { useCollectionsForRecipe } from '../hooks/useCollections';
 import { CalendarPlus, FolderPlus, ShoppingCart, ExternalLink } from 'lucide-react';
 import { Badge } from '../components/ui';
+import { getCategoryForTag } from '../data/tagDefinitions';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 import AddToCollectionModal from '../components/AddToCollectionModal';
 import AddToShoppingListModal from '../components/AddToShoppingListModal';
@@ -99,28 +100,28 @@ export default function RecipeDetailPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowAddToMealPlan(true)}
-                  className="inline-flex items-center px-4 py-2 bg-btn-success text-white rounded-lg hover:bg-btn-success-hover"
+                  className="inline-flex items-center px-4 py-2 bg-sec-mealplans text-white rounded-lg hover:opacity-90"
                 >
                   <CalendarPlus className="w-4 h-4 mr-1" />
                   Meal Plan
                 </button>
                 <button
                   onClick={() => setShowAddToCollection(true)}
-                  className="inline-flex items-center px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"
+                  className="inline-flex items-center px-4 py-2 bg-sec-collections text-white rounded-lg hover:opacity-90"
                 >
                   <FolderPlus className="w-4 h-4 mr-1" />
                   Collection
                 </button>
                 <button
                   onClick={() => setShowAddToShoppingList(true)}
-                  className="inline-flex items-center px-4 py-2 bg-hero-shopping text-white rounded-lg hover:opacity-90"
+                  className="inline-flex items-center px-4 py-2 bg-sec-shopping text-white rounded-lg hover:opacity-90"
                 >
                   <ShoppingCart className="w-4 h-4 mr-1" />
                   Shopping List
                 </button>
                 <Link
                   to={`/recipes/${id}/edit`}
-                  className="px-4 py-2 bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
+                  className="px-4 py-2 bg-btn-secondary text-white rounded-lg hover:bg-btn-secondary-hover"
                 >
                   Edit
                 </Link>
@@ -163,14 +164,12 @@ export default function RecipeDetailPage() {
             {/* Tags */}
             {recipe.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {recipe.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 bg-accent-light text-accent text-sm rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                {recipe.tags.map((tag) => {
+                  const cat = getCategoryForTag(tag);
+                  return (
+                    <Badge key={tag} variant={cat?.color || 'blue'}>{tag}</Badge>
+                  );
+                })}
               </div>
             )}
 

@@ -203,10 +203,8 @@ export default function CollectionDetailPage() {
 
                 {/* Add to Meal Plan */}
                 <div className="mt-3 pt-3 border-t border-border-default">
-                  <Button
-                    variant="success"
-                    size="sm"
-                    fullWidth
+                  <button
+                    className="w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-sm bg-sec-mealplans text-white hover:opacity-90"
                     onClick={(e) => {
                       e.stopPropagation();
                       setAddToMealPlan({ id: recipe.id, title: recipe.title });
@@ -214,7 +212,7 @@ export default function CollectionDetailPage() {
                   >
                     <CalendarPlus className="w-4 h-4 mr-1 inline" />
                     Add to Meal Plan
-                  </Button>
+                  </button>
                 </div>
               </div>
             </Card>

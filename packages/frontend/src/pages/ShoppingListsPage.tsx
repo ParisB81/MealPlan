@@ -387,7 +387,7 @@ export default function ShoppingListsPage() {
                     </div>
                     <div className="w-full bg-border-default rounded-full h-2">
                       <div
-                        className="bg-green-600 h-2 rounded-full transition-all"
+                        className="bg-progress h-2 rounded-full transition-all"
                         style={{ width: `${progress}%` }}
                       />
                     </div>

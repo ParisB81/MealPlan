@@ -52,7 +52,7 @@ export default function Modal({
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -61,7 +61,7 @@ export default function Modal({
       <div
         className={`bg-surface shadow-xl w-full flex flex-col
           h-full md:h-auto
-          md:rounded-lg md:mx-4 md:max-h-[80vh]
+          md:rounded-2xl md:mx-4 md:max-h-[80vh]
           ${sizeClasses[size]}
         `}
       >

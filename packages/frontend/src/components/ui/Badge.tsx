@@ -11,13 +11,13 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  blue: 'bg-blue-100 text-blue-700',
-  gray: 'bg-gray-100 text-gray-600',
-  green: 'bg-green-100 text-green-800',
-  red: 'bg-red-100 text-red-700',
-  yellow: 'bg-yellow-100 text-yellow-800',
-  orange: 'bg-orange-100 text-orange-700',
-  purple: 'bg-purple-100 text-purple-700',
+  blue: 'bg-[#e8eef5] text-[#4a6080]',
+  gray: 'bg-[#f0ede8] text-[#6b6358]',
+  green: 'bg-[#e6f0ea] text-[#3d6648]',
+  red: 'bg-[#f5e8e8] text-[#8b3a3a]',
+  yellow: 'bg-[#f5f0e0] text-[#7a6530]',
+  orange: 'bg-[#fdf3ed] text-[#a84e20]',
+  purple: 'bg-[#f0ecf8] text-[#6a4daa]',
 };
 
 const sizeClasses: Record<BadgeSize, string> = {

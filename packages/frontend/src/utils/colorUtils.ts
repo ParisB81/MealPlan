@@ -134,15 +134,39 @@ export const ALL_CSS_VARIABLE_NAMES = [
   '--color-accent-light',
   '--color-accent-ring',
 
-  // Hero Cards (8)
+  // Hero Cards (14)
   '--color-hero-recipes',
   '--color-hero-recipes-border',
+  '--color-hero-collections',
+  '--color-hero-collections-border',
   '--color-hero-mealplans',
   '--color-hero-mealplans-border',
   '--color-hero-shopping',
   '--color-hero-shopping-border',
   '--color-hero-cooking',
   '--color-hero-cooking-border',
+  '--color-hero-prefs',
+  '--color-hero-prefs-border',
+  '--color-hero-ai',
+  '--color-hero-ai-border',
+
+  // Section Colors (16)
+  '--color-sec-recipes',
+  '--color-sec-recipes-light',
+  '--color-sec-collections',
+  '--color-sec-collections-light',
+  '--color-sec-mealplans',
+  '--color-sec-mealplans-light',
+  '--color-sec-shopping',
+  '--color-sec-shopping-light',
+  '--color-sec-cooking',
+  '--color-sec-cooking-light',
+  '--color-sec-prefs',
+  '--color-sec-prefs-light',
+  '--color-sec-ai',
+  '--color-sec-ai-light',
+  '--color-sec-ai-recipes',
+  '--color-sec-ai-recipes-light',
 
   // List Cards (8)
   '--color-card-recipes',
@@ -201,6 +225,11 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
   const { pageBg, accent, heroRecipes, heroMealplans, heroShopping, heroCooking } = keys;
   const dark = isDark(pageBg);
 
+  // — Resolve optional section colors (backward compat: derive if absent) —
+  const secPrefs     = keys.secPrefs     || '#8b7db8';
+  const secAi        = keys.secAi        || '#7c3aed';
+  const secAiRecipes = keys.secAiRecipes || '#059669';
+
   // — Surface & Text —
   const surface      = dark ? lighten(pageBg, 10) : '#ffffff';
   const surfaceAlt   = dark ? lighten(pageBg, 5) : pageBg;
@@ -217,11 +246,33 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
   const accentLight = dark ? setLightness(accent, 15) : setLightness(accent, 95);
   const accentRing  = lighten(accent, 5);
 
-  // — Hero borders —
-  const heroRecipesBorder   = darken(heroRecipes, 8);
-  const heroMealplansBorder = darken(heroMealplans, 8);
-  const heroShoppingBorder  = darken(heroShopping, 8);
-  const heroCookingBorder   = darken(heroCooking, 8);
+  // — Hero colors & borders (used for card backgrounds on non-Classic themes) —
+  const heroCollections       = darken(heroRecipes, 8);
+  const heroRecipesBorder     = darken(heroRecipes, 8);
+  const heroCollectionsBorder = darken(heroCollections, 8);
+  const heroMealplansBorder   = darken(heroMealplans, 8);
+  const heroShoppingBorder    = darken(heroShopping, 8);
+  const heroCookingBorder     = darken(heroCooking, 8);
+  const heroPrefsBorder       = darken(secPrefs, 8);
+  const heroAiBorder          = darken(secAi, 8);
+
+  // — Section Colors (the primary identity system) —
+  // Recipes family: heroRecipes is the section color; collections is a darker sibling
+  const secRecipes          = heroRecipes;
+  const secRecipesLight     = dark ? setLightness(heroRecipes, 12) : setLightness(heroRecipes, 95);
+  const secCollections      = heroCollections;
+  const secCollectionsLight = dark ? setLightness(heroCollections, 12) : setLightness(heroCollections, 94);
+  // Planning family
+  const secMealplans      = heroMealplans;
+  const secMealplansLight = dark ? setLightness(heroMealplans, 12) : setLightness(heroMealplans, 95);
+  const secShopping       = heroShopping;
+  const secShoppingLight  = dark ? setLightness(heroShopping, 12) : setLightness(heroShopping, 94);
+  const secCooking        = heroCooking;
+  const secCookingLight   = dark ? setLightness(heroCooking, 12) : setLightness(heroCooking, 93);
+  // Prefs, AI, AI Recipes
+  const secPrefsLight      = dark ? setLightness(secPrefs, 12) : setLightness(secPrefs, 95);
+  const secAiLight         = dark ? setLightness(secAi, 12) : setLightness(secAi, 96);
+  const secAiRecipesLight  = dark ? setLightness(secAiRecipes, 12) : setLightness(secAiRecipes, 96);
 
   // — List Card colors (lighter variants of hero colors) —
   const cardRecipes        = dark ? setLightness(heroRecipes, 20) : setLightness(heroRecipes, 85);
@@ -230,20 +281,21 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
   const cardMealplansBorder = dark ? setLightness(heroMealplans, 30) : setLightness(heroMealplans, 75);
   const cardShopping       = dark ? setLightness(heroShopping, 20) : setLightness(heroShopping, 85);
   const cardShoppingBorder = dark ? setLightness(heroShopping, 30) : setLightness(heroShopping, 75);
-  const cardCooking        = dark ? setLightness(heroCooking, 20) : setLightness(heroCooking, 45);
-  const cardCookingBorder  = dark ? setLightness(heroCooking, 30) : setLightness(heroCooking, 55);
+  const cardCooking        = dark ? setLightness(heroCooking, 20) : setLightness(heroCooking, 92);
+  const cardCookingBorder  = dark ? setLightness(heroCooking, 30) : setLightness(heroCooking, 82);
 
   // — Detail —
   const detailMealplans       = dark ? setLightness(heroMealplans, 25) : setLightness(heroMealplans, 80);
   const detailMealplansBorder = dark ? setLightness(heroMealplans, 35) : setLightness(heroMealplans, 70);
   const detailCookingFrom     = dark ? darken(heroCooking, 5) : lighten(heroCooking, 5);
   const detailCookingTo       = dark ? lighten(heroCooking, 10) : darken(heroCooking, 5);
-  const cardCookingText       = dark ? '#e5e7eb' : '#ffffff';
-  const cardCookingMeta       = dark ? '#9ca3af' : '#e5e7eb';
+  // Cooking card text: dark text on light cards, light text on dark cards
+  const cardCookingText       = dark ? '#e5e7eb' : '#1c1917';
+  const cardCookingMeta       = dark ? '#9ca3af' : '#78716c';
 
   // — Buttons (secondary derives from pageBg; danger/success/warning are fixed) —
-  const btnSecondary      = dark ? lighten(pageBg, 15) : '#4b5563';
-  const btnSecondaryHover = dark ? lighten(pageBg, 20) : '#374151';
+  const btnSecondary      = dark ? lighten(pageBg, 15) : '#57534e';
+  const btnSecondaryHover = dark ? lighten(pageBg, 20) : '#44403c';
 
   return {
     // Surface & Text
@@ -267,12 +319,36 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
     // Hero Cards
     '--color-hero-recipes': heroRecipes,
     '--color-hero-recipes-border': heroRecipesBorder,
+    '--color-hero-collections': heroCollections,
+    '--color-hero-collections-border': heroCollectionsBorder,
     '--color-hero-mealplans': heroMealplans,
     '--color-hero-mealplans-border': heroMealplansBorder,
     '--color-hero-shopping': heroShopping,
     '--color-hero-shopping-border': heroShoppingBorder,
     '--color-hero-cooking': heroCooking,
     '--color-hero-cooking-border': heroCookingBorder,
+    '--color-hero-prefs': secPrefs,
+    '--color-hero-prefs-border': heroPrefsBorder,
+    '--color-hero-ai': secAi,
+    '--color-hero-ai-border': heroAiBorder,
+
+    // Section Colors
+    '--color-sec-recipes': secRecipes,
+    '--color-sec-recipes-light': secRecipesLight,
+    '--color-sec-collections': secCollections,
+    '--color-sec-collections-light': secCollectionsLight,
+    '--color-sec-mealplans': secMealplans,
+    '--color-sec-mealplans-light': secMealplansLight,
+    '--color-sec-shopping': secShopping,
+    '--color-sec-shopping-light': secShoppingLight,
+    '--color-sec-cooking': secCooking,
+    '--color-sec-cooking-light': secCookingLight,
+    '--color-sec-prefs': secPrefs,
+    '--color-sec-prefs-light': secPrefsLight,
+    '--color-sec-ai': secAi,
+    '--color-sec-ai-light': secAiLight,
+    '--color-sec-ai-recipes': secAiRecipes,
+    '--color-sec-ai-recipes-light': secAiRecipesLight,
 
     // List Cards
     '--color-card-recipes': cardRecipes,
@@ -310,7 +386,7 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
     '--color-btn-link-hover': accentHover,
 
     // Semantic
-    '--color-progress': accent,
+    '--color-progress': '#16a34a',
     '--color-error-bg': dark ? '#450a0a' : '#fef2f2',
     '--color-error-border': dark ? '#7f1d1d' : '#fecaca',
     '--color-error-text': dark ? '#fca5a5' : '#dc2626',

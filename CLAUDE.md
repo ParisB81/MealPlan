@@ -37,6 +37,10 @@ This file provides essential context for AI assistants (like Claude) working on 
    "C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" prisma/seed.ts
    ```
 
+## Design System
+
+The visual language, color rules, and theme authoring guide are documented in **[`DESIGN_SYSTEM.md`](./DESIGN_SYSTEM.md)**. Key rules: neutral card surfaces with colored section icon squares, role-based button colors (primary=blue CTA, section=cross-section, secondary=edit, success=complete, danger=delete), tag badges always use Tag Manager category colors, and all colors flow through CSS custom properties — no hardcoded Tailwind color classes in page components.
+
 ## Project Overview
 
 MealPlan is a full-stack TypeScript web application for meal planning and cooking. It provides recipe management (including scraping recipes from URLs), weekly meal planning, shopping list generation with intelligent ingredient aggregation, and nutritional tracking. The app is deployed to Railway cloud and accessible as a PWA on Android phones.

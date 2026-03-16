@@ -316,6 +316,7 @@ export default function MealPlanDetailPage() {
               <Button
                 variant="secondary"
                 onClick={() => navigate(`/cooking-plan/new?planId=${id}`)}
+                className="!bg-sec-cooking hover:!opacity-90 !text-white !border-transparent"
               >
                 <CookingPot size={16} className="mr-1.5" />
                 Cooking Plan
@@ -325,7 +326,7 @@ export default function MealPlanDetailPage() {
               <div className="relative" ref={dropdownRef}>
                 <Button
                   variant="secondary"
-                  className="!bg-hero-shopping hover:!bg-hero-shopping-border border border-hero-shopping-border text-white"
+                  className="!bg-sec-shopping hover:!opacity-90 !border-transparent !text-white"
                   onClick={() => setShoppingDropdownOpen(o => !o)}
                   loading={generateShoppingList.isPending || addFromMealPlan.isPending}
                 >

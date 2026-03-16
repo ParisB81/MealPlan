@@ -233,19 +233,19 @@ export default function ShoppingListPage() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setShowAddIngredient(true)}
-              className="px-3 py-2 text-sm bg-btn-success text-white rounded-lg hover:bg-btn-success-hover active:bg-green-800"
+              className="px-3 py-2 text-sm bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover"
             >
               Add Ingredient
             </button>
             <button
               onClick={() => setShowRecipePicker(true)}
-              className="px-3 py-2 text-sm bg-orange-600 text-white rounded-lg hover:bg-orange-700 active:bg-orange-800"
+              className="px-3 py-2 text-sm bg-sec-recipes text-white rounded-lg hover:opacity-90"
             >
               Add from Recipe
             </button>
             <button
               onClick={() => setShowMealPlanPicker(true)}
-              className="px-3 py-2 text-sm bg-btn-primary text-white rounded-lg hover:bg-btn-primary-hover active:bg-accent"
+              className="px-3 py-2 text-sm bg-sec-mealplans text-white rounded-lg hover:opacity-90"
             >
               Add from Meal Plan
             </button>
@@ -313,7 +313,7 @@ export default function ShoppingListPage() {
             </div>
             <div className="w-full bg-border-default rounded-full h-2 mb-3">
               <div
-                className="bg-green-600 h-2 rounded-full transition-all"
+                className="bg-progress h-2 rounded-full transition-all"
                 style={{ width: `${progress}%` }}
               />
             </div>

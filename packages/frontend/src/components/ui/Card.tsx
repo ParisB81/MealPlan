@@ -16,7 +16,7 @@ const paddingClasses = {
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ hoverable = false, padding = 'md', className = '', children, ...props }, ref) => {
     const base = [
-      'bg-surface rounded-lg shadow',
+      'bg-surface rounded-xl border border-border-default shadow-sm',
       paddingClasses[padding],
       hoverable ? 'hover:shadow-lg transition-shadow' : '',
     ]

@@ -71,7 +71,7 @@ export default function MealPlansPage() {
             </Button>
             <Link
               to="/ai-meal-plan"
-              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-purple-600 text-white hover:bg-purple-700"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-sec-ai text-white hover:opacity-90"
             >
               <Sparkles className="w-4 h-4 mr-1" />
               AI Generate

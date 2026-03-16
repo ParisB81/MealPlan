@@ -7,6 +7,7 @@ import { collectionsService } from '../services/collections.service';
 import toast from 'react-hot-toast';
 import { Button, Input, Badge, Alert } from '../components/ui';
 import { Download, CalendarPlus, Trash2, X, Sparkles, FolderPlus, ShoppingCart, SlidersHorizontal, Tag } from 'lucide-react';
+import { getCategoryForTag } from '../data/tagDefinitions';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
 import AddToCollectionModal from '../components/AddToCollectionModal';
 import AddToShoppingListModal from '../components/AddToShoppingListModal';
@@ -220,7 +221,7 @@ export default function RecipesPage() {
             </Link>
             <Link
               to="/recipes/ai-generate"
-              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-emerald-600 text-white hover:bg-emerald-700"
+              className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-sec-ai-recipes text-white hover:opacity-90"
             >
               <Sparkles className="w-4 h-4 mr-1" />
               AI Generate
@@ -233,12 +234,12 @@ export default function RecipesPage() {
               Manage Tags
             </Link>
             {!showBulkActions && (
-              <Button
-                variant="secondary"
+              <button
                 onClick={() => setShowBulkActions(true)}
+                className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-4 py-2 text-sm bg-surface border border-border-default text-text-primary hover:bg-hover-bg"
               >
                 Bulk Actions
-              </Button>
+              </button>
             )}
             <span className="inline-flex items-center justify-center font-medium rounded-lg px-4 py-2 text-sm bg-border-default text-text-muted cursor-default">
               <Download className="w-4 h-4 mr-1 inline" />
@@ -310,7 +311,7 @@ export default function RecipesPage() {
                       onClick={handleBulkShoppingList}
                       disabled={selectedRecipes.size === 0}
                       loading={generateFromRecipes.isPending}
-                      className="!bg-hero-shopping hover:!opacity-90 !text-white !border-hero-shopping-border"
+                      className="!bg-sec-shopping hover:!opacity-90 !text-white !border-transparent"
                     >
                       <ShoppingCart className="w-4 h-4 mr-1 inline" />
                       Shopping List
@@ -584,24 +585,26 @@ export default function RecipesPage() {
                         {(() => {
                           // When searching, ensure the matched tag is visible in the first 3 shown
                           const searchLower = search.toLowerCase().trim();
+                          const getTagVariant = (tag: string) => {
+                            const cat = getCategoryForTag(tag);
+                            return cat?.color || 'blue';
+                          };
                           if (searchLower && !hasComma) {
                             const matchIdx = recipe.tags.findIndex(t => t.toLowerCase().includes(searchLower));
                             if (matchIdx >= 3) {
-                              // Move matched tag into the visible set
                               const reordered = [...recipe.tags];
                               const [matched] = reordered.splice(matchIdx, 1);
-                              reordered.splice(2, 0, matched); // Insert at position 3 (index 2)
+                              reordered.splice(2, 0, matched);
                               return reordered.slice(0, 3).map((tag) => (
-                                <Badge key={tag} variant={tag.toLowerCase().includes(searchLower) ? 'green' : 'blue'}>{tag}</Badge>
+                                <Badge key={tag} variant={getTagVariant(tag)}>{tag}</Badge>
                               ));
                             }
-                            // Matched tag is already in first 3 — highlight it
                             return recipe.tags.slice(0, 3).map((tag) => (
-                              <Badge key={tag} variant={tag.toLowerCase().includes(searchLower) ? 'green' : 'blue'}>{tag}</Badge>
+                              <Badge key={tag} variant={getTagVariant(tag)}>{tag}</Badge>
                             ));
                           }
                           return recipe.tags.slice(0, 3).map((tag) => (
-                            <Badge key={tag} variant="blue">{tag}</Badge>
+                            <Badge key={tag} variant={getTagVariant(tag)}>{tag}</Badge>
                           ));
                         })()}
                         {recipe.tags.length > 3 && (
@@ -614,43 +617,36 @@ export default function RecipesPage() {
                   {/* Action buttons (active recipes only) */}
                   {activeTab === 'active' && !showBulkActions && (
                     <div className="mt-4 pt-4 border-t border-card-recipes-border flex gap-2">
-                      <Button
-                        variant="success"
-                        size="sm"
-                        fullWidth
+                      <button
+                        className="flex-1 inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-xs bg-sec-mealplans text-white hover:opacity-90"
                         onClick={(e) => {
                           e.stopPropagation();
                           setAddToMealPlan({ id: recipe.id, title: recipe.title });
                         }}
                       >
-                        <CalendarPlus className="w-4 h-4 mr-1 inline" />
+                        <CalendarPlus className="w-3.5 h-3.5 mr-1 inline" />
                         Meal Plan
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        fullWidth
+                      </button>
+                      <button
+                        className="flex-1 inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-xs bg-sec-collections text-white hover:opacity-90"
                         onClick={(e) => {
                           e.stopPropagation();
                           setAddToCollection({ id: recipe.id, title: recipe.title });
                         }}
                       >
-                        <FolderPlus className="w-4 h-4 mr-1 inline" />
+                        <FolderPlus className="w-3.5 h-3.5 mr-1 inline" />
                         Collection
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        fullWidth
+                      </button>
+                      <button
+                        className="flex-1 inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-xs bg-sec-shopping text-white hover:opacity-90"
                         onClick={(e) => {
                           e.stopPropagation();
                           setAddToShoppingList({ id: recipe.id, title: recipe.title });
                         }}
-                        className="!bg-hero-shopping hover:!opacity-90 !text-white !border-hero-shopping-border"
                       >
-                        <ShoppingCart className="w-4 h-4 mr-1 inline" />
+                        <ShoppingCart className="w-3.5 h-3.5 mr-1 inline" />
                         Shopping
-                      </Button>
+                      </button>
                     </div>
                   )}
 
