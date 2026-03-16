@@ -170,8 +170,9 @@ model MealPlanPreference {
   userId    String
   name      String
 
-  // Recipe source mode: "library_only" | "library_and_ai"
-  recipeSource String @default("library_only")
+  // Recipe source mode: "library_only" | "library_and_ai" | "collection_only"
+  recipeSource         String  @default("library_only")
+  sourceCollectionId   String? // When recipeSource is "collection_only", the collection to draw from
 
   // Dietary preferences (stored as JSON strings)
   dietaryRestrictions String @default("[]")

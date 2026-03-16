@@ -172,7 +172,7 @@ export default function StepTasteDiet({
         <Button
           variant="primary"
           onClick={handleGenerate}
-          disabled={generatePlan.isPending || (!macroValid && macroTotal > 0) || pinOverflow}
+          disabled={generatePlan.isPending || (!macroValid && macroTotal > 0) || pinOverflow || (preferences.recipeSource === 'collection_only' && !preferences.sourceCollectionId)}
           className="bg-purple-600 hover:bg-purple-700"
         >
           {generatePlan.isPending ? (

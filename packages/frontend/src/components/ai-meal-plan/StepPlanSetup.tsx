@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Collapsible } from '../ui';
 import { usePreferences, useCreatePreference, useUpdatePreference } from '../../hooks/useMealPlanPreferences';
+import { useCollections } from '../../hooks/useCollections';
 import { CookingFreeDaysPicker } from '../ai-shared';
 import RecipePicker from '../RecipePicker';
 import type { CreatePreferenceInput, MealType, PinnedMeal } from '../../types/mealPlanPreference';
@@ -59,6 +60,7 @@ export default function StepPlanSetup({
   onNext,
 }: Props) {
   const { data: savedProfiles = [] } = usePreferences();
+  const { data: collections = [] } = useCollections('active');
   const createPref = useCreatePreference();
   const updatePref = useUpdatePreference();
   const [selectedProfileId, setSelectedProfileId] = useState<string>(preferenceId || '');
@@ -94,6 +96,7 @@ export default function StepPlanSetup({
       onUpdate({
         name: profile.name,
         recipeSource: profile.recipeSource,
+        sourceCollectionId: profile.sourceCollectionId,
         dietaryRestrictions: profile.dietaryRestrictions,
         cuisinePreferences: profile.cuisinePreferences,
         allergies: profile.allergies,
@@ -306,7 +309,7 @@ export default function StepPlanSetup({
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 type="button"
-                onClick={() => onUpdate({ ...preferences, recipeSource: 'library_only' })}
+                onClick={() => onUpdate({ ...preferences, recipeSource: 'library_only', sourceCollectionId: null })}
                 className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                   preferences.recipeSource === 'library_only'
                     ? 'border-purple-500 bg-purple-50'
@@ -318,7 +321,7 @@ export default function StepPlanSetup({
               </button>
               <button
                 type="button"
-                onClick={() => onUpdate({ ...preferences, recipeSource: 'library_and_ai' })}
+                onClick={() => onUpdate({ ...preferences, recipeSource: 'library_and_ai', sourceCollectionId: null })}
                 className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                   preferences.recipeSource === 'library_and_ai'
                     ? 'border-purple-500 bg-purple-50'
@@ -328,7 +331,36 @@ export default function StepPlanSetup({
                 <div className="font-medium text-text-primary">Library + AI</div>
                 <div className="text-sm text-text-secondary mt-1">Your recipes plus AI-created dishes</div>
               </button>
+              <button
+                type="button"
+                onClick={() => onUpdate({ ...preferences, recipeSource: 'collection_only' })}
+                className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
+                  preferences.recipeSource === 'collection_only'
+                    ? 'border-purple-500 bg-purple-50'
+                    : 'border-border-default hover:border-purple-300'
+                }`}
+              >
+                <div className="font-medium text-text-primary">Collection only</div>
+                <div className="text-sm text-text-secondary mt-1">Use recipes from one collection</div>
+              </button>
             </div>
+            {preferences.recipeSource === 'collection_only' && (
+              <div className="mt-3">
+                <select
+                  value={preferences.sourceCollectionId || ''}
+                  onChange={(e) => onUpdate({ ...preferences, sourceCollectionId: e.target.value || null })}
+                  className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface text-sm"
+                >
+                  <option value="">Select a collection...</option>
+                  {collections.map((c: any) => (
+                    <option key={c.id} value={c.id}>{c.name} ({c.recipeCount} recipes)</option>
+                  ))}
+                </select>
+                {!preferences.sourceCollectionId && (
+                  <p className="text-xs text-amber-600 mt-1">Please select a collection to continue.</p>
+                )}
+              </div>
+            )}
           </div>
           <div>
             <label className="text-xs text-text-muted mb-1 block">Default servings per recipe</label>

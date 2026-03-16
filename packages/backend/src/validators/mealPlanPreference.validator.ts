@@ -3,7 +3,8 @@ import { z } from 'zod';
 // Create preference profile schema
 export const createPreferenceSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
-  recipeSource: z.enum(['library_only', 'library_and_ai']).default('library_only'),
+  recipeSource: z.enum(['library_only', 'library_and_ai', 'collection_only']).default('library_only'),
+  sourceCollectionId: z.string().nullable().optional(),
   dietaryRestrictions: z.array(z.string()).default([]),
   cuisinePreferences: z.array(z.string()).default([]),
   allergies: z.array(z.string()).default([]),

@@ -2,8 +2,10 @@ import { useState, useMemo } from 'react';
 import { Button, Card, Badge } from '../ui';
 import { useSwapMeal } from '../../hooks/useAIMealPlan';
 import { useRecipes } from '../../hooks/useRecipes';
+import RecipePicker from '../RecipePicker';
+import type { Recipe } from '../../types/recipe';
 import type { GeneratedPlan, AIRecipeEntry, SwapAlternative, CreatePreferenceInput, PinnedMeal } from '../../types/mealPlanPreference';
-import { ChevronLeft, ChevronRight, ArrowLeftRight, Loader2, BookOpen, Sparkles, Clock, Flame, Pin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeftRight, Loader2, BookOpen, Sparkles, Clock, Flame, Pin, Library } from 'lucide-react';
 import { format, parseISO, isValid } from 'date-fns';
 
 function safeFormatDate(dateStr: string, pattern: string): string {
@@ -67,6 +69,7 @@ export default function StepReviewPlan({
     mealIndex: number;
     alternatives: SwapAlternative[];
   } | null>(null);
+  const [showLibraryPicker, setShowLibraryPicker] = useState(false);
 
   // Fetch library recipes (for nutrition lookup)
   const { data: recipesData } = useRecipes();
@@ -211,6 +214,24 @@ export default function StepReviewPlan({
     }
 
     setSwapState(null);
+  };
+
+  const applyLibrarySwap = (recipe: Recipe) => {
+    if (!swapState) return;
+    const alt: SwapAlternative = {
+      existingRecipeId: recipe.id,
+      existingRecipeTitle: recipe.title,
+      newRecipeTitle: null,
+      newRecipeDescription: null,
+      estimatedPrepTime: recipe.prepTime || undefined,
+      estimatedCookTime: recipe.cookTime || undefined,
+      estimatedCalories: recipe.nutrition?.calories,
+      estimatedProtein: recipe.nutrition?.protein,
+      estimatedCarbs: recipe.nutrition?.carbs,
+      estimatedFat: recipe.nutrition?.fat,
+    };
+    applySwap(alt);
+    setShowLibraryPicker(false);
   };
 
   const newRecipeCount = recipeQueue.filter(r => r.status === 'pending').length;
@@ -376,12 +397,12 @@ export default function StepReviewPlan({
                             onClick={() => applySwap(alt)}
                             className="w-full text-left p-2 rounded hover:bg-purple-100 transition-colors"
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-wrap items-start gap-2">
                               <span className="text-sm font-medium text-text-primary">
                                 {alt.existingRecipeTitle || alt.newRecipeTitle}
                               </span>
                               {alt.newRecipeTitle && !alt.existingRecipeId && (
-                                <Sparkles className="w-3 h-3 text-purple-500" />
+                                <Sparkles className="w-3 h-3 text-purple-500 shrink-0 mt-0.5" />
                               )}
                             </div>
                             {alt.newRecipeDescription && (
@@ -394,6 +415,15 @@ export default function StepReviewPlan({
                             )}
                           </button>
                         ))}
+                        <div className="border-t border-purple-200 pt-2 mt-1">
+                          <button
+                            onClick={() => setShowLibraryPicker(true)}
+                            className="w-full text-left p-2 rounded hover:bg-purple-100 transition-colors flex items-center gap-2 text-sm text-accent font-medium"
+                          >
+                            <Library className="w-4 h-4 shrink-0" />
+                            Browse full library...
+                          </button>
+                        </div>
                         <button
                           onClick={() => setSwapState(null)}
                           className="text-xs text-text-muted hover:text-text-secondary"
@@ -429,6 +459,13 @@ export default function StepReviewPlan({
           <ChevronRight className="w-4 h-4 ml-1.5" />
         </Button>
       </div>
+
+      {/* Library picker modal for swap */}
+      <RecipePicker
+        isOpen={showLibraryPicker}
+        onClose={() => setShowLibraryPicker(false)}
+        onSelectRecipe={applyLibrarySwap}
+      />
     </div>
   );
 }

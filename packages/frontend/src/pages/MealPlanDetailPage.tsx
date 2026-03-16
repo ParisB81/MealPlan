@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3 } from 'lucide-react';
+import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3, Pencil } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useMealPlan, useDeleteMealPlan, useMealPlanNutrition, useRemoveRecipeFromMealPlan, useUpdateMealPlanStatus } from '../hooks/useMealPlans';
+import { useMealPlan, useDeleteMealPlan, useMealPlanNutrition, useRemoveRecipeFromMealPlan, useUpdateMealPlanStatus, useUpdateMealPlan } from '../hooks/useMealPlans';
 import { useGenerateShoppingList, useShoppingLists, useAddFromMealPlan } from '../hooks/useShoppingLists';
 import { mealPlansService } from '../services/mealPlans.service';
 import AddRecipeModal from '../components/AddRecipeModal';
@@ -31,6 +31,9 @@ export default function MealPlanDetailPage() {
   const [copyState, setCopyState] = useState<CopyState | null>(null);
   const [isPasting, setIsPasting] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'grid'>('cards');
+  const [showRename, setShowRename] = useState(false);
+  const [renameName, setRenameName] = useState('');
+  const updateMealPlan = useUpdateMealPlan();
   const queryClient = useQueryClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -254,6 +257,18 @@ export default function MealPlanDetailPage() {
     });
   };
 
+  const handleRename = () => {
+    if (!mealPlan) return;
+    setRenameName(mealPlan.name);
+    setShowRename(true);
+  };
+
+  const handleSaveRename = async () => {
+    if (!id || !renameName.trim()) return;
+    await updateMealPlan.mutateAsync({ id, input: { name: renameName.trim() } });
+    setShowRename(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-page-bg flex items-center justify-center">
@@ -298,6 +313,13 @@ export default function MealPlanDetailPage() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{mealPlan.name}</h1>
+                <button
+                  onClick={handleRename}
+                  className="p-1.5 rounded-lg hover:bg-page-bg transition-colors text-text-muted hover:text-text-primary"
+                  title="Rename meal plan"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
                 {mealPlan.status === 'completed' && (
                   <Badge variant="green" size="md">&#x2713; Completed</Badge>
                 )}
@@ -629,6 +651,38 @@ export default function MealPlanDetailPage() {
           <div className="mt-4 flex justify-end">
             <Button variant="secondary" onClick={() => setIsAddToListModalOpen(false)}>Cancel</Button>
           </div>
+        </Modal>
+
+        {/* Rename Meal Plan Modal */}
+        <Modal
+          isOpen={showRename}
+          onClose={() => setShowRename(false)}
+          title="Rename Meal Plan"
+          size="sm"
+          footer={
+            <div className="flex justify-end gap-3">
+              <Button variant="secondary" onClick={() => setShowRename(false)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSaveRename}
+                disabled={!renameName.trim() || updateMealPlan.isPending}
+                loading={updateMealPlan.isPending}
+              >
+                Save
+              </Button>
+            </div>
+          }
+        >
+          <input
+            type="text"
+            value={renameName}
+            onChange={(e) => setRenameName(e.target.value)}
+            className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+            autoFocus
+            maxLength={200}
+            onKeyDown={(e) => { if (e.key === 'Enter' && renameName.trim()) handleSaveRename(); }}
+          />
         </Modal>
       </div>
     </div>

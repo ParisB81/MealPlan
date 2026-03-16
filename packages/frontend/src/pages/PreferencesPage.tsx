@@ -21,6 +21,7 @@ export default function PreferencesPage() {
         prefill: {
           name: `${pref.name} (copy)`,
           recipeSource: pref.recipeSource,
+          sourceCollectionId: pref.sourceCollectionId,
           dietaryRestrictions: pref.dietaryRestrictions,
           cuisinePreferences: pref.cuisinePreferences,
           allergies: pref.allergies,
@@ -92,8 +93,8 @@ export default function PreferencesPage() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-text-primary">{pref.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  <Badge variant={pref.recipeSource === 'library_and_ai' ? 'purple' : 'blue'} size="sm">
-                    {pref.recipeSource === 'library_and_ai' ? 'Library + AI' : 'Library only'}
+                  <Badge variant={pref.recipeSource === 'library_and_ai' ? 'purple' : pref.recipeSource === 'collection_only' ? 'orange' : 'blue'} size="sm">
+                    {pref.recipeSource === 'library_and_ai' ? 'Library + AI' : pref.recipeSource === 'collection_only' ? 'Collection' : 'Library only'}
                   </Badge>
                   {pref.dietaryRestrictions.map((r: string) => (
                     <Badge key={r} variant="green" size="sm">{r}</Badge>

@@ -1,4 +1,4 @@
-export type RecipeSource = 'library_only' | 'library_and_ai';
+export type RecipeSource = 'library_only' | 'library_and_ai' | 'collection_only';
 export type MealType = 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
 export interface MealPlanPreference {
@@ -6,6 +6,7 @@ export interface MealPlanPreference {
   userId: string;
   name: string;
   recipeSource: RecipeSource;
+  sourceCollectionId: string | null;
   dietaryRestrictions: string[];
   cuisinePreferences: string[];
   allergies: string[];
@@ -39,6 +40,7 @@ export interface MealPlanPreference {
 export interface CreatePreferenceInput {
   name: string;
   recipeSource?: RecipeSource;
+  sourceCollectionId?: string | null;
   dietaryRestrictions?: string[];
   cuisinePreferences?: string[];
   allergies?: string[];

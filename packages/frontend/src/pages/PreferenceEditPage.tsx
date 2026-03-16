@@ -7,6 +7,7 @@ import {
   useCreatePreference,
   useUpdatePreference,
 } from '../hooks/useMealPlanPreferences';
+import { useCollections } from '../hooks/useCollections';
 import {
   DietaryRestrictionsSelector,
   AllergiesSelector,
@@ -77,6 +78,7 @@ export default function PreferenceEditPage() {
 
   const { data: existingPref, isLoading } = usePreference(isNew ? null : id!);
   const { data: savedProfiles = [] } = usePreferences();
+  const { data: collections = [] } = useCollections('active');
   const createPref = useCreatePreference();
   const updatePref = useUpdatePreference();
 
@@ -93,6 +95,7 @@ export default function PreferenceEditPage() {
       setForm({
         name: existingPref.name,
         recipeSource: existingPref.recipeSource,
+        sourceCollectionId: existingPref.sourceCollectionId,
         dietaryRestrictions: existingPref.dietaryRestrictions,
         cuisinePreferences: existingPref.cuisinePreferences,
         allergies: existingPref.allergies,
@@ -134,6 +137,7 @@ export default function PreferenceEditPage() {
     setForm({
       name: form.name || `${profile.name} (copy)`,
       recipeSource: profile.recipeSource,
+      sourceCollectionId: profile.sourceCollectionId,
       dietaryRestrictions: profile.dietaryRestrictions,
       cuisinePreferences: profile.cuisinePreferences,
       allergies: profile.allergies,
@@ -282,7 +286,7 @@ export default function PreferenceEditPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="button"
-                  onClick={() => update({ recipeSource: 'library_only' })}
+                  onClick={() => update({ recipeSource: 'library_only', sourceCollectionId: null })}
                   className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                     form.recipeSource === 'library_only'
                       ? 'border-sec-prefs bg-sec-prefs-light'
@@ -294,7 +298,7 @@ export default function PreferenceEditPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => update({ recipeSource: 'library_and_ai' })}
+                  onClick={() => update({ recipeSource: 'library_and_ai', sourceCollectionId: null })}
                   className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
                     form.recipeSource === 'library_and_ai'
                       ? 'border-sec-prefs bg-sec-prefs-light'
@@ -304,7 +308,36 @@ export default function PreferenceEditPage() {
                   <div className="font-medium text-text-primary">Library + AI</div>
                   <div className="text-sm text-text-secondary mt-1">Your recipes plus AI-created dishes</div>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => update({ recipeSource: 'collection_only' })}
+                  className={`flex-1 p-3 rounded-lg border-2 text-left transition-colors ${
+                    form.recipeSource === 'collection_only'
+                      ? 'border-sec-prefs bg-sec-prefs-light'
+                      : 'border-border-default hover:border-sec-prefs'
+                  }`}
+                >
+                  <div className="font-medium text-text-primary">Collection only</div>
+                  <div className="text-sm text-text-secondary mt-1">Use recipes from one collection</div>
+                </button>
               </div>
+              {form.recipeSource === 'collection_only' && (
+                <div className="mt-3">
+                  <select
+                    value={form.sourceCollectionId || ''}
+                    onChange={(e) => update({ sourceCollectionId: e.target.value || null })}
+                    className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface text-sm"
+                  >
+                    <option value="">Select a collection...</option>
+                    {collections.map((c: any) => (
+                      <option key={c.id} value={c.id}>{c.name} ({c.recipeCount} recipes)</option>
+                    ))}
+                  </select>
+                  {!form.sourceCollectionId && (
+                    <p className="text-xs text-amber-600 mt-1">Please select a collection to continue.</p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div>

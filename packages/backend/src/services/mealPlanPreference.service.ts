@@ -11,6 +11,7 @@ export class MealPlanPreferenceService {
         userId,
         name: data.name,
         recipeSource: data.recipeSource,
+        sourceCollectionId: data.sourceCollectionId ?? null,
         dietaryRestrictions: JSON.stringify(data.dietaryRestrictions),
         cuisinePreferences: JSON.stringify(data.cuisinePreferences),
         allergies: JSON.stringify(data.allergies),
@@ -80,6 +81,7 @@ export class MealPlanPreferenceService {
 
     if (data.name !== undefined) updateData.name = data.name;
     if (data.recipeSource !== undefined) updateData.recipeSource = data.recipeSource;
+    if (data.sourceCollectionId !== undefined) updateData.sourceCollectionId = data.sourceCollectionId;
     if (data.dietaryRestrictions !== undefined) updateData.dietaryRestrictions = JSON.stringify(data.dietaryRestrictions);
     if (data.cuisinePreferences !== undefined) updateData.cuisinePreferences = JSON.stringify(data.cuisinePreferences);
     if (data.allergies !== undefined) updateData.allergies = JSON.stringify(data.allergies);

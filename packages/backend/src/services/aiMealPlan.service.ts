@@ -34,9 +34,26 @@ export function getClient(): Anthropic {
 }
 
 // Fetch condensed recipe library for AI context
-export async function getRecipeLibrarySummary(): Promise<string> {
+export async function getRecipeLibrarySummary(collectionId?: string | null): Promise<string> {
+  let recipeIds: string[] | undefined;
+
+  // If collection-scoped, fetch only recipes in that collection
+  if (collectionId) {
+    const items = await prisma.recipeCollectionItem.findMany({
+      where: { collectionId },
+      select: { recipeId: true },
+    });
+    recipeIds = items.map(i => i.recipeId);
+    if (recipeIds.length === 0) {
+      return '(empty collection — no recipes available)';
+    }
+  }
+
   const recipes = await prisma.recipe.findMany({
-    where: { status: 'active' },
+    where: {
+      status: 'active',
+      ...(recipeIds ? { id: { in: recipeIds } } : {}),
+    },
     select: {
       id: true,
       title: true,
@@ -181,7 +198,8 @@ export class AIMealPlanService {
     if (!pref) throw new AppError(404, 'Preference profile not found');
 
     const includedMeals = pref.includedMeals.split(',');
-    const recipeLibrary = await getRecipeLibrarySummary();
+    const collectionId = pref.recipeSource === 'collection_only' ? pref.sourceCollectionId : null;
+    const recipeLibrary = await getRecipeLibrarySummary(collectionId);
     const prefText = formatPreferenceForPrompt(pref);
     const nutritionText = formatNutritionForPrompt(pref);
 
@@ -201,6 +219,8 @@ export class AIMealPlanService {
 
     const sourceMode = pref.recipeSource === 'library_and_ai'
       ? 'You may use existing recipes from the library OR suggest new dishes based on real culinary traditions from around the world (e.g., cassoulet, borscht, shakshuka, pad thai, moussaka). For new dishes, provide title, brief description, estimated prep/cook time, and a cuisine tag.'
+      : pref.recipeSource === 'collection_only'
+      ? 'You must ONLY use existing recipes from the provided collection. Reference them by their exact ID and title. Do NOT suggest any new recipes.'
       : 'You must ONLY use existing recipes from the library. Reference them by their exact ID and title.';
 
     const varietyDescription = [
@@ -423,10 +443,13 @@ Return this exact JSON structure:
     const pref = await prisma.mealPlanPreference.findUnique({ where: { id: preferenceId } });
     if (!pref) throw new AppError(404, 'Preference profile not found');
 
-    const recipeLibrary = await getRecipeLibrarySummary();
+    const collectionId = pref.recipeSource === 'collection_only' ? pref.sourceCollectionId : null;
+    const recipeLibrary = await getRecipeLibrarySummary(collectionId);
     const prefText = formatPreferenceForPrompt(pref);
     const sourceMode = pref.recipeSource === 'library_and_ai'
       ? 'You may suggest existing recipes OR new dishes based on real culinary traditions.'
+      : pref.recipeSource === 'collection_only'
+      ? 'You must ONLY suggest existing recipes from the provided collection.'
       : 'You must ONLY suggest existing recipes from the library.';
 
     const isWeekend = new Date(date).getDay() === 0 || new Date(date).getDay() === 6;
