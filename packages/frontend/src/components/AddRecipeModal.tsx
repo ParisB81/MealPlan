@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useRecipes } from '../hooks/useRecipes';
 import { useAddRecipeToMealPlan } from '../hooks/useMealPlans';
@@ -7,7 +7,7 @@ import { useCollections, useCollection } from '../hooks/useCollections';
 import type { Recipe } from '../types/recipe';
 import type { AddRecipeToMealPlanInput } from '../types/mealPlan';
 import { Modal, Input, TextArea, Select, Button } from './ui';
-import { ArrowLeft, Clock, Users, ExternalLink, Plus, Minus, X, ChevronLeft, ChevronRight, Check, SlidersHorizontal } from 'lucide-react';
+import { ArrowLeft, Clock, Users, ExternalLink, Plus, Minus, X, ChevronLeft, ChevronRight, Check, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { getRecipeImageUrl } from '../utils/recipeImage';
 
 /** Shift a YYYY-MM-DD string by ±1 day */
@@ -102,6 +102,8 @@ interface AddRecipeModalProps {
   onClose: () => void;
   /** Pre-fill the date picker with this date (YYYY-MM-DD) */
   defaultDate?: string;
+  /** Auto-select this recipe and jump to details step (e.g., after AI creation) */
+  preSelectedRecipeId?: string;
 }
 
 type Step = 'browse' | 'details';
@@ -113,7 +115,8 @@ interface QuickAddState {
   servings: number;
 }
 
-export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate }: AddRecipeModalProps) {
+export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate, preSelectedRecipeId }: AddRecipeModalProps) {
+  const navigate = useNavigate();
   const addRecipe = useAddRecipeToMealPlan();
 
   const [step, setStep] = useState<Step>('browse');
@@ -234,6 +237,16 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
     }
   }, [isOpen, defaultDate]);
 
+  // Auto-select a recipe when preSelectedRecipeId is provided (e.g., after AI creation)
+  useEffect(() => {
+    if (isOpen && preSelectedRecipeId && recipes.length > 0 && step === 'browse') {
+      const match = recipes.find(r => r.id === preSelectedRecipeId);
+      if (match) {
+        handleSelectRecipe(match);
+      }
+    }
+  }, [isOpen, preSelectedRecipeId, recipes]);
+
   /** Reset to browse step for the next add — preserves mealType, advances date by 1 day */
   const resetForNextAdd = (addedDate: string) => {
     setStep('browse');
@@ -349,7 +362,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
             onChange={(e) => setSearchTerm(e.target.value)}
           />
 
-          {/* Collection dropdown + Filter toggle */}
+          {/* Collection dropdown + Filter toggle + AI generate */}
           <div className="flex gap-2">
             {collections && collections.length > 0 && (
               <select
@@ -381,6 +394,14 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                   {activeFilterCount}
                 </span>
               )}
+            </button>
+            <button
+              type="button"
+              onClick={() => { onClose(); navigate(`/recipes/ai-generate?mealPlanId=${mealPlanId}`); }}
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-700 text-sm font-medium hover:bg-emerald-100 transition-colors whitespace-nowrap active:scale-95"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">AI Create</span>
             </button>
           </div>
 
@@ -619,6 +640,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
               })}
             </div>
           )}
+
         </div>
       ) : (
         /* ── Step 2: Preview + Details Form ── */

@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Button, Card } from '../ui';
 import type { AIRecipeQueueEntry } from '../../types/aiRecipe';
-import { CheckCircle, ChefHat, ExternalLink } from 'lucide-react';
+import { CheckCircle, ChefHat, ExternalLink, ArrowLeft } from 'lucide-react';
 
 interface Props {
   queue: AIRecipeQueueEntry[];
   onStartOver: () => void;
+  mealPlanId?: string | null;
 }
 
-export default function StepDone({ queue, onStartOver }: Props) {
+export default function StepDone({ queue, onStartOver, mealPlanId }: Props) {
   const created = queue.filter(q => q.status === 'created');
   const skipped = queue.filter(q => q.status === 'skipped');
 
@@ -47,6 +48,14 @@ export default function StepDone({ queue, onStartOver }: Props) {
 
       {/* Actions */}
       <div className="flex flex-col sm:flex-row gap-3 pt-4">
+        {mealPlanId && (
+          <Link to={`/meal-plans/${mealPlanId}`}>
+            <Button variant="primary" className="w-full">
+              <ArrowLeft className="w-4 h-4 mr-1.5" />
+              Back to Meal Plan
+            </Button>
+          </Link>
+        )}
         <Button
           variant="primary"
           onClick={onStartOver}
@@ -54,9 +63,9 @@ export default function StepDone({ queue, onStartOver }: Props) {
         >
           Generate More Recipes
         </Button>
-        <Link to="/recipes">
+        <Link to={mealPlanId ? `/meal-plans/${mealPlanId}` : '/recipes'}>
           <Button variant="secondary" className="w-full">
-            Back to Recipes
+            {mealPlanId ? 'Back to Meal Plan' : 'Back to Recipes'}
           </Button>
         </Link>
       </div>

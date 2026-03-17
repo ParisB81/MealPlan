@@ -10,6 +10,7 @@ interface Props {
   onQueueUpdate: (queue: AIRecipeQueueEntry[]) => void;
   onBack: () => void;
   onAllDone: () => void;
+  mealPlanId?: string | null;
 }
 
 export default function StepReviewCreate({
@@ -18,6 +19,7 @@ export default function StepReviewCreate({
   onQueueUpdate,
   onBack,
   onAllDone,
+  mealPlanId,
 }: Props) {
   const navigate = useNavigate();
   const generateDetails = useGenerateRecipeDetails();
@@ -43,6 +45,7 @@ export default function StepReviewCreate({
         state: {
           prefill: details,
           returnTo: '/recipes/ai-generate',
+          mealPlanId: mealPlanId || undefined,
         },
       });
     } catch {

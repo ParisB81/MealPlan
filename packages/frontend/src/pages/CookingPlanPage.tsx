@@ -492,7 +492,7 @@ export default function CookingPlanPage() {
                           <div className="flex items-start justify-between">
                             <div className="flex-1">
                               <Link
-                                to={`/recipes/${meal.recipeId}`}
+                                to={`/recipes/${meal.recipeId}?servings=${meal.servings}`}
                                 className="text-base font-semibold text-accent hover:text-accent-hover hover:underline"
                               >
                                 {meal.recipe?.title || 'Unknown Recipe'}

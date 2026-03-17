@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import StepConcept from '../components/ai-recipes/StepConcept';
 import StepRecipePreferences from '../components/ai-recipes/StepRecipePreferences';
@@ -48,10 +48,27 @@ const defaultInput: GenerateRecipeSuggestionsInput = {
 
 export default function AIRecipeGeneratorPage() {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const generateSuggestions = useGenerateRecipeSuggestions();
 
   // Check for return from RecipeFormPage
   const returnedRecipeId = (location.state as any)?.createdRecipeId;
+
+  // Meal plan context: passed via query param when launched from AddRecipeModal
+  const [mealPlanId] = useState<string | null>(() => {
+    const fromUrl = searchParams.get('mealPlanId');
+    if (fromUrl) return fromUrl;
+    // Restore from session if returning from RecipeFormPage
+    const saved = sessionStorage.getItem(SESSION_KEY + '_mealPlanId');
+    return saved || null;
+  });
+
+  // Persist mealPlanId across navigations
+  useEffect(() => {
+    if (mealPlanId) {
+      sessionStorage.setItem(SESSION_KEY + '_mealPlanId', mealPlanId);
+    }
+  }, [mealPlanId]);
 
   const [step, setStep] = useState<WizardStep>('concept');
   const [state, setState] = useState<WizardState>(() => {
@@ -109,6 +126,7 @@ export default function AIRecipeGeneratorPage() {
   const clearSession = () => {
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem(SESSION_KEY + '_step');
+    sessionStorage.removeItem(SESSION_KEY + '_mealPlanId');
     sessionStorage.removeItem('ai_recipe_gen_return');
   };
 
@@ -225,6 +243,7 @@ export default function AIRecipeGeneratorPage() {
           onQueueUpdate={(queue) => setState(prev => ({ ...prev, queue }))}
           onBack={() => goToStep('preferences')}
           onAllDone={() => goToStep('done')}
+          mealPlanId={mealPlanId}
         />
       )}
 
@@ -232,6 +251,7 @@ export default function AIRecipeGeneratorPage() {
         <StepDone
           queue={state.queue}
           onStartOver={handleStartOver}
+          mealPlanId={mealPlanId}
         />
       )}
     </div>

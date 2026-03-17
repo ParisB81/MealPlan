@@ -113,6 +113,7 @@ export default function RecipeFormPage() {
   // Store returnTo info from location state (for AI wizard round-trip)
   const [returnTo] = useState(() => location.state?.returnTo as string | undefined);
   const [returnTempKey] = useState(() => location.state?.tempKey as string | undefined);
+  const [returnMealPlanId] = useState(() => location.state?.mealPlanId as string | undefined);
 
   // Store source info from location state (for URL import round-trip)
   const [importSource] = useState(() => location.state?.source as string | undefined);
@@ -237,7 +238,12 @@ export default function RecipeFormPage() {
     } else {
       createRecipe.mutate(cleanedData, {
         onSuccess: (data) => {
-          if (returnTo) {
+          if (returnTo && returnMealPlanId) {
+            // AI recipe created from meal plan context — go back to meal plan with new recipe
+            navigate(`/meal-plans/${returnMealPlanId}`, {
+              state: { addRecipeId: data.id },
+            });
+          } else if (returnTo) {
             // Navigate back to AI wizard with created recipe info
             navigate(returnTo, {
               state: {

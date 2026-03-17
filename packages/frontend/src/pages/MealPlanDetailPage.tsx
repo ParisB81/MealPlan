@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
 import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3, Pencil } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import type { CopyState, MealType } from '../types/mealPlan';
 export default function MealPlanDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { data: mealPlan, isLoading, error } = useMealPlan(id);
   const { data: nutrition } = useMealPlanNutrition(id);
   const deleteMealPlan = useDeleteMealPlan();
@@ -33,10 +34,22 @@ export default function MealPlanDetailPage() {
   const [viewMode, setViewMode] = useState<'cards' | 'grid'>('cards');
   const [showRename, setShowRename] = useState(false);
   const [renameName, setRenameName] = useState('');
+  const [preSelectedRecipeId, setPreSelectedRecipeId] = useState<string | undefined>(undefined);
   const updateMealPlan = useUpdateMealPlan();
   const queryClient = useQueryClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Auto-open AddRecipeModal when returning from AI recipe creation with a new recipe
+  useEffect(() => {
+    const addRecipeId = (location.state as any)?.addRecipeId;
+    if (addRecipeId) {
+      setPreSelectedRecipeId(addRecipeId);
+      setIsAddRecipeModalOpen(true);
+      // Clear location state so refreshing doesn't re-trigger
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Group meals by date (computed early so callbacks can reference it)
   const mealsByDate: Record<string, any[]> = useMemo(() => {
@@ -562,7 +575,7 @@ export default function MealPlanDetailPage() {
                                 {meal.mealType}
                               </Badge>
                               <Link
-                                to={`/recipes/${meal.recipe.id}`}
+                                to={`/recipes/${meal.recipe.id}?servings=${meal.servings}`}
                                 className="text-lg font-medium text-text-primary hover:text-accent"
                               >
                                 {meal.recipe.title}
@@ -615,8 +628,9 @@ export default function MealPlanDetailPage() {
           <AddRecipeModal
             mealPlanId={id}
             isOpen={isAddRecipeModalOpen}
-            onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); }}
+            onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); setPreSelectedRecipeId(undefined); }}
             defaultDate={addRecipeDate}
+            preSelectedRecipeId={preSelectedRecipeId}
           />
         )}
 

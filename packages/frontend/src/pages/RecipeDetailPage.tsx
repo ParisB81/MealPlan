@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useRecipe, useDeleteRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 import { useCollectionsForRecipe } from '../hooks/useCollections';
 import { CalendarPlus, FolderPlus, ShoppingCart, ExternalLink } from 'lucide-react';
@@ -10,9 +10,19 @@ import AddToCollectionModal from '../components/AddToCollectionModal';
 import AddToShoppingListModal from '../components/AddToShoppingListModal';
 import ImageUpload from '../components/ImageUpload';
 
+/** Round a scaled quantity to a clean display value */
+function formatQuantity(q: number): string {
+  if (q === 0) return '0';
+  // Whole numbers
+  if (Number.isInteger(q)) return String(q);
+  // Up to 2 decimal places, strip trailing zeros
+  return parseFloat(q.toFixed(2)).toString();
+}
+
 export default function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data: recipe, isLoading, error } = useRecipe(id);
   const deleteRecipe = useDeleteRecipe();
   const updateRecipe = useUpdateRecipe();
@@ -20,6 +30,24 @@ export default function RecipeDetailPage() {
   const [showAddToCollection, setShowAddToCollection] = useState(false);
   const [showAddToShoppingList, setShowAddToShoppingList] = useState(false);
   const { data: collectionMemberships } = useCollectionsForRecipe(id);
+
+  // Servings override from query param (e.g., from meal plan or cooking plan)
+  const servingsParam = searchParams.get('servings');
+  const displayServings = servingsParam ? Math.max(1, Math.round(Number(servingsParam))) : recipe?.servings ?? 1;
+  const scaleFactor = recipe ? displayServings / recipe.servings : 1;
+  const isScaled = recipe ? displayServings !== recipe.servings : false;
+
+  const handleServingsChange = (newServings: number) => {
+    if (!recipe) return;
+    const clamped = Math.max(1, newServings);
+    if (clamped === recipe.servings) {
+      // Back to default — remove query param
+      searchParams.delete('servings');
+    } else {
+      searchParams.set('servings', String(clamped));
+    }
+    setSearchParams(searchParams, { replace: true });
+  };
 
   const handleImageUpload = (imageUrl: string) => {
     if (!id) return;
@@ -156,8 +184,29 @@ export default function RecipeDetailPage() {
                   <span className="font-semibold">Total:</span> {totalTime} min
                 </div>
               )}
-              <div>
-                <span className="font-semibold">Servings:</span> {recipe.servings}
+              <div className="flex items-center gap-1.5">
+                <span className="font-semibold">Servings:</span>
+                <button
+                  onClick={() => handleServingsChange(displayServings - 1)}
+                  className="w-6 h-6 rounded-full border border-border-strong bg-surface hover:bg-hover-bg flex items-center justify-center text-text-primary text-sm font-bold active:scale-95"
+                  aria-label="Decrease servings"
+                >−</button>
+                <span className={`tabular-nums min-w-[1.5rem] text-center ${isScaled ? 'text-accent font-bold' : ''}`}>
+                  {displayServings}
+                </span>
+                <button
+                  onClick={() => handleServingsChange(displayServings + 1)}
+                  className="w-6 h-6 rounded-full border border-border-strong bg-surface hover:bg-hover-bg flex items-center justify-center text-text-primary text-sm font-bold active:scale-95"
+                  aria-label="Increase servings"
+                >+</button>
+                {isScaled && (
+                  <button
+                    onClick={() => handleServingsChange(recipe.servings)}
+                    className="text-xs text-accent hover:underline ml-1"
+                  >
+                    (reset to {recipe.servings})
+                  </button>
+                )}
               </div>
             </div>
 
@@ -204,7 +253,14 @@ export default function RecipeDetailPage() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Ingredients */}
           <div className="bg-surface rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold text-text-primary mb-4">Ingredients</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-4">
+              Ingredients
+              {isScaled && (
+                <span className="text-sm font-normal text-accent ml-2">
+                  (scaled for {displayServings} {displayServings === 1 ? 'serving' : 'servings'})
+                </span>
+              )}
+            </h2>
             <ul className="space-y-2">
               {recipe.ingredients.map((item) => (
                 <li key={item.id} className="flex justify-between">
@@ -212,8 +268,8 @@ export default function RecipeDetailPage() {
                     {item.ingredient.name}
                     {item.notes && ` (${item.notes})`}
                   </span>
-                  <span className="text-text-secondary">
-                    {item.quantity} {item.unit}
+                  <span className={`text-text-secondary ${isScaled ? 'font-medium' : ''}`}>
+                    {formatQuantity(item.quantity * scaleFactor)} {item.unit}
                   </span>
                 </li>
               ))}
