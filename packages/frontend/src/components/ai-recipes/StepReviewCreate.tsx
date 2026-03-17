@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, Card, Badge } from '../ui';
 import { useGenerateRecipeDetails } from '../../hooks/useAIMealPlan';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +24,19 @@ export default function StepReviewCreate({
 }: Props) {
   const navigate = useNavigate();
   const generateDetails = useGenerateRecipeDetails();
+
+  // Recovery: reset any stuck 'creating' entries back to 'pending' on mount
+  // This handles the case where user clicked Create, navigated away, and returned
+  const hasStuckEntries = queue.some(q => q.status === 'creating');
+  React.useEffect(() => {
+    if (hasStuckEntries) {
+      onQueueUpdate(queue.map(q => q.status === 'creating' ? { ...q, status: 'pending' as const } : q));
+    }
+    // Only run on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const isAnyCreating = queue.some(q => q.status === 'creating');
 
   const handleCreateRecipe = async (entry: AIRecipeQueueEntry, suggestion: AIRecipeSuggestion) => {
     // Mark as creating
@@ -120,6 +134,7 @@ export default function StepReviewCreate({
                   variant="primary"
                   size="sm"
                   onClick={() => handleCreateRecipe(entry, suggestion)}
+                  disabled={isAnyCreating}
                   className="bg-emerald-600 hover:bg-emerald-700"
                 >
                   <ChefHat className="w-4 h-4 mr-1" />
@@ -129,6 +144,7 @@ export default function StepReviewCreate({
                   variant="ghost"
                   size="sm"
                   onClick={() => handleSkip(entry.tempKey)}
+                  disabled={isAnyCreating}
                 >
                   <SkipForward className="w-4 h-4 mr-1" />
                   Skip
