@@ -65,6 +65,7 @@ export class CollectionService {
         userId,
         name: data.name,
         description: data.description || null,
+        imageUrl: data.imageUrl || null,
       },
     });
     return { ...collection, recipeCount: 0 };
@@ -79,6 +80,7 @@ export class CollectionService {
     const updateData: any = {};
     if (data.name !== undefined) updateData.name = data.name;
     if (data.description !== undefined) updateData.description = data.description;
+    if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl || null;
 
     const collection = await prisma.recipeCollection.update({
       where: { id },

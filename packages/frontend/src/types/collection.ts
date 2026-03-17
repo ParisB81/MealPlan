@@ -5,6 +5,7 @@ export interface RecipeCollection {
   userId: string;
   name: string;
   description?: string | null;
+  imageUrl?: string | null;
   status: string;
   recipeCount: number;
   createdAt: string;
@@ -29,6 +30,7 @@ export interface CreateCollectionInput {
 export interface UpdateCollectionInput {
   name?: string;
   description?: string | null;
+  imageUrl?: string | null;
 }
 
 export interface CollectionMembership {

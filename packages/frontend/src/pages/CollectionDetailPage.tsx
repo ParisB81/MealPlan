@@ -12,6 +12,7 @@ import RecipePicker from '../components/RecipePicker';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Clock, Users, CalendarPlus } from 'lucide-react';
 import { getCategoryForTag } from '../data/tagDefinitions';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
+import ImageUpload from '../components/ImageUpload';
 import type { Recipe } from '../types/recipe';
 
 export default function CollectionDetailPage() {
@@ -67,6 +68,16 @@ export default function CollectionDetailPage() {
     setShowRecipePicker(false);
   };
 
+  const handleImageUpload = (imageUrl: string) => {
+    if (!id) return;
+    updateCollection.mutate({ id, input: { imageUrl } });
+  };
+
+  const handleImageRemove = () => {
+    if (!id || !confirm('Remove the collection photo?')) return;
+    updateCollection.mutate({ id, input: { imageUrl: '' } });
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-4 md:py-8">
@@ -99,29 +110,40 @@ export default function CollectionDetailPage() {
         Back to Collections
       </Link>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{collection.name}</h1>
-          {collection.description && (
-            <p className="text-text-secondary mt-1">{collection.description}</p>
-          )}
-          <p className="text-sm text-text-muted mt-2">
-            {collection.recipeCount} recipe{collection.recipeCount !== 1 ? 's' : ''}
-          </p>
-        </div>
-        <div className="flex gap-2 flex-shrink-0">
-          <Button onClick={() => setShowRecipePicker(true)}>
-            <Plus className="w-4 h-4 mr-1 inline" />
-            Add Recipes
-          </Button>
-          <Button variant="secondary" onClick={handleEdit}>
-            <Pencil className="w-4 h-4 mr-1 inline" />
-            Edit
-          </Button>
-          <Button variant="danger" onClick={handleDelete}>
-            <Trash2 className="w-4 h-4" />
-          </Button>
+      {/* Collection Header Card */}
+      <div className="bg-surface rounded-lg shadow-lg overflow-hidden mb-8">
+        <ImageUpload
+          currentImageUrl={collection.imageUrl}
+          onUploadComplete={handleImageUpload}
+          onRemove={handleImageRemove}
+          className="w-full h-48 md:h-64"
+        />
+
+        <div className="p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{collection.name}</h1>
+              {collection.description && (
+                <p className="text-text-secondary mt-1">{collection.description}</p>
+              )}
+              <p className="text-sm text-text-muted mt-2">
+                {collection.recipeCount} recipe{collection.recipeCount !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <div className="flex gap-2 flex-shrink-0">
+              <Button onClick={() => setShowRecipePicker(true)}>
+                <Plus className="w-4 h-4 mr-1 inline" />
+                Add Recipes
+              </Button>
+              <Button variant="secondary" onClick={handleEdit}>
+                <Pencil className="w-4 h-4 mr-1 inline" />
+                Edit
+              </Button>
+              <Button variant="danger" onClick={handleDelete}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 

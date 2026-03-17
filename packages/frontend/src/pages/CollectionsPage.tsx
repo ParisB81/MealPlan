@@ -7,7 +7,7 @@ import {
   useRestoreCollection,
   usePermanentDeleteCollection,
 } from '../hooks/useCollections';
-import { Button, Card, Modal, Input, TextArea } from '../components/ui';
+import { Button, Modal, Input, TextArea } from '../components/ui';
 import { FolderHeart, Plus, Trash2, RotateCcw } from 'lucide-react';
 
 type TabType = 'active' | 'deleted';
@@ -170,13 +170,25 @@ export default function CollectionsPage() {
       {!isLoading && collections && collections.length > 0 && (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {collections.map((collection) => (
-            <Card
+            <div
               key={collection.id}
-              hoverable
-              className="cursor-pointer bg-surface border border-border-default"
+              className="bg-surface border border-border-default rounded-lg shadow-sm overflow-hidden cursor-pointer hover:shadow-md transition-shadow"
               onClick={() => navigate(`/collections/${collection.id}`)}
             >
-              <div className="flex flex-col h-full">
+              {/* Collection image */}
+              {collection.imageUrl ? (
+                <img
+                  src={collection.imageUrl}
+                  alt={collection.name}
+                  className="w-full h-40 object-cover"
+                />
+              ) : (
+                <div className="w-full h-40 bg-hover-bg flex items-center justify-center">
+                  <FolderHeart className="w-12 h-12 text-text-muted/40" />
+                </div>
+              )}
+
+              <div className="p-4 flex flex-col">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="text-lg font-semibold text-text-primary line-clamp-1">
                     {collection.name}
@@ -221,7 +233,7 @@ export default function CollectionsPage() {
                   <span>{formatDate(collection.updatedAt)}</span>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
