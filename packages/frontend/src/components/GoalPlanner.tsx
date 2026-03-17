@@ -268,7 +268,7 @@ export default function GoalPlanner() {
         </p>
 
         {/* Suggestion chips */}
-        <div className="flex gap-2 overflow-x-auto pb-3 -mx-1 px-1 md:flex-wrap md:overflow-visible scrollbar-thin">
+        <div className="flex flex-wrap gap-2 pb-3">
           {suggestions.map((s) => (
             <button
               key={s.label}
@@ -277,9 +277,9 @@ export default function GoalPlanner() {
                 handleGo(s.text);
               }}
               className={`flex items-center gap-2 border rounded-xl
-                         px-3.5 py-2 text-sm whitespace-nowrap
+                         px-3.5 py-2 text-sm
                          hover:shadow-sm transition-all cursor-pointer active:scale-95
-                         min-h-[40px] flex-shrink-0
+                         min-h-[40px]
                          ${s.contextual
                            ? 'bg-accent/10 border-accent/30 text-accent-dark hover:border-accent'
                            : 'bg-surface-alt border-border-default text-text-secondary hover:border-accent hover:text-text-primary'
