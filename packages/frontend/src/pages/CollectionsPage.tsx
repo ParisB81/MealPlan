@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   useCollections,
   useCreateCollection,
@@ -13,10 +13,30 @@ import { FolderHeart, Plus, Trash2, RotateCcw } from 'lucide-react';
 type TabType = 'active' | 'deleted';
 
 export default function CollectionsPage() {
+  const location = useLocation();
+  const goalPrefill = (location.state as any)?.goalPrefill;
+
   const [activeTab, setActiveTab] = useState<TabType>('active');
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
+  const [isGoalCreate, setIsGoalCreate] = useState(false);
+  const [goalRecipeContext, setGoalRecipeContext] = useState<Record<string, unknown> | null>(null);
+
+  // Auto-open create modal from goal planner
+  useEffect(() => {
+    if (goalPrefill?.createNew) {
+      setNewName(goalPrefill.suggestedName || '');
+      setNewDescription(goalPrefill.suggestedDescription || '');
+      setShowCreate(true);
+      setIsGoalCreate(true);
+      // Save recipe context from goal planner for post-create navigation
+      if (goalPrefill.recipeContext) {
+        setGoalRecipeContext(goalPrefill.recipeContext);
+      }
+      window.history.replaceState({}, document.title);
+    }
+  }, [goalPrefill]);
 
   const { data: collections, isLoading } = useCollections(activeTab);
   const createCollection = useCreateCollection();
@@ -34,10 +54,31 @@ export default function CollectionsPage() {
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
-    await createCollection.mutateAsync({ name: newName.trim(), description: newDescription.trim() || undefined });
+    const created = await createCollection.mutateAsync({ name: newName.trim(), description: newDescription.trim() || undefined });
+    const wasGoalCreate = isGoalCreate;
+    const savedContext = goalRecipeContext;
     setNewName('');
     setNewDescription('');
     setShowCreate(false);
+    setIsGoalCreate(false);
+    setGoalRecipeContext(null);
+
+    // Post-collection flow: navigate to AI Recipe Generator with collection context
+    if (wasGoalCreate && created?.id) {
+      navigate('/recipes/ai-generate', {
+        state: {
+          goalPrefill: {
+            concept: savedContext?.concept || newName.trim(),
+            dietaryRestrictions: savedContext?.dietaryRestrictions || [],
+            cuisinePreferences: savedContext?.cuisinePreferences || [],
+            preferredMethods: savedContext?.preferredMethods || [],
+            specificTaste: savedContext?.specificTaste || '',
+          },
+          postCollectionId: created.id,
+          postCollectionName: created.name,
+        },
+      });
+    }
   };
 
   const handleDelete = (e: React.MouseEvent, id: string, name: string) => {

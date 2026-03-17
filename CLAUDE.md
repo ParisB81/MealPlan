@@ -150,7 +150,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── UnitAutocomplete.tsx    # Autocomplete for measurement units
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
 │   │   │   │   ├── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom + split mode)
-│   │   │   │   └── DietGoalCalculator.tsx # Mifflin-St Jeor TDEE calculator (frontend-only)
+│   │   │   │   ├── DietGoalCalculator.tsx # Mifflin-St Jeor TDEE calculator (frontend-only)
+│   │   │   │   └── GoalPlanner.tsx        # "What would you like to do today?" guided entry point
 │   │   │   ├── data/
 │   │   │   │   ├── tagDefinitions.ts       # 97 predefined tags in 6 categories
 │   │   │   │   └── themes.ts              # 5 predefined themes + custom theme types/helpers
@@ -182,7 +183,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
 │   │   │   │   └── ThemeContext.tsx        # Theme provider: predefined + custom themes, inline CSS injection
 │   │   │   ├── utils/
-│   │   │   │   └── colorUtils.ts          # HSL color math: 6 key colors → 55 CSS variables derivation
+│   │   │   │   ├── colorUtils.ts          # HSL color math: 6 key colors → 55 CSS variables derivation
+│   │   │   │   └── goalParser.ts          # Goal planner intent parser + router + summary
 │   │   │   ├── hooks/
 │   │   │   │   ├── useRecipes.ts           # Recipe CRUD + bulk ops + soft delete/restore
 │   │   │   │   ├── useMealPlans.ts         # Meal plan CRUD + meal management + nutrition
@@ -1208,6 +1210,21 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Recipe Servings Scaling from Meal Plan/Cooking Plan** — Recipe links from MealPlanDetailPage and CookingPlanPage include `?servings=N` query param matching the meal plan servings. RecipeDetailPage reads `?servings` param, computes `scaleFactor = displayServings / recipe.servings`, and scales all ingredient quantities. Interactive +/− stepper buttons allow manual adjustment; resetting to recipe default removes the query param (clean URL). `formatQuantity()` helper rounds scaled values to 2 decimal places and strips trailing zeros. "(scaled for N serving/s)" label shown on Ingredients heading when scaled. Key files: `RecipeDetailPage.tsx` (scaling logic + stepper UI), `MealPlanDetailPage.tsx` (servings in recipe links), `CookingPlanPage.tsx` (servings in recipe links).
 
+**Goal Planner (Guided Entry Point)** — Interactive "What would you like to do today?" component on HomePage that parses natural language goals and routes users to the right workflow with pre-filled state. **3 new files, 5 modified files, zero backend changes.**
+- **Intent parser** (`packages/frontend/src/utils/goalParser.ts`): Keyword-based parser extracts goal type (meal_plan/recipes/collection/shopping), duration, dietary restrictions, cuisine preferences, diet goals, calorie targets, cooking methods, meal types, and descriptors from freetext input. Uses existing `TAG_CATEGORIES` from `tagDefinitions.ts` for cuisine/method matching. Router function (`buildGoalNavigation`) maps parsed intent to `location.state` objects for target pages.
+- **GoalPlanner component** (`packages/frontend/src/components/GoalPlanner.tsx`): Renders suggestion chips + freetext input + "Let's go" button + live parsed-intent preview line. 5 smart features:
+  1. **Contextual suggestions** — Fetches meal plans/shopping lists/recipes via React Query hooks; shows "Plan next week" when current plan ending, "Shop for X" when a plan has no shopping list, "Try Georgian" for unexplored cuisines. Contextual chips shown first with accent styling.
+  2. **Rotating placeholders** — 8 example phrases cycle every 4 seconds in the input placeholder.
+  3. **"Feeling lucky" dice button** — Generates random cuisine + descriptor + meal type combo and navigates immediately.
+  4. **Post-collection AI recipe flow** — Collection goal → creates collection → auto-navigates to AI Recipe Generator with violet context banner ("Recipes will be added to X"); created recipes auto-added to collection via dynamic `import()` of collections service. `postCollectionId` suppresses stale `mealPlanId` to prevent incorrect meal plan redirects.
+  5. **Time-of-day awareness** — Morning shows breakfast/brunch, midday shows lunch/salads, evening shows dinner, late night shows meal prep.
+- **Navigation flow by goal type:**
+  - **Meal plan** → `/ai-meal-plan` with prefilled preferences (dietary restrictions, cuisines, methods, calories, season, start/end dates from duration)
+  - **Recipes** → `/recipes/ai-generate` with prefilled concept, meal types, taste, dietary restrictions, cuisines, methods, calorie range
+  - **Collection** → `/collections` with create modal auto-opened (name + description pre-filled) → after Create → `/recipes/ai-generate` with collection context
+  - **Shopping** → `/shopping-lists` with builder modal auto-opened
+- **Target page changes:** `AIMealPlanWizardPage.tsx`, `AIRecipeGeneratorPage.tsx`, `CollectionsPage.tsx`, `ShoppingListsPage.tsx` all accept `location.state.goalPrefill` and clear stale sessionStorage when goal prefill is present. `window.history.replaceState()` prevents re-processing on back/forward.
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1402,4 +1419,4 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 **Last Updated:** 2026-03-17
 **Project Version:** 2.12.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication** + **Diet Goal Calculator** + **Season-Aware Ingredient Suggestions** + **Shopping List Splitting by Date Range** + **UX Improvements (11 Changes)** + **AddRecipeModal Collection & Advanced Filters** + **Mobile UX Improvements (5 Changes)** + **Meal Plan Rename** + **Browse Library in Swap Alternatives** + **Collection-Only Recipe Source** + **AI Create in AddRecipeModal** + **Recipe Servings Scaling**)
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication** + **Diet Goal Calculator** + **Season-Aware Ingredient Suggestions** + **Shopping List Splitting by Date Range** + **UX Improvements (11 Changes)** + **AddRecipeModal Collection & Advanced Filters** + **Mobile UX Improvements (5 Changes)** + **Meal Plan Rename** + **Browse Library in Swap Alternatives** + **Collection-Only Recipe Source** + **AI Create in AddRecipeModal** + **Recipe Servings Scaling** + **Goal Planner**)

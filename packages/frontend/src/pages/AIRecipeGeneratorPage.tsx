@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, FolderHeart } from 'lucide-react';
 import StepConcept from '../components/ai-recipes/StepConcept';
 import StepRecipePreferences from '../components/ai-recipes/StepRecipePreferences';
 import StepReviewCreate from '../components/ai-recipes/StepReviewCreate';
@@ -70,8 +70,56 @@ export default function AIRecipeGeneratorPage() {
     }
   }, [mealPlanId]);
 
+  // Check for goal planner prefill
+  const goalPrefill = (location.state as any)?.goalPrefill;
+
+  // Post-collection flow: recipes created here get added to this collection
+  const [postCollectionId] = useState<string | null>(() => {
+    const fromState = (location.state as any)?.postCollectionId;
+    if (fromState) return fromState;
+    return sessionStorage.getItem(SESSION_KEY + '_postCollectionId');
+  });
+  const [postCollectionName] = useState<string | null>(() => {
+    const fromState = (location.state as any)?.postCollectionName;
+    if (fromState) return fromState;
+    return sessionStorage.getItem(SESSION_KEY + '_postCollectionName');
+  });
+
+  // Persist post-collection context across RecipeFormPage navigations
+  useEffect(() => {
+    if (postCollectionId) {
+      sessionStorage.setItem(SESSION_KEY + '_postCollectionId', postCollectionId);
+    }
+    if (postCollectionName) {
+      sessionStorage.setItem(SESSION_KEY + '_postCollectionName', postCollectionName);
+    }
+  }, [postCollectionId, postCollectionName]);
+
   const [step, setStep] = useState<WizardStep>('concept');
   const [state, setState] = useState<WizardState>(() => {
+    // Goal planner prefill takes priority — clear any stale session
+    if (goalPrefill) {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY + '_step');
+      window.history.replaceState({}, document.title);
+      return {
+        input: {
+          ...defaultInput,
+          concept: goalPrefill.concept || '',
+          mealTypes: goalPrefill.mealTypes || [],
+          specificTaste: goalPrefill.specificTaste || '',
+          dietaryRestrictions: goalPrefill.dietaryRestrictions || [],
+          cuisinePreferences: goalPrefill.cuisinePreferences || [],
+          preferredMethods: goalPrefill.preferredMethods || [],
+          caloriesMin: goalPrefill.caloriesMin ?? null,
+          caloriesMax: goalPrefill.caloriesMax ?? null,
+        },
+        baseRecipeTitle: null,
+        suggestions: [],
+        queue: [],
+      };
+    }
+
     const saved = sessionStorage.getItem(SESSION_KEY);
     if (saved) {
       try {
@@ -112,10 +160,18 @@ export default function AIRecipeGeneratorPage() {
           sessionStorage.removeItem('ai_recipe_gen_return');
         } catch { /* ignore */ }
       }
+      // Auto-add to collection if post-collection flow is active
+      if (postCollectionId) {
+        import('../services/collections.service').then(({ collectionsService }) => {
+          collectionsService.addRecipe(postCollectionId, returnedRecipeId).catch(() => {
+            // Silently ignore — recipe was still created successfully
+          });
+        });
+      }
       setStep('review');
       window.history.replaceState({}, document.title);
     }
-  }, [returnedRecipeId]);
+  }, [returnedRecipeId, postCollectionId]);
 
   // Persist state
   useEffect(() => {
@@ -127,6 +183,8 @@ export default function AIRecipeGeneratorPage() {
     sessionStorage.removeItem(SESSION_KEY);
     sessionStorage.removeItem(SESSION_KEY + '_step');
     sessionStorage.removeItem(SESSION_KEY + '_mealPlanId');
+    sessionStorage.removeItem(SESSION_KEY + '_postCollectionId');
+    sessionStorage.removeItem(SESSION_KEY + '_postCollectionName');
     sessionStorage.removeItem('ai_recipe_gen_return');
   };
 
@@ -176,6 +234,14 @@ export default function AIRecipeGeneratorPage() {
           AI Recipe Generator
         </h1>
       </div>
+
+      {/* Post-collection context banner */}
+      {postCollectionName && (
+        <div className="mb-4 px-4 py-2.5 bg-violet-50 border border-violet-200 rounded-xl text-sm text-violet-700 flex items-center gap-2">
+          <FolderHeart className="w-4 h-4 flex-shrink-0" />
+          Recipes will be added to <strong>{postCollectionName}</strong>
+        </div>
+      )}
 
       {/* Step indicator */}
       <div className="flex items-center gap-1 mb-8 overflow-x-auto pb-2">
@@ -243,7 +309,7 @@ export default function AIRecipeGeneratorPage() {
           onQueueUpdate={(queue) => setState(prev => ({ ...prev, queue }))}
           onBack={() => goToStep('preferences')}
           onAllDone={() => goToStep('done')}
-          mealPlanId={mealPlanId}
+          mealPlanId={postCollectionId ? null : mealPlanId}
         />
       )}
 
@@ -251,7 +317,7 @@ export default function AIRecipeGeneratorPage() {
         <StepDone
           queue={state.queue}
           onStartOver={handleStartOver}
-          mealPlanId={mealPlanId}
+          mealPlanId={postCollectionId ? null : mealPlanId}
         />
       )}
     </div>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   useShoppingLists,
   useGenerateShoppingList,
@@ -18,7 +18,18 @@ import { Trash2, X } from 'lucide-react';
 type ShoppingListStatus = 'active' | 'completed' | 'deleted';
 
 export default function ShoppingListsPage() {
+  const location = useLocation();
+  const goalPrefill = (location.state as any)?.goalPrefill;
+
   const [showBuilder, setShowBuilder] = useState(false);
+
+  // Auto-open builder from goal planner
+  useEffect(() => {
+    if (goalPrefill?.openBuilder) {
+      setShowBuilder(true);
+      window.history.replaceState({}, document.title);
+    }
+  }, [goalPrefill]);
   const [activeTab, setActiveTab] = useState<ShoppingListStatus>('active');
   const [selectedLists, setSelectedLists] = useState<Set<string>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);

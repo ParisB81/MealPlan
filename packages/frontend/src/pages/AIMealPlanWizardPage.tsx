@@ -127,8 +127,51 @@ export default function AIMealPlanWizardPage() {
   const returnedRecipeId = (location.state as any)?.createdRecipeId;
   const returnedTempKey = (location.state as any)?.tempKey;
 
+  // Check for goal planner prefill
+  const goalPrefill = (location.state as any)?.goalPrefill;
+
   const [step, setStep] = useState<WizardStep>('setup');
   const [state, setState] = useState<WizardState>(() => {
+    // Goal planner prefill takes priority — clear any stale session
+    if (goalPrefill) {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem(SESSION_KEY + '_step');
+      const prefs = { ...defaultPreferences };
+      const gp = goalPrefill.preferences || {};
+      if (gp.dietaryRestrictions?.length) prefs.dietaryRestrictions = gp.dietaryRestrictions;
+      if (gp.cuisinePreferences?.length) prefs.cuisinePreferences = gp.cuisinePreferences;
+      if (gp.preferredMethods?.length) prefs.preferredMethods = gp.preferredMethods;
+      if (gp.caloriesMin != null) prefs.caloriesMin = gp.caloriesMin;
+      if (gp.caloriesMax != null) prefs.caloriesMax = gp.caloriesMax;
+      if (gp.includedMeals?.length) prefs.includedMeals = gp.includedMeals;
+      if (gp.season) prefs.season = gp.season;
+
+      const days = goalPrefill.durationDays ?? 7;
+      prefs.durationDays = days;
+      prefs.durationWeeks = Math.ceil(days / 7);
+
+      // Compute start/end dates
+      const start = new Date();
+      const end = new Date();
+      end.setDate(end.getDate() + days - 1);
+      const fmt = (d: Date) => d.toISOString().slice(0, 10);
+
+      // Clear location state to prevent re-processing on back/forward
+      window.history.replaceState({}, document.title);
+
+      return {
+        preferenceId: null,
+        preferences: prefs,
+        startDate: fmt(start),
+        endDate: fmt(end),
+        pinnedMeals: [],
+        generatedPlan: null,
+        recipeQueue: [],
+        createdRecipeIds: {},
+        planDescription: '',
+      };
+    }
+
     // Try to restore from sessionStorage
     const saved = sessionStorage.getItem(SESSION_KEY);
     if (saved) {

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card } from '../components/ui';
 import ThemePicker from '../components/ThemePicker';
+import GoalPlanner from '../components/GoalPlanner';
 import { UtensilsCrossed, FolderHeart, CalendarDays, ShoppingCart, CookingPot, Settings2, Sparkles, Salad, Wrench } from 'lucide-react';
 
 export default function HomePage() {
@@ -14,6 +15,9 @@ export default function HomePage() {
           Plan your meals, organize recipes, and generate shopping lists
         </p>
       </header>
+
+      {/* Goal Planner — guided entry point */}
+      <GoalPlanner />
 
       {/* Primary feature cards — all neutral, icons carry section color */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
