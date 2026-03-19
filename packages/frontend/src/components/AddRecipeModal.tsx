@@ -32,22 +32,22 @@ function DateStepper({
       <button
         type="button"
         onClick={() => onChange(shiftDate(value, -1))}
-        className="p-1 rounded hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors"
+        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors active:scale-95"
         title="Previous day"
       >
-        <ChevronLeft size={14} />
+        <ChevronLeft size={18} />
       </button>
       <input
         type="date"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="flex-1 min-w-0 border border-border-strong rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm text-text-primary bg-surface"
+        className="flex-1 min-w-0 border border-border-strong rounded-lg px-3 py-2 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-accent-ring text-sm text-text-primary bg-surface"
         required
       />
       <button
         type="button"
         onClick={() => onChange(shiftDate(value, 1))}
-        className="p-1 rounded hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors"
+        className="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-hover-bg text-text-muted hover:text-text-primary transition-colors active:scale-95"
         title="Next day"
       >
         <ChevronRight size={14} />
@@ -577,7 +577,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                     {isQuickAdding ? (
                       <form
                         onSubmit={handleQuickAddSubmit}
-                        className="px-3 pb-3 pt-1 border-t border-border-default bg-surface-alt flex flex-col gap-2"
+                        className="px-3 pb-3 pt-2 border-t border-border-default bg-surface-alt flex flex-col gap-2.5"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <DateStepper
@@ -592,7 +592,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                               mealType: e.target.value as QuickAddState['mealType'],
                             })
                           }
-                          className="w-full text-xs border border-border-strong rounded px-2 py-1 text-text-primary bg-surface"
+                          className="w-full text-sm border border-border-strong rounded-lg px-3 py-2 min-h-[44px] text-text-primary bg-surface"
                         >
                           <option value="breakfast">Breakfast</option>
                           <option value="lunch">Lunch</option>
@@ -600,27 +600,26 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
                           <option value="snack">Snack</option>
                         </select>
                         <div className="flex items-center gap-2">
-                          <label className="text-xs text-text-muted whitespace-nowrap">Servings</label>
+                          <label className="text-sm text-text-muted whitespace-nowrap">Servings</label>
                           <ServingsStepper
                             value={quickAdd.servings}
                             onChange={(v) => setQuickAdd({ ...quickAdd, servings: v })}
-                            size="sm"
                           />
                         </div>
                         <div className="flex gap-2">
                           <button
                             type="submit"
                             disabled={addRecipe.isPending}
-                            className="flex-1 text-xs bg-btn-success text-white rounded py-1.5 hover:bg-btn-success-hover disabled:opacity-50 font-medium"
+                            className="flex-1 text-sm bg-btn-success text-white rounded-lg py-2.5 min-h-[44px] hover:bg-btn-success-hover disabled:opacity-50 font-medium active:scale-95 transition-transform"
                           >
                             {addRecipe.isPending ? 'Adding…' : '✓ Add'}
                           </button>
                           <button
                             type="button"
                             onClick={(e) => { e.stopPropagation(); setQuickAdd(null); }}
-                            className="text-xs text-text-muted hover:text-text-primary px-2"
+                            className="text-sm text-text-muted hover:text-text-primary px-3 py-2 min-h-[44px] flex items-center active:scale-95 transition-transform"
                           >
-                            <X size={14} />
+                            <X size={18} />
                           </button>
                         </div>
                       </form>
