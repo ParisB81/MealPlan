@@ -227,7 +227,7 @@ export default function PreferenceEditPage() {
             value={form.name || ''}
             onChange={(e) => update({ name: e.target.value })}
             placeholder="e.g., Paris's weight loss plan"
-            className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface"
+            className="w-full border border-border-default rounded-lg px-3 py-2 text-text-primary bg-surface text-base md:text-sm font-medium"
           />
         </div>
 
