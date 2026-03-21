@@ -134,7 +134,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   │   ├── StepRecipePreferences.tsx
 │   │   │   │   │   ├── StepReviewCreate.tsx
 │   │   │   │   │   └── StepDone.tsx
-│   │   │   │   ├── Navigation.tsx          # Responsive nav: desktop horizontal, mobile hamburger+drawer
+│   │   │   │   ├── Navigation.tsx          # Responsive nav: desktop horizontal bar; mobile shows logo + ThemePicker only (hamburger drawer removed — replaced by MobileTabBar)
 │   │   │   │   ├── ThemePicker.tsx         # Theme selector: dropdown (desktop) + inline (mobile drawer)
 │   │   │   │   ├── CustomThemeEditor.tsx   # 3-slot custom theme editor with color pickers + live preview
 │   │   │   │   ├── RecipeSelector.tsx      # Recipe selection component
@@ -151,7 +151,8 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
 │   │   │   │   ├── ShoppingListBuilder.tsx # Multi-tab modal (meal plans/recipes/custom + split mode)
 │   │   │   │   ├── DietGoalCalculator.tsx # Mifflin-St Jeor TDEE calculator (frontend-only)
-│   │   │   │   └── GoalPlanner.tsx        # "What would you like to do today?" guided entry point
+│   │   │   │   ├── GoalPlanner.tsx        # "What would you like to do today?" guided entry point
+│   │   │   │   └── MobileTabBar.tsx       # Fixed bottom tab bar (mobile only, md:hidden): Plans/Recipes/Preferences/Developer; active-state dots; env(safe-area-inset-bottom) padding
 │   │   │   ├── data/
 │   │   │   │   ├── tagDefinitions.ts       # 97 predefined tags in 6 categories
 │   │   │   │   └── themes.ts              # 5 predefined themes + custom theme types/helpers
@@ -178,7 +179,9 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── CollectionsPage.tsx         # List/create recipe collections (active/deleted)
 │   │   │   │   ├── CollectionDetailPage.tsx    # View collection with recipe grid, add/remove/edit
 │   │   │   │   ├── PreferencesPage.tsx         # List saved preference profiles
-│   │   │   │   └── PreferenceEditPage.tsx     # Create/edit preference profile (standalone form)
+│   │   │   │   ├── PreferenceEditPage.tsx     # Create/edit preference profile (standalone form)
+│   │   │   │   ├── PlanMyMealsPage.tsx        # Hub page at /plan-my-meals: Meal Plans / Shopping Lists / Cooking Plans
+│   │   │   │   └── RecipesCollectionsPage.tsx # Hub page at /recipes-collections: Recipes Database / My Collections / Generate AI Recipes
 │   │   │   ├── contexts/
 │   │   │   │   ├── AuthContext.tsx         # Auth provider: token storage, interceptors, login/logout
 │   │   │   │   └── ThemeContext.tsx        # Theme provider: predefined + custom themes, inline CSS injection
@@ -762,7 +765,9 @@ Located in `packages/frontend/src/components/ui/`:
 
 | Path | Page | Description |
 |------|------|-------------|
-| `/` | HomePage | Landing page with quick links to all features |
+| `/` | HomePage | Landing page — mobile: 4-tile circular-icon layout + bottom sheet GoalPlanner; desktop: mirrors mobile tiles (left 7/12) + GoalPlanner sidebar (right 5/12) |
+| `/plan-my-meals` | PlanMyMealsPage | Hub page: Meal Plans / Shopping Lists / Cooking Plans |
+| `/recipes-collections` | RecipesCollectionsPage | Hub page: Recipes Database / My Collections / Generate AI Recipes |
 | `/recipes` | RecipesPage | Browse, search, filter recipes |
 | `/recipes/new` | RecipeFormPage | Create new recipe |
 | `/recipes/import-urls` | UrlImportPage | Scrape recipes from URLs, review & import individually |
@@ -1225,6 +1230,8 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
   - **Shopping** → `/shopping-lists` with builder modal auto-opened
 - **Target page changes:** `AIMealPlanWizardPage.tsx`, `AIRecipeGeneratorPage.tsx`, `CollectionsPage.tsx`, `ShoppingListsPage.tsx` all accept `location.state.goalPrefill` and clear stale sessionStorage when goal prefill is present. `window.history.replaceState()` prevents re-processing on back/forward.
 
+**Mobile & Desktop Home Page Redesign** — Complete visual overhaul of HomePage. Mobile: 4-tile layout — 2-column circular-icon tiles (Plan my Meals + Recipes & Collections), wide Preferences strip, purple "Think of Something!" CTA; GoalPlanner opens in a bottom sheet; fixed bottom tab bar (`MobileTabBar.tsx`) with 4 tabs (Plans/Recipes/Preferences/Developer); hamburger drawer removed from Navigation. Desktop: mirrors mobile visual language exactly — same `rounded-full` circular icons with section-color backgrounds + ring shadow, same `linear-gradient(155deg, var(--color-surface), var(--color-sec-*-light))` gradient tiles; layout is 2-column tile grid + wide Preferences strip on left (7/12 cols) + GoalPlanner sidebar with purple shimmer gradient on right (5/12 cols). Two new hub pages: `PlanMyMealsPage` + `RecipesCollectionsPage`. Key implementation notes: routes wrapper needs `pb-20 md:pb-0` to clear fixed tab bar; Toaster uses `containerStyle={{ bottom: '80px' }}` to stay above it; hub page sub-links must NOT be nested `<Link>` inside `<Link>` — use sibling links or buttons.
+
 ### Future Enhancements
 - Drag-and-drop meal plan interface
 - Recipe images upload
@@ -1417,6 +1424,6 @@ Items within each category are sorted **alphabetically** by ingredient name.
 
 ---
 
-**Last Updated:** 2026-03-17
-**Project Version:** 2.12.0
-**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication** + **Diet Goal Calculator** + **Season-Aware Ingredient Suggestions** + **Shopping List Splitting by Date Range** + **UX Improvements (11 Changes)** + **AddRecipeModal Collection & Advanced Filters** + **Mobile UX Improvements (5 Changes)** + **Meal Plan Rename** + **Browse Library in Swap Alternatives** + **Collection-Only Recipe Source** + **AI Create in AddRecipeModal** + **Recipe Servings Scaling** + **Goal Planner**)
+**Last Updated:** 2026-03-21
+**Project Version:** 2.13.0
+**All Phases Complete** (Phases 0-4 + Scraper + UI Library + Ingredient Management + Cooking Plans + Developer Tools + Recipe Enhancements + Akis Scraper + Argiro Scraper + Validation Error Display + Meal Plan Calendar + Tag Manager + Ingredient Data Pipeline + Sodium Normalization + Unit Normalization + Scraper Architecture + Source URL Tracking + Source URL Enrichment Script + Unified Metric Aggregation + Can Size Extraction + Ingredient Recipes Modal + Auto-Tagging + Ingredient Refinement Pipeline + Ingredient Unit Overrides + Shopping List Alpha Sort + **PostgreSQL Migration** + **Railway Cloud Deployment** + **Mobile-First UI** + **PWA Support** + **Password Authentication** + **Shopping List Second-Pass Merge** + **Tag Autocomplete** + **Review & Import Flow** + **Case-Insensitive Search** + **Shopping List Add-from-Recipes Fix** + **Theme System** + **Tabbed Recipe Form** + **Shopping List Print** + **Themed Shopping Button** + **AI-Powered Meal Plan Generation** + **Nutrition Calculation Fix** + **Source Tag Category** + **Railway Nixpacks/Puppeteer** + **Railway Healthcheck Auth Fix** + **AI Meal Plan Wizard Restructure** + **AI Recipe Generator** + **Recipe Collections** + **Recipe Advanced Filters** + **Standalone Preference Profiles Page** + **Per-Day Add Meal Button** + **Exclusive Accordion Sections** + **AI Generate on MealPlansPage** + **Preference Profile Duplication** + **Diet Goal Calculator** + **Season-Aware Ingredient Suggestions** + **Shopping List Splitting by Date Range** + **UX Improvements (11 Changes)** + **AddRecipeModal Collection & Advanced Filters** + **Mobile UX Improvements (5 Changes)** + **Meal Plan Rename** + **Browse Library in Swap Alternatives** + **Collection-Only Recipe Source** + **AI Create in AddRecipeModal** + **Recipe Servings Scaling** + **Goal Planner** + **Mobile & Desktop Home Page Redesign**)

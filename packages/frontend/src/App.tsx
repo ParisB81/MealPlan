@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import Navigation from './components/Navigation';
+import MobileTabBar from './components/MobileTabBar';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import LoginPage from './pages/LoginPage';
@@ -35,6 +36,8 @@ import CollectionsPage from './pages/CollectionsPage';
 import CollectionDetailPage from './pages/CollectionDetailPage';
 import PreferencesPage from './pages/PreferencesPage';
 import PreferenceEditPage from './pages/PreferenceEditPage';
+import PlanMyMealsPage from './pages/PlanMyMealsPage';
+import RecipesCollectionsPage from './pages/RecipesCollectionsPage';
 
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -55,7 +58,8 @@ function AppContent() {
     <div className="min-h-screen bg-page-bg">
       <ScrollToTop />
       <Navigation />
-      <Toaster position="bottom-center" toastOptions={{ className: 'mb-safe' }} />
+      <Toaster position="bottom-center" containerStyle={{ bottom: '80px' }} />
+      <div className="pb-20 md:pb-0">
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/recipes" element={<RecipesPage />} />
@@ -83,7 +87,11 @@ function AppContent() {
         <Route path="/developer/assets" element={<AssetsLibraryPage />} />
         <Route path="/developer/tags" element={<TagManagerPage />} />
         <Route path="/developer/ingredients" element={<IngredientRefinementPage />} />
+        <Route path="/plan-my-meals" element={<PlanMyMealsPage />} />
+        <Route path="/recipes-collections" element={<RecipesCollectionsPage />} />
       </Routes>
+      </div>
+      <MobileTabBar />
     </div>
   );
 }
