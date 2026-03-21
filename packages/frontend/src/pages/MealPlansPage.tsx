@@ -57,6 +57,9 @@ export default function MealPlansPage() {
   return (
     <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
+        <Link to="/plan-my-meals" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+          ← Back to Plans
+        </Link>
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Meal Plans</h1>

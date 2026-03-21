@@ -44,7 +44,7 @@ export default function MobileTabBar() {
               key={to}
               to={to}
               className={`flex flex-col items-center gap-1 min-w-[68px] px-2 py-2 rounded-xl transition-colors active:bg-hover-bg ${
-                active ? 'text-accent' : 'text-text-muted'
+                active ? 'text-accent' : 'text-text-secondary'
               }`}
             >
               <Icon className="w-6 h-6" />

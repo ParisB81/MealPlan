@@ -1,86 +1,76 @@
 import { useLocation, Link } from 'react-router-dom';
-import { Home, CalendarDays, ShoppingCart, UtensilsCrossed, Salad, CookingPot, Wrench, FolderHeart, Settings2 } from 'lucide-react';
+import { CalendarDays, BookOpen, SlidersHorizontal, Code2 } from 'lucide-react';
 import ThemePicker from './ThemePicker';
 
-// Groups: content | planning | utility
-const navGroups = [
+const NAV_TABS = [
   {
-    links: [
-      { to: '/', label: 'Home', icon: Home },
-      { to: '/recipes', label: 'Recipes', icon: UtensilsCrossed, match: '/recipes' },
-      { to: '/collections', label: 'Collections', icon: FolderHeart, match: '/collections' },
-    ],
+    to: '/plan-my-meals',
+    label: 'Plans',
+    icon: CalendarDays,
+    matches: ['/plan-my-meals', '/meal-plans', '/shopping-lists', '/cooking-plan', '/ai-meal-plan'],
   },
   {
-    links: [
-      { to: '/meal-plans', label: 'Meal Plans', icon: CalendarDays, match: '/meal-plans' },
-      { to: '/shopping-lists', label: 'Shopping', icon: ShoppingCart, match: '/shopping-lists' },
-      { to: '/cooking-plans', label: 'Cooking', icon: CookingPot, match: '/cooking-plan' },
-    ],
+    to: '/recipes-collections',
+    label: 'Recipes',
+    icon: BookOpen,
+    matches: ['/recipes-collections', '/recipes', '/collections'],
   },
   {
-    links: [
-      { to: '/preferences', label: 'Preferences', icon: Settings2, match: '/preferences' },
-      { to: '/ingredients', label: 'Ingredients', icon: Salad, match: '/ingredients' },
-      { to: '/developer', label: 'Developer', icon: Wrench, match: '/developer' },
-    ],
+    to: '/preferences',
+    label: 'Preferences',
+    icon: SlidersHorizontal,
+    matches: ['/preferences'],
+  },
+  {
+    to: '/developer',
+    label: 'Developer',
+    icon: Code2,
+    matches: ['/developer', '/ingredients'],
   },
 ];
 
-const navLinks = navGroups.flatMap((g) => g.links);
-
 export default function Navigation() {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
-  // Hide navigation on home page (after all hooks)
-  if (location.pathname === '/') return null;
-
-  const isActive = (link: typeof navLinks[0]) =>
-    link.match ? location.pathname.startsWith(link.match) : false;
+  // Hide navigation on home page
+  if (pathname === '/') return null;
 
   return (
     <nav className="bg-surface shadow-sm border-b border-border-default sticky top-0 z-40">
       <div className="container mx-auto px-4 py-3">
-        {/* Desktop nav (hidden on mobile) */}
+
+        {/* Desktop nav — 4 hub tabs matching mobile tab bar */}
         <div className="hidden md:flex items-center gap-1">
           <div className="flex-1 flex items-center gap-1">
-            {navGroups.map((group, gi) => (
-              <div key={gi} className="flex items-center gap-1">
-                {gi > 0 && (
-                  <div className="w-px h-5 bg-border-default mx-1.5" />
-                )}
-                {group.links.map((link) => {
-                  const Icon = link.icon;
-                  const active = isActive(link);
-                  return (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                        active
-                          ? 'text-accent bg-accent-light'
-                          : 'text-text-secondary hover:text-accent hover:bg-hover-bg'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {link.label}
-                    </Link>
-                  );
-                })}
-              </div>
-            ))}
+            {NAV_TABS.map(({ to, label, icon: Icon, matches }) => {
+              const active = matches.some((m) => pathname.startsWith(m));
+              return (
+                <Link
+                  key={to}
+                  to={to}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    active
+                      ? 'text-accent bg-accent-light'
+                      : 'text-text-secondary hover:text-accent hover:bg-hover-bg'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {label}
+                </Link>
+              );
+            })}
           </div>
-          {/* Theme Picker (desktop) */}
           <ThemePicker />
         </div>
 
-        {/* Mobile nav header — logo + theme picker only (bottom tab bar handles navigation) */}
+        {/* Mobile header — logo + theme picker only (MobileTabBar handles navigation) */}
         <div className="flex md:hidden items-center justify-between">
           <Link to="/" className="font-bold text-lg text-text-primary">
             MealPlan
           </Link>
           <ThemePicker />
         </div>
+
       </div>
     </nav>
   );

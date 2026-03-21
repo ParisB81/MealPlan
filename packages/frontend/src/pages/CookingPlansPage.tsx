@@ -54,6 +54,9 @@ export default function CookingPlansPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8">
+      <Link to="/plan-my-meals" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+        ← Back to Plans
+      </Link>
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">

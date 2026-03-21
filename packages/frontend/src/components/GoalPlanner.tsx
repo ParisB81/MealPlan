@@ -191,7 +191,7 @@ function generateLuckyText(): string {
 
 // --- Component ---
 
-export default function GoalPlanner() {
+export default function GoalPlanner({ noCard = false }: { noCard?: boolean }) {
   const navigate = useNavigate();
   const [inputText, setInputText] = useState('');
   const placeholder = useRotatingPlaceholder();
@@ -257,8 +257,8 @@ export default function GoalPlanner() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto mb-10">
-      <div className="bg-surface border-2 border-border-default rounded-2xl p-5 md:p-7 shadow-lg">
+    <div className={noCard ? '' : 'max-w-3xl mx-auto mb-10'}>
+      <div className={noCard ? '' : 'bg-surface border-2 border-border-default rounded-2xl p-5 md:p-7 shadow-lg'}>
         {/* Heading */}
         <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-1">
           What would you like to do today?

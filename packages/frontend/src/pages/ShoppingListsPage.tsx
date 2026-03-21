@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   useShoppingLists,
   useGenerateShoppingList,
@@ -180,6 +180,9 @@ export default function ShoppingListsPage() {
   return (
     <div className="min-h-screen bg-page-bg">
       <div className="container mx-auto px-4 py-4 md:py-8">
+        <Link to="/plan-my-meals" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+          ← Back to Plans
+        </Link>
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
           <div>

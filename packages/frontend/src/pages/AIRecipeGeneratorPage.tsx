@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams, Link } from 'react-router-dom';
 import { Sparkles, FolderHeart } from 'lucide-react';
 import StepConcept from '../components/ai-recipes/StepConcept';
 import StepRecipePreferences from '../components/ai-recipes/StepRecipePreferences';
@@ -227,6 +227,9 @@ export default function AIRecipeGeneratorPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8 max-w-4xl">
+      <Link to="/recipes-collections" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+        ← Back to Recipes
+      </Link>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Sparkles className="w-7 h-7 text-emerald-500" />

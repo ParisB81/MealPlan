@@ -53,6 +53,9 @@ export default function PreferencesPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8 max-w-3xl">
+      <Link to="/" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+        ← Back to Home
+      </Link>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 h-6 text-sec-prefs" />
@@ -91,42 +94,42 @@ export default function PreferencesPage() {
           <Card key={pref.id} padding="sm">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-text-primary">{pref.name}</h3>
+                <h3 className="text-lg font-semibold text-text-primary">{pref.name}</h3>
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  <Badge variant={pref.recipeSource === 'library_and_ai' ? 'purple' : pref.recipeSource === 'collection_only' ? 'orange' : 'blue'} size="sm">
+                  <Badge variant={pref.recipeSource === 'library_and_ai' ? 'purple' : pref.recipeSource === 'collection_only' ? 'orange' : 'blue'} size="md">
                     {pref.recipeSource === 'library_and_ai' ? 'Library + AI' : pref.recipeSource === 'collection_only' ? 'Collection' : 'Library only'}
                   </Badge>
                   {pref.dietaryRestrictions.map((r: string) => (
-                    <Badge key={r} variant="green" size="sm">{r}</Badge>
+                    <Badge key={r} variant="green" size="md">{r}</Badge>
                   ))}
                   {pref.cuisinePreferences.slice(0, 3).map((c: string) => (
-                    <Badge key={c} variant="purple" size="sm">{c}</Badge>
+                    <Badge key={c} variant="purple" size="md">{c}</Badge>
                   ))}
                   {pref.cuisinePreferences.length > 3 && (
-                    <Badge variant="purple" size="sm">+{pref.cuisinePreferences.length - 3}</Badge>
+                    <Badge variant="purple" size="md">+{pref.cuisinePreferences.length - 3}</Badge>
                   )}
                 </div>
-                <p className="text-xs text-text-muted mt-2">
+                <p className="text-sm text-text-muted mt-2">
                   Updated {format(new Date(pref.updatedAt), 'MMM d, yyyy')}
                 </p>
               </div>
               <div className="flex gap-1.5 shrink-0">
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="md"
                   onClick={() => handleDuplicate(pref)}
                   title="Duplicate profile"
                 >
                   <Copy className="w-4 h-4" />
                 </Button>
                 <Link to={`/preferences/${pref.id}`}>
-                  <Button variant="ghost" size="sm" title="Edit profile">
+                  <Button variant="ghost" size="md" title="Edit profile">
                     <Edit className="w-4 h-4" />
                   </Button>
                 </Link>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="md"
                   onClick={() => handleDelete(pref.id, pref.name)}
                   title="Delete profile"
                 >

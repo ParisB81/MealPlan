@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import {
   useCollections,
   useCreateCollection,
@@ -102,6 +102,9 @@ export default function CollectionsPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 md:py-8">
+      <Link to="/recipes-collections" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
+        ← Back to Recipes
+      </Link>
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">

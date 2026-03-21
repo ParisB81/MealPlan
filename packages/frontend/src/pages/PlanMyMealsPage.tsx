@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CalendarDays, ShoppingCart, CookingPot, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, ShoppingCart, CookingPot, ChevronRight } from 'lucide-react';
 
 const OPTIONS = [
   {
@@ -31,10 +31,9 @@ export default function PlanMyMealsPage() {
       <div className="container mx-auto px-4 py-6 max-w-lg">
         <Link
           to="/"
-          className="md:hidden inline-flex items-center gap-1 text-text-muted text-sm mb-5 active:text-accent"
+          className="inline-flex items-center text-accent hover:text-accent-hover mb-6"
         >
-          <ChevronLeft className="w-4 h-4" />
-          Home
+          ← Back to Home
         </Link>
 
         <div className="mb-8">
