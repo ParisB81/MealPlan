@@ -38,8 +38,8 @@ export default function PlanMyMealsPage() {
         </Link>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-text-primary mb-1">Plan my Meals</h1>
-          <p className="text-text-secondary text-sm">
+          <h1 className="text-3xl font-bold text-text-primary mb-1">Plan my Meals</h1>
+          <p className="text-text-secondary text-base">
             Create plans, build shopping lists, and schedule your cooking sessions.
           </p>
         </div>
@@ -54,8 +54,8 @@ export default function PlanMyMealsPage() {
                   <Icon className="w-7 h-7 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-text-primary text-base">{title}</div>
-                  <div className="text-text-secondary text-sm mt-0.5">{desc}</div>
+                  <div className="font-bold text-text-primary text-lg">{title}</div>
+                  <div className="text-text-secondary text-base mt-0.5">{desc}</div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-text-muted flex-shrink-0" />
               </div>

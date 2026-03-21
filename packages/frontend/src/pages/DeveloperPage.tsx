@@ -52,6 +52,26 @@ export default function DeveloperPage() {
               </p>
             </Card>
           </Link>
+
+          <Link to="/ingredients">
+            <Card hoverable className="h-full">
+              <div className="text-4xl mb-3">🥕</div>
+              <h2 className="text-2xl font-semibold text-text-primary mb-2">Ingredients Database</h2>
+              <p className="text-text-secondary">
+                Browse and manage the master ingredient database — search, edit categories, and view which recipes use each ingredient.
+              </p>
+            </Card>
+          </Link>
+
+          <Link to="/ai-meal-plan">
+            <Card hoverable className="h-full">
+              <div className="text-4xl mb-3">🤖</div>
+              <h2 className="text-2xl font-semibold text-text-primary mb-2">AI Meal Plans</h2>
+              <p className="text-text-secondary">
+                Generate personalised meal plans with Claude AI — set preferences, dietary restrictions, cuisines, and let AI plan your week.
+              </p>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>

@@ -38,8 +38,8 @@ export default function RecipesCollectionsPage() {
         </Link>
 
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-text-primary mb-1">Recipes & Collections</h1>
-          <p className="text-text-secondary text-sm">
+          <h1 className="text-3xl font-bold text-text-primary mb-1">Recipes & Collections</h1>
+          <p className="text-text-secondary text-base">
             Browse the recipe database, organise your favourites, or generate new recipes with AI.
           </p>
         </div>
@@ -54,8 +54,8 @@ export default function RecipesCollectionsPage() {
                   <Icon className="w-7 h-7 text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-text-primary text-base">{title}</div>
-                  <div className="text-text-secondary text-sm mt-0.5">{desc}</div>
+                  <div className="font-bold text-text-primary text-lg">{title}</div>
+                  <div className="text-text-secondary text-base mt-0.5">{desc}</div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-text-muted flex-shrink-0" />
               </div>

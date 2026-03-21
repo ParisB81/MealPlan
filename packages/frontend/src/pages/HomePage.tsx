@@ -51,18 +51,21 @@ export default function HomePage() {
           <button
             onClick={() => navigate('/plan-my-meals')}
             className="flex flex-col items-center p-5 rounded-3xl border border-border-default bg-surface active:scale-[0.97] transition-transform text-left"
-            style={{ background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-mealplans-light) 100%)' }}
+            style={{
+              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-mealplans-light) 100%)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            }}
           >
             <div
               className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
-              style={{ background: 'var(--color-sec-mealplans)', boxShadow: '0 4px 16px rgba(0,0,0,0.18), 0 0 0 4px var(--color-sec-mealplans-light)' }}
+              style={{ background: 'var(--color-sec-mealplans)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-mealplans-light)' }}
             >
               <CalendarDays className="w-10 h-10 text-white" />
             </div>
-            <span className="text-sm font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-mealplans)' }}>
+            <span className="text-lg font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-mealplans)' }}>
               Plan my<br />Meals
             </span>
-            <span className="text-[11px] text-text-muted mt-1 text-center leading-snug">
+            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
               Plans · Shopping · Cooking
             </span>
           </button>
@@ -71,54 +74,32 @@ export default function HomePage() {
           <button
             onClick={() => navigate('/recipes-collections')}
             className="flex flex-col items-center p-5 rounded-3xl border border-border-default bg-surface active:scale-[0.97] transition-transform text-left"
-            style={{ background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-recipes-light) 100%)' }}
+            style={{
+              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-recipes-light) 100%)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            }}
           >
             <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-3 shadow-md"
-              style={{ background: 'var(--color-sec-recipes)' }}
+              className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
+              style={{ background: 'var(--color-sec-recipes)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-recipes-light)' }}
             >
               <BookOpen className="w-10 h-10 text-white" />
             </div>
-            <span className="text-sm font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-recipes)' }}>
+            <span className="text-lg font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-recipes)' }}>
               Recipes &<br />Collections
             </span>
-            <span className="text-[11px] text-text-muted mt-1 text-center leading-snug">
+            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
               Browse · Collect · AI
             </span>
           </button>
 
-          {/* Wide tile: My Preferences */}
-          <button
-            onClick={() => navigate('/preferences')}
-            className="col-span-2 flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
-            style={{ background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)' }}
-          >
-            <div
-              className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 shadow-md"
-              style={{ background: 'var(--color-sec-prefs)' }}
-            >
-              <SlidersHorizontal className="w-7 h-7 text-white" />
-            </div>
-            <div className="flex-1 min-w-0 text-left">
-              <div className="font-extrabold text-base" style={{ color: 'var(--color-sec-prefs)' }}>
-                My Preferences
-              </div>
-              <div className="text-[12px] text-text-muted mt-0.5">
-                Taste & Diet · Cuisines · Cooking Methods
-              </div>
-            </div>
-            <span className="text-2xl text-text-muted font-light">›</span>
-          </button>
-        </div>
-
-        {/* Think of Something! CTA */}
-        <div className="px-4 pb-4">
+          {/* Think of Something! CTA — above Preferences */}
           <button
             onClick={() => setIsThinkSheetOpen(true)}
-            className="w-full rounded-3xl active:scale-[0.98] transition-transform overflow-hidden relative"
+            className="col-span-2 rounded-3xl active:scale-[0.98] transition-transform overflow-hidden relative"
             style={{
               background: 'linear-gradient(135deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)',
-              boxShadow: '0 8px 30px color-mix(in srgb, var(--color-sec-ai) 35%, transparent)',
+              boxShadow: '0 6px 28px rgba(0,0,0,0.22)',
             }}
           >
             {/* Shimmer overlay */}
@@ -137,12 +118,57 @@ export default function HomePage() {
                 <div className="text-xl font-black text-white tracking-tight">
                   Think of Something!
                 </div>
-                <div className="text-[12px] text-white/60 mt-0.5">
+                <div className="text-sm text-white/70 mt-0.5">
                   What would you like to do today?
                 </div>
               </div>
               <span className="text-2xl text-white/60 font-light">›</span>
             </div>
+          </button>
+
+          {/* Wide tile: My Preferences */}
+          <button
+            onClick={() => navigate('/preferences')}
+            className="col-span-2 flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+            }}
+          >
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ background: 'var(--color-sec-prefs)', boxShadow: '0 4px 12px rgba(0,0,0,0.18)' }}
+            >
+              <SlidersHorizontal className="w-7 h-7 text-white" />
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <div className="font-extrabold text-xl" style={{ color: 'var(--color-sec-prefs)' }}>
+                My Preferences
+              </div>
+              <div className="text-sm text-text-muted mt-0.5">
+                Taste & Diet · Cuisines · Cooking Methods
+              </div>
+            </div>
+            <span className="text-2xl text-text-muted font-light">›</span>
+          </button>
+
+          {/* Developer button */}
+          <button
+            onClick={() => navigate('/developer')}
+            className="col-span-2 flex items-center gap-4 px-5 py-3 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            style={{
+              background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%)',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+            }}
+          >
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-text-muted/15">
+              <Wrench className="w-5 h-5 text-text-muted" />
+            </div>
+            <div className="flex-1 min-w-0 text-left">
+              <div className="font-bold text-base text-text-secondary">Developer Tools</div>
+              <div className="text-sm text-text-muted mt-0.5">Assets · Tags · Ingredients</div>
+            </div>
+            <span className="text-xl text-text-muted font-light">›</span>
           </button>
         </div>
       </div>
@@ -162,8 +188,8 @@ export default function HomePage() {
               <div className="w-10 h-1 rounded-full bg-border-strong mx-auto mb-4" />
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-text-primary">Think of Something!</h3>
-                  <p className="text-xs text-text-muted">Tell me what you feel like today</p>
+                  <h3 className="text-2xl font-black text-text-primary">Think of Something!</h3>
+                  <p className="text-sm text-text-muted mt-0.5">Tell me what you feel like today</p>
                 </div>
                 <button
                   onClick={() => setIsThinkSheetOpen(false)}

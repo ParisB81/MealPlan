@@ -258,12 +258,12 @@ export default function GoalPlanner() {
 
   return (
     <div className="max-w-3xl mx-auto mb-10">
-      <div className="bg-surface border border-border-default rounded-2xl p-5 md:p-7 shadow-sm">
+      <div className="bg-surface border-2 border-border-default rounded-2xl p-5 md:p-7 shadow-lg">
         {/* Heading */}
-        <h2 className="text-lg md:text-xl font-semibold text-text-primary mb-1">
+        <h2 className="text-xl md:text-2xl font-bold text-text-primary mb-1">
           What would you like to do today?
         </h2>
-        <p className="text-sm text-text-muted mb-5">
+        <p className="text-base text-text-muted mb-5">
           Describe your goal and we'll guide you through it
         </p>
 
@@ -277,16 +277,16 @@ export default function GoalPlanner() {
                 handleGo(s.text);
               }}
               className={`flex items-center gap-2 border rounded-xl
-                         px-3.5 py-2 text-sm
-                         hover:shadow-sm transition-all cursor-pointer active:scale-95
-                         min-h-[40px]
+                         px-3.5 py-2 text-sm font-medium
+                         hover:shadow-md transition-all cursor-pointer active:scale-95
+                         min-h-[44px]
                          ${s.contextual
                            ? 'bg-accent/10 border-accent/30 text-accent-dark hover:border-accent'
-                           : 'bg-surface-alt border-border-default text-text-secondary hover:border-accent hover:text-text-primary'
+                           : 'bg-sec-ai/10 border-sec-ai/30 text-sec-ai hover:bg-sec-ai/20'
                          }`}
             >
               {s.contextual && <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />}
-              {!s.contextual && <s.icon className="w-4 h-4 text-text-muted flex-shrink-0" />}
+              {!s.contextual && <s.icon className="w-4 h-4 flex-shrink-0 opacity-80" />}
               {s.label}
             </button>
           ))}
@@ -300,10 +300,10 @@ export default function GoalPlanner() {
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="flex-1 bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm
+            className="flex-1 bg-surface border border-border-default rounded-xl px-4 py-3 text-base
                        text-text-primary placeholder:text-text-muted
                        focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent
-                       min-h-[44px] transition-colors"
+                       min-h-[48px] transition-colors"
           />
           <button
             onClick={handleFeelingLucky}

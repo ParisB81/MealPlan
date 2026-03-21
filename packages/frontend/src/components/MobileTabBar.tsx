@@ -43,12 +43,12 @@ export default function MobileTabBar() {
             <Link
               key={to}
               to={to}
-              className={`flex flex-col items-center gap-0.5 min-w-[68px] px-2 py-2 rounded-xl transition-colors active:bg-hover-bg ${
+              className={`flex flex-col items-center gap-1 min-w-[68px] px-2 py-2 rounded-xl transition-colors active:bg-hover-bg ${
                 active ? 'text-accent' : 'text-text-muted'
               }`}
             >
-              <Icon className="w-5 h-5" />
-              <span className="text-[10px] font-semibold leading-tight">{label}</span>
+              <Icon className="w-6 h-6" />
+              <span className="text-xs font-semibold leading-tight">{label}</span>
               {active && (
                 <span className="w-1 h-1 rounded-full bg-accent mt-0.5" />
               )}
