@@ -203,7 +203,7 @@ export default function HomePage() {
             {/* GoalPlanner content */}
             <div
               className="flex-1 overflow-y-auto"
-              onClick={() => setIsThinkSheetOpen(false)}
+              onClick={(e) => e.stopPropagation()}
             >
               <GoalPlanner />
             </div>
