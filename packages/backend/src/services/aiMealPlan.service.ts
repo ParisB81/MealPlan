@@ -145,7 +145,11 @@ function formatPreferenceForPrompt(pref: any): string {
   }
 
   if (pref.defaultServings && pref.defaultServings !== 4) {
-    parts.push(`Default servings: ${pref.defaultServings} (single-person: plan portions accordingly)`);
+    parts.push(`Default servings: ${pref.defaultServings} (plan portions accordingly)`);
+  }
+
+  if (pref.numberOfPersons && pref.numberOfPersons > 1) {
+    parts.push(`Number of persons eating: ${pref.numberOfPersons}. Each recipe should produce enough servings for all ${pref.numberOfPersons} people.`);
   }
 
   return parts.join('\n');

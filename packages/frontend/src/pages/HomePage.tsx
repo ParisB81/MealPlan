@@ -176,14 +176,14 @@ export default function HomePage() {
 
       {/* ─── Think of Something! bottom sheet (mobile only) ─── */}
       {isThinkSheetOpen && (
-        <div className="md:hidden fixed inset-0 z-50">
+        <div className="md:hidden fixed inset-0 z-50 pointer-events-none">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/60"
+            className="fixed inset-0 bg-black/60 pointer-events-auto"
             onClick={() => setIsThinkSheetOpen(false)}
           />
           {/* Sheet */}
-          <div className="fixed bottom-0 left-0 right-0 rounded-t-3xl bg-surface shadow-2xl max-h-[82vh] flex flex-col">
+          <div className="fixed bottom-0 left-0 right-0 rounded-t-3xl bg-surface shadow-2xl max-h-[82vh] flex flex-col pointer-events-auto">
             {/* Handle + header */}
             <div className="flex-shrink-0 px-5 pt-4 pb-3 border-b border-border-default">
               <div className="w-10 h-1 rounded-full bg-border-strong mx-auto mb-4" />
@@ -201,10 +201,7 @@ export default function HomePage() {
               </div>
             </div>
             {/* GoalPlanner content */}
-            <div
-              className="flex-1 overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="flex-1 overflow-y-auto">
               <GoalPlanner />
             </div>
           </div>

@@ -11,6 +11,7 @@ export const createMealPlanSchema = z.object({
   name: z.string().min(1, 'Name is required').max(200),
   startDate: z.string().datetime().or(z.date()),
   endDate: z.string().datetime().or(z.date()),
+  numberOfPersons: z.number().int().min(1).max(12).optional(),
 });
 
 // Update meal plan schema

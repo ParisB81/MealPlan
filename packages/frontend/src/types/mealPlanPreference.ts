@@ -25,6 +25,7 @@ export interface MealPlanPreference {
   cookingFreeDays: string;
   quickMealMaxMinutes: number | null;
   defaultServings: number;
+  numberOfPersons: number;
   durationWeeks: number;
   durationDays: number | null;
   repeatWeekly: boolean;
@@ -59,6 +60,7 @@ export interface CreatePreferenceInput {
   cookingFreeDays?: string;
   quickMealMaxMinutes?: number | null;
   defaultServings?: number;
+  numberOfPersons?: number;
   durationWeeks?: number;
   durationDays?: number | null;
   repeatWeekly?: boolean;

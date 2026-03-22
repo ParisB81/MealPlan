@@ -104,6 +104,8 @@ interface AddRecipeModalProps {
   defaultDate?: string;
   /** Auto-select this recipe and jump to details step (e.g., after AI creation) */
   preSelectedRecipeId?: string;
+  /** Number of persons eating — used as default servings */
+  numberOfPersons?: number;
 }
 
 type Step = 'browse' | 'details';
@@ -115,7 +117,7 @@ interface QuickAddState {
   servings: number;
 }
 
-export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate, preSelectedRecipeId }: AddRecipeModalProps) {
+export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate, preSelectedRecipeId, numberOfPersons = 1 }: AddRecipeModalProps) {
   const navigate = useNavigate();
   const addRecipe = useAddRecipeToMealPlan();
 
@@ -126,7 +128,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
   // Detail form state (Step 2)
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [mealType, setMealType] = useState<'breakfast' | 'lunch' | 'dinner' | 'snack'>('dinner');
-  const [servings, setServings] = useState(2);
+  const [servings, setServings] = useState(numberOfPersons);
   const [notes, setNotes] = useState('');
 
   // Quick-add inline form state (Step 1)
@@ -226,7 +228,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       setSelectedRecipe(null);
       setDate(defaultDate || new Date().toISOString().split('T')[0]);
       setMealType('dinner');
-      setServings(2);
+      setServings(numberOfPersons);
       setNotes('');
       setQuickAdd(null);
       setAddedCount(0);
@@ -293,7 +295,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       recipeId: recipe.id,
       date: defaultDate || new Date().toISOString().split('T')[0],
       mealType: 'dinner',
-      servings: recipe.servings,
+      servings: numberOfPersons,
     });
   };
 

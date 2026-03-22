@@ -59,6 +59,7 @@ const DEFAULT_FORM: CreatePreferenceInput = {
   cookingFreeDays: '',
   quickMealMaxMinutes: null,
   defaultServings: 4,
+  numberOfPersons: 1,
   durationWeeks: 1,
   durationDays: 7,
   repeatWeekly: false,
@@ -114,6 +115,7 @@ export default function PreferenceEditPage() {
         cookingFreeDays: existingPref.cookingFreeDays,
         quickMealMaxMinutes: existingPref.quickMealMaxMinutes,
         defaultServings: existingPref.defaultServings,
+        numberOfPersons: existingPref.numberOfPersons,
         durationWeeks: existingPref.durationWeeks,
         durationDays: existingPref.durationDays,
         repeatWeekly: existingPref.repeatWeekly,
@@ -156,6 +158,7 @@ export default function PreferenceEditPage() {
       cookingFreeDays: profile.cookingFreeDays,
       quickMealMaxMinutes: profile.quickMealMaxMinutes,
       defaultServings: profile.defaultServings,
+      numberOfPersons: profile.numberOfPersons,
       durationWeeks: profile.durationWeeks,
       durationDays: profile.durationDays,
       repeatWeekly: profile.repeatWeekly,
@@ -256,7 +259,7 @@ export default function PreferenceEditPage() {
         {/* Section 1: Meals & Servings */}
         <Collapsible
           title="Meals & Servings"
-          subtitle={`${(form.includedMeals || ['breakfast', 'lunch', 'dinner']).length} meals, ${form.defaultServings || 4} servings`}
+          subtitle={`${(form.includedMeals || ['breakfast', 'lunch', 'dinner']).length} meals, ${form.defaultServings || 4} servings${(form.numberOfPersons || 1) > 1 ? `, ${form.numberOfPersons} persons` : ''}`}
           open={openSection === 'meals'}
           onToggle={() => toggleSection('meals')}
         >
@@ -358,6 +361,26 @@ export default function PreferenceEditPage() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div>
+              <label className="text-xs text-text-muted mb-1 block">Number of persons eating</label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                  onClick={() => update({ numberOfPersons: Math.max(1, (form.numberOfPersons || 1) - 1) })}
+                  disabled={(form.numberOfPersons || 1) <= 1}
+                >−</button>
+                <span className="text-lg font-semibold text-text-primary w-8 text-center">{form.numberOfPersons || 1}</span>
+                <button
+                  type="button"
+                  className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                  onClick={() => update({ numberOfPersons: Math.min(12, (form.numberOfPersons || 1) + 1) })}
+                  disabled={(form.numberOfPersons || 1) >= 12}
+                >+</button>
+              </div>
+              <p className="text-xs text-text-muted mt-1">Nutrition summary will be shown per person</p>
             </div>
 
             <div>
@@ -478,6 +501,9 @@ export default function PreferenceEditPage() {
             <DietGoalCalculator
               onApply={(calories, protein, carbs, fat) => {
                 update({ caloriesMin: calories, caloriesMax: calories, proteinPercent: protein, carbsPercent: carbs, fatPercent: fat });
+              }}
+              onApplyWithPersons={(calories, protein, carbs, fat, persons) => {
+                update({ caloriesMin: calories, caloriesMax: calories, proteinPercent: protein, carbsPercent: carbs, fatPercent: fat, numberOfPersons: persons });
               }}
             />
             <div>

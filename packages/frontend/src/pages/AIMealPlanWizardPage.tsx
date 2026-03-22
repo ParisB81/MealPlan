@@ -111,6 +111,7 @@ const defaultPreferences: CreatePreferenceInput = {
   cookingFreeDays: '',
   quickMealMaxMinutes: null,
   defaultServings: 4,
+  numberOfPersons: 1,
   durationWeeks: 1,
   durationDays: 7,
   repeatWeekly: false,
@@ -415,6 +416,8 @@ export default function AIMealPlanWizardPage() {
           createdRecipeIds={state.createdRecipeIds}
           startDate={state.startDate}
           endDate={state.endDate}
+          numberOfPersons={state.preferences.numberOfPersons || 1}
+          defaultServings={state.preferences.defaultServings || 4}
           onBack={() => goToStep(state.recipeQueue.length > 0 ? 'recipes' : 'review')}
           onComplete={(mealPlanId) => {
             clearSession();

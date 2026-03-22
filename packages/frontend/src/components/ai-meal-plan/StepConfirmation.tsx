@@ -22,6 +22,8 @@ interface Props {
   createdRecipeIds: Record<string, string>;
   startDate: string;
   endDate: string;
+  numberOfPersons?: number;
+  defaultServings?: number;
   onBack: () => void;
   onComplete: (mealPlanId: string) => void;
 }
@@ -29,6 +31,7 @@ interface Props {
 export default function StepConfirmation({
   plan, planDescription, recipeQueue,
   startDate: startDateProp, endDate: endDateProp,
+  numberOfPersons = 1, defaultServings = 4,
   onBack, onComplete,
 }: Props) {
   const createMealPlan = useCreateMealPlan();
@@ -73,6 +76,7 @@ export default function StepConfirmation({
         name: planDescription || `AI Meal Plan - ${safeFormatDate(startDate, 'MMM d')} to ${safeFormatDate(endDate, 'MMM d')}`,
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate).toISOString(),
+        numberOfPersons,
       });
 
       // 2. Add each meal to the plan (continue on individual failures)
@@ -106,7 +110,7 @@ export default function StepConfirmation({
                 recipeId,
                 date: new Date(day.date).toISOString(),
                 mealType: meal.mealType as 'breakfast' | 'lunch' | 'dinner' | 'snack',
-                servings: 1,
+                servings: defaultServings,
               },
             });
             addedCount++;

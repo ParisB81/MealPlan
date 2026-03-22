@@ -14,6 +14,7 @@ export default function MealPlansPage() {
   const deleteMealPlan = useDeleteMealPlan();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
+  const [newPlanPersons, setNewPlanPersons] = useState(1);
   const navigate = useNavigate();
 
   const handleCreateWeeklyPlan = async () => {
@@ -23,9 +24,10 @@ export default function MealPlansPage() {
     const endDate = addDays(today, 6).toISOString();
 
     try {
-      const newPlan = await createMealPlan.mutateAsync({ name, startDate, endDate });
+      const newPlan = await createMealPlan.mutateAsync({ name, startDate, endDate, numberOfPersons: newPlanPersons });
       setShowCreateForm(false);
       setNewPlanName('');
+      setNewPlanPersons(1);
       navigate(`/meal-plans/${newPlan.id}`);
     } catch {
       // error handled by hook's onError
@@ -116,6 +118,24 @@ export default function MealPlansPage() {
             onChange={(e) => setNewPlanName(e.target.value)}
             placeholder={`Week of ${format(new Date(), 'MMM d')}`}
           />
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-text-secondary mb-1">Number of Persons</label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                onClick={() => setNewPlanPersons(p => Math.max(1, p - 1))}
+                disabled={newPlanPersons <= 1}
+              >−</button>
+              <span className="text-lg font-semibold text-text-primary w-8 text-center">{newPlanPersons}</span>
+              <button
+                type="button"
+                className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                onClick={() => setNewPlanPersons(p => Math.min(12, p + 1))}
+                disabled={newPlanPersons >= 12}
+              >+</button>
+            </div>
+          </div>
           <div className="flex gap-3 mt-6">
             <Button variant="ghost" fullWidth onClick={() => setShowCreateForm(false)}>
               Cancel

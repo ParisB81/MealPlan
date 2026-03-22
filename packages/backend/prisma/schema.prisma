@@ -113,6 +113,7 @@ model MealPlan {
   name      String // e.g., "Week of Jan 8-14"
   startDate DateTime
   endDate   DateTime
+  numberOfPersons Int @default(1)
   status    String   @default("active") // "active", "completed", "deleted"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -199,6 +200,7 @@ model MealPlanPreference {
   cookingFreeDays      String  @default("")  // Comma-separated YYYY-MM-DD dates for cooking-free days
   quickMealMaxMinutes  Int?  // max total prep+cook time for non-cook-day meals (e.g., 10)
   defaultServings      Int   @default(4) // default servings per recipe (1 for single-person)
+  numberOfPersons      Int   @default(1) // number of people eating (for nutrition per-person display)
   preferredMethods     String  @default("[]") // JSON array of preferred cooking methods
   season               String? // "Spring" | "Summer" | "Autumn" | "Winter" | null
 

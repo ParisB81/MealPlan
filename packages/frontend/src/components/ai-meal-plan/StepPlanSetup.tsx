@@ -115,6 +115,7 @@ export default function StepPlanSetup({
         cookingFreeDays: profile.cookingFreeDays,
         quickMealMaxMinutes: profile.quickMealMaxMinutes,
         defaultServings: profile.defaultServings,
+        numberOfPersons: profile.numberOfPersons,
         durationWeeks: profile.durationWeeks,
         durationDays: profile.durationDays,
         repeatWeekly: profile.repeatWeekly,
@@ -283,7 +284,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 2: Meals & Servings */}
-      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.defaultServings || 4} servings`} open={openSection === 'meals'} onToggle={() => toggleSection('meals')}>
+      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.defaultServings || 4} servings${(preferences.numberOfPersons || 1) > 1 ? `, ${preferences.numberOfPersons} persons` : ''}`} open={openSection === 'meals'} onToggle={() => toggleSection('meals')}>
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-text-secondary mb-3 block">Meals to include</label>
@@ -383,6 +384,25 @@ export default function StepPlanSetup({
             {(preferences.defaultServings || 4) === 1 && (
               <p className="text-xs text-text-muted mt-1">Single portions — perfect for living alone.</p>
             )}
+          </div>
+          <div>
+            <label className="text-xs text-text-muted mb-1 block">Number of persons eating</label>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                onClick={() => onUpdate({ ...preferences, numberOfPersons: Math.max(1, (preferences.numberOfPersons || 1) - 1) })}
+                disabled={(preferences.numberOfPersons || 1) <= 1}
+              >−</button>
+              <span className="text-lg font-semibold text-text-primary w-8 text-center">{preferences.numberOfPersons || 1}</span>
+              <button
+                type="button"
+                className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                onClick={() => onUpdate({ ...preferences, numberOfPersons: Math.min(12, (preferences.numberOfPersons || 1) + 1) })}
+                disabled={(preferences.numberOfPersons || 1) >= 12}
+              >+</button>
+            </div>
+            <p className="text-xs text-text-muted mt-1">Nutrition summary will be shown per person</p>
           </div>
           <div>
             <label className="text-sm font-medium text-text-secondary mb-2 block">

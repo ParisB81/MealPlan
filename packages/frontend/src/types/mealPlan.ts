@@ -21,6 +21,7 @@ export interface MealPlan {
   name: string;
   startDate: string;
   endDate: string;
+  numberOfPersons: number;
   status: MealPlanStatus;
   createdAt: string;
   updatedAt: string;
@@ -31,6 +32,7 @@ export interface CreateMealPlanInput {
   name: string;
   startDate: string;
   endDate: string;
+  numberOfPersons?: number;
 }
 
 export interface UpdateMealPlanInput extends Partial<CreateMealPlanInput> {
@@ -64,6 +66,7 @@ export interface MealPlanNutrition {
   totalFat: number;
   mealsCount: number;
   mealsWithNutrition?: number;
+  numberOfPersons: number;
 }
 
 export interface CopyMealData {

@@ -34,6 +34,7 @@ export default function MealPlanDetailPage() {
   const [viewMode, setViewMode] = useState<'cards' | 'grid'>('cards');
   const [showRename, setShowRename] = useState(false);
   const [renameName, setRenameName] = useState('');
+  const [showPersonsEdit, setShowPersonsEdit] = useState(false);
   const [preSelectedRecipeId, setPreSelectedRecipeId] = useState<string | undefined>(undefined);
   const updateMealPlan = useUpdateMealPlan();
   const queryClient = useQueryClient();
@@ -341,7 +342,49 @@ export default function MealPlanDetailPage() {
                 {format(new Date(mealPlan.startDate), 'MMMM d')} -{' '}
                 {format(new Date(mealPlan.endDate), 'MMMM d, yyyy')}
               </p>
-              <p className="text-text-muted mt-1">{mealPlan.meals.length} meals planned</p>
+              <p className="text-text-muted mt-1">
+                {mealPlan.meals.length} meals planned
+                {' · '}
+                {!showPersonsEdit ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowPersonsEdit(true)}
+                    className="inline-flex items-center gap-1 text-text-muted hover:text-accent transition-colors"
+                    title="Edit number of persons"
+                  >
+                    {mealPlan.numberOfPersons || 1} {(mealPlan.numberOfPersons || 1) === 1 ? 'person' : 'persons'}
+                    <Pencil className="w-3 h-3" />
+                  </button>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      className="w-6 h-6 rounded-full border border-border text-text-primary text-xs flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                      onClick={() => {
+                        const n = Math.max(1, (mealPlan.numberOfPersons || 1) - 1);
+                        updateMealPlan.mutate({ id: id!, input: { numberOfPersons: n } });
+                      }}
+                      disabled={(mealPlan.numberOfPersons || 1) <= 1}
+                    >−</button>
+                    <span className="font-semibold text-text-primary">{mealPlan.numberOfPersons || 1}</span>
+                    <button
+                      type="button"
+                      className="w-6 h-6 rounded-full border border-border text-text-primary text-xs flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
+                      onClick={() => {
+                        const n = Math.min(12, (mealPlan.numberOfPersons || 1) + 1);
+                        updateMealPlan.mutate({ id: id!, input: { numberOfPersons: n } });
+                      }}
+                      disabled={(mealPlan.numberOfPersons || 1) >= 12}
+                    >+</button>
+                    <span className="text-text-muted">{(mealPlan.numberOfPersons || 1) === 1 ? 'person' : 'persons'}</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowPersonsEdit(false)}
+                      className="text-xs text-accent hover:text-accent-hover ml-1"
+                    >done</button>
+                  </span>
+                )}
+              </p>
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap">
               <Button onClick={() => { setAddRecipeDate(undefined); setIsAddRecipeModalOpen(true); }}>
@@ -426,33 +469,31 @@ export default function MealPlanDetailPage() {
               )}
             </div>
 
-            {/* Daily average (primary) + plan totals (secondary) */}
+            {/* Per-person daily average */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
               <div className="text-center">
-                <div className="text-3xl font-bold text-accent">{Math.round(nutrition.totalCalories / dailyNutrition.length)}</div>
-                <div className="text-sm text-text-secondary">Calories / day</div>
-                <div className="text-xs text-text-muted">{nutrition.totalCalories} plan total</div>
+                <div className="text-3xl font-bold text-accent">{Math.round(nutrition.totalCalories / dailyNutrition.length / (nutrition.numberOfPersons || 1))}</div>
+                <div className="text-sm text-text-secondary">Calories{(nutrition.numberOfPersons || 1) > 1 ? ' / person' : ''} / day</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-green-600">{Math.round(nutrition.totalProtein / dailyNutrition.length)}g</div>
-                <div className="text-sm text-text-secondary">Protein / day</div>
-                <div className="text-xs text-text-muted">{nutrition.totalProtein}g plan total</div>
+                <div className="text-3xl font-bold text-green-600">{Math.round(nutrition.totalProtein / dailyNutrition.length / (nutrition.numberOfPersons || 1))}g</div>
+                <div className="text-sm text-text-secondary">Protein{(nutrition.numberOfPersons || 1) > 1 ? ' / person' : ''} / day</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-600">{Math.round(nutrition.totalCarbs / dailyNutrition.length)}g</div>
-                <div className="text-sm text-text-secondary">Carbs / day</div>
-                <div className="text-xs text-text-muted">{nutrition.totalCarbs}g plan total</div>
+                <div className="text-3xl font-bold text-yellow-600">{Math.round(nutrition.totalCarbs / dailyNutrition.length / (nutrition.numberOfPersons || 1))}g</div>
+                <div className="text-sm text-text-secondary">Carbs{(nutrition.numberOfPersons || 1) > 1 ? ' / person' : ''} / day</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-orange-600">{Math.round(nutrition.totalFat / dailyNutrition.length)}g</div>
-                <div className="text-sm text-text-secondary">Fat / day</div>
-                <div className="text-xs text-text-muted">{nutrition.totalFat}g plan total</div>
+                <div className="text-3xl font-bold text-orange-600">{Math.round(nutrition.totalFat / dailyNutrition.length / (nutrition.numberOfPersons || 1))}g</div>
+                <div className="text-sm text-text-secondary">Fat{(nutrition.numberOfPersons || 1) > 1 ? ' / person' : ''} / day</div>
               </div>
             </div>
 
             {/* Daily breakdown table */}
             <div className="border-t border-border pt-4">
-              <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">Daily Breakdown</h3>
+              <h3 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">
+                Daily Breakdown{(nutrition.numberOfPersons || 1) > 1 ? ` (per person, ${nutrition.numberOfPersons} persons)` : ''}
+              </h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -473,10 +514,10 @@ export default function MealPlanDetailPage() {
                             <span className="text-xs text-text-muted ml-1">({day.mealsWithData}/{day.totalMeals})</span>
                           )}
                         </td>
-                        <td className="text-right py-1.5 px-2 text-text-primary font-semibold">{day.calories}</td>
-                        <td className="text-right py-1.5 px-2 text-text-primary">{day.protein}g</td>
-                        <td className="text-right py-1.5 px-2 text-text-primary">{day.carbs}g</td>
-                        <td className="text-right py-1.5 px-2 text-text-primary">{day.fat}g</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary font-semibold">{Math.round(day.calories / (nutrition.numberOfPersons || 1))}</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{Math.round(day.protein / (nutrition.numberOfPersons || 1))}g</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{Math.round(day.carbs / (nutrition.numberOfPersons || 1))}g</td>
+                        <td className="text-right py-1.5 px-2 text-text-primary">{Math.round(day.fat / (nutrition.numberOfPersons || 1))}g</td>
                       </tr>
                     ))}
                   </tbody>
@@ -631,6 +672,7 @@ export default function MealPlanDetailPage() {
             onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); setPreSelectedRecipeId(undefined); }}
             defaultDate={addRecipeDate}
             preSelectedRecipeId={preSelectedRecipeId}
+            numberOfPersons={mealPlan?.numberOfPersons || 1}
           />
         )}
 

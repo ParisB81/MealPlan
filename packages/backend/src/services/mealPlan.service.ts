@@ -17,6 +17,7 @@ export class MealPlanService {
         name: data.name,
         startDate: new Date(data.startDate),
         endDate: new Date(data.endDate),
+        numberOfPersons: data.numberOfPersons ?? 1,
       },
       include: {
         meals: {
@@ -119,6 +120,7 @@ export class MealPlanService {
     if (data.startDate) updateData.startDate = new Date(data.startDate);
     if (data.endDate) updateData.endDate = new Date(data.endDate);
     if (data.status) updateData.status = data.status;
+    if (data.numberOfPersons !== undefined) updateData.numberOfPersons = data.numberOfPersons;
 
     const mealPlan = await prisma.mealPlan.update({
       where: { id: mealPlanId },
@@ -265,6 +267,11 @@ export class MealPlanService {
 
   // Get nutrition summary for meal plan
   async getMealPlanNutrition(mealPlanId: string) {
+    const mealPlan = await prisma.mealPlan.findUnique({
+      where: { id: mealPlanId },
+      select: { numberOfPersons: true },
+    });
+
     const meals = await prisma.mealPlanRecipe.findMany({
       where: { mealPlanId },
       include: {
@@ -301,6 +308,7 @@ export class MealPlanService {
       totalFat: Math.round(totalFat),
       mealsCount: meals.length,
       mealsWithNutrition,
+      numberOfPersons: mealPlan?.numberOfPersons ?? 1,
     };
   }
 
