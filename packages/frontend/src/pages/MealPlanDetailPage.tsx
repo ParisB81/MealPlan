@@ -371,10 +371,10 @@ export default function MealPlanDetailPage() {
                       type="button"
                       className="w-6 h-6 rounded-full border border-border text-text-primary text-xs flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
                       onClick={() => {
-                        const n = Math.min(12, (mealPlan.numberOfPersons || 1) + 1);
+                        const n = Math.min(25, (mealPlan.numberOfPersons || 1) + 1);
                         updateMealPlan.mutate({ id: id!, input: { numberOfPersons: n } });
                       }}
-                      disabled={(mealPlan.numberOfPersons || 1) >= 12}
+                      disabled={(mealPlan.numberOfPersons || 1) >= 25}
                     >+</button>
                     <span className="text-text-muted">{(mealPlan.numberOfPersons || 1) === 1 ? 'person' : 'persons'}</span>
                     <button

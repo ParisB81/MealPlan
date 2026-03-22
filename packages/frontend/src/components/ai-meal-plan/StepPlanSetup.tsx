@@ -284,7 +284,7 @@ export default function StepPlanSetup({
       </Collapsible>
 
       {/* Section 2: Meals & Servings */}
-      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.defaultServings || 4} servings${(preferences.numberOfPersons || 1) > 1 ? `, ${preferences.numberOfPersons} persons` : ''}`} open={openSection === 'meals'} onToggle={() => toggleSection('meals')}>
+      <Collapsible title="Meals & Servings" subtitle={`${includedMeals.length} meals, ${preferences.numberOfPersons || 1} ${(preferences.numberOfPersons || 1) === 1 ? 'person' : 'persons'}`} open={openSection === 'meals'} onToggle={() => toggleSection('meals')}>
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-text-secondary mb-3 block">Meals to include</label>
@@ -364,45 +364,29 @@ export default function StepPlanSetup({
             )}
           </div>
           <div>
-            <label className="text-xs text-text-muted mb-1 block">Default servings per recipe</label>
-            <div className="flex flex-wrap gap-2">
-              {[1, 2, 3, 4, 6].map(n => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => onUpdate({ ...preferences, defaultServings: n })}
-                  className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                    (preferences.defaultServings || 4) === n
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-surface-alt text-text-secondary hover:bg-purple-100'
-                  }`}
-                >
-                  {n} {n === 1 ? 'serving' : 'servings'}
-                </button>
-              ))}
-            </div>
-            {(preferences.defaultServings || 4) === 1 && (
-              <p className="text-xs text-text-muted mt-1">Single portions — perfect for living alone.</p>
-            )}
-          </div>
-          <div>
             <label className="text-xs text-text-muted mb-1 block">Number of persons eating</label>
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
-                onClick={() => onUpdate({ ...preferences, numberOfPersons: Math.max(1, (preferences.numberOfPersons || 1) - 1) })}
+                onClick={() => {
+                  const n = Math.max(1, (preferences.numberOfPersons || 1) - 1);
+                  onUpdate({ ...preferences, numberOfPersons: n, defaultServings: n });
+                }}
                 disabled={(preferences.numberOfPersons || 1) <= 1}
               >−</button>
               <span className="text-lg font-semibold text-text-primary w-8 text-center">{preferences.numberOfPersons || 1}</span>
               <button
                 type="button"
                 className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
-                onClick={() => onUpdate({ ...preferences, numberOfPersons: Math.min(12, (preferences.numberOfPersons || 1) + 1) })}
-                disabled={(preferences.numberOfPersons || 1) >= 12}
+                onClick={() => {
+                  const n = Math.min(25, (preferences.numberOfPersons || 1) + 1);
+                  onUpdate({ ...preferences, numberOfPersons: n, defaultServings: n });
+                }}
+                disabled={(preferences.numberOfPersons || 1) >= 25}
               >+</button>
             </div>
-            <p className="text-xs text-text-muted mt-1">Nutrition summary will be shown per person</p>
+            <p className="text-xs text-text-muted mt-1">Recipes will default to 1 serving per person. Nutrition shown per person.</p>
           </div>
           <div>
             <label className="text-sm font-medium text-text-secondary mb-2 block">

@@ -144,13 +144,8 @@ function formatPreferenceForPrompt(pref: any): string {
     parts.push(`Cook-day recipes should produce enough servings for leftovers on subsequent non-cook days. The same recipe SHOULD appear on consecutive days to represent "cook once, eat leftovers".`);
   }
 
-  if (pref.defaultServings && pref.defaultServings !== 4) {
-    parts.push(`Default servings: ${pref.defaultServings} (plan portions accordingly)`);
-  }
-
-  if (pref.numberOfPersons && pref.numberOfPersons > 1) {
-    parts.push(`Number of persons eating: ${pref.numberOfPersons}. Each recipe should produce enough servings for all ${pref.numberOfPersons} people.`);
-  }
+  const persons = pref.numberOfPersons || 1;
+  parts.push(`Number of persons eating: ${persons}. Each recipe should produce ${persons} ${persons === 1 ? 'serving' : 'servings'} (1 per person).`);
 
   return parts.join('\n');
 }

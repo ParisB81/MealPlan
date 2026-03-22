@@ -226,7 +226,7 @@ export default function StepCreateRecipes({
       const recipeData = await generateDetails.mutateAsync({
         title: entry.title,
         description: entry.description,
-        servings: preferences.defaultServings || 4,
+        servings: preferences.numberOfPersons || 1,
         cuisineHint: entry.cuisineTag,
       });
 

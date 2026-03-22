@@ -58,7 +58,7 @@ const DEFAULT_FORM: CreatePreferenceInput = {
   cookDaysPerWeek: null,
   cookingFreeDays: '',
   quickMealMaxMinutes: null,
-  defaultServings: 4,
+  defaultServings: 1,
   numberOfPersons: 1,
   durationWeeks: 1,
   durationDays: 7,
@@ -259,7 +259,7 @@ export default function PreferenceEditPage() {
         {/* Section 1: Meals & Servings */}
         <Collapsible
           title="Meals & Servings"
-          subtitle={`${(form.includedMeals || ['breakfast', 'lunch', 'dinner']).length} meals, ${form.defaultServings || 4} servings${(form.numberOfPersons || 1) > 1 ? `, ${form.numberOfPersons} persons` : ''}`}
+          subtitle={`${(form.includedMeals || ['breakfast', 'lunch', 'dinner']).length} meals, ${form.numberOfPersons || 1} ${(form.numberOfPersons || 1) === 1 ? 'person' : 'persons'}`}
           open={openSection === 'meals'}
           onToggle={() => toggleSection('meals')}
         >
@@ -344,43 +344,29 @@ export default function PreferenceEditPage() {
             </div>
 
             <div>
-              <label className="text-xs text-text-muted mb-1 block">Default servings per recipe</label>
-              <div className="flex flex-wrap gap-2">
-                {[1, 2, 3, 4, 6].map(n => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => update({ defaultServings: n })}
-                    className={`px-3 py-1.5 rounded-full text-sm transition-colors ${
-                      (form.defaultServings || 4) === n
-                        ? 'bg-sec-prefs text-white'
-                        : 'bg-surface-alt text-text-secondary hover:bg-sec-prefs-light'
-                    }`}
-                  >
-                    {n} {n === 1 ? 'serving' : 'servings'}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <label className="text-xs text-text-muted mb-1 block">Number of persons eating</label>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
-                  onClick={() => update({ numberOfPersons: Math.max(1, (form.numberOfPersons || 1) - 1) })}
+                  onClick={() => {
+                    const n = Math.max(1, (form.numberOfPersons || 1) - 1);
+                    update({ numberOfPersons: n, defaultServings: n });
+                  }}
                   disabled={(form.numberOfPersons || 1) <= 1}
                 >−</button>
                 <span className="text-lg font-semibold text-text-primary w-8 text-center">{form.numberOfPersons || 1}</span>
                 <button
                   type="button"
                   className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
-                  onClick={() => update({ numberOfPersons: Math.min(12, (form.numberOfPersons || 1) + 1) })}
-                  disabled={(form.numberOfPersons || 1) >= 12}
+                  onClick={() => {
+                    const n = Math.min(25, (form.numberOfPersons || 1) + 1);
+                    update({ numberOfPersons: n, defaultServings: n });
+                  }}
+                  disabled={(form.numberOfPersons || 1) >= 25}
                 >+</button>
               </div>
-              <p className="text-xs text-text-muted mt-1">Nutrition summary will be shown per person</p>
+              <p className="text-xs text-text-muted mt-1">Recipes will default to 1 serving per person. Nutrition shown per person.</p>
             </div>
 
             <div>

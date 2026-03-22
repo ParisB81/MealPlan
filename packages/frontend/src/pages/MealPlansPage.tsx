@@ -131,8 +131,8 @@ export default function MealPlansPage() {
               <button
                 type="button"
                 className="w-9 h-9 rounded-full border border-border text-text-primary flex items-center justify-center hover:bg-surface-hover active:scale-95 disabled:opacity-40"
-                onClick={() => setNewPlanPersons(p => Math.min(12, p + 1))}
-                disabled={newPlanPersons >= 12}
+                onClick={() => setNewPlanPersons(p => Math.min(25, p + 1))}
+                disabled={newPlanPersons >= 25}
               >+</button>
             </div>
           </div>
