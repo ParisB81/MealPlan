@@ -49,15 +49,32 @@ export class AIMealPlanController {
 
   // Generate full recipe details for an AI-suggested dish
   async generateRecipeDetails(req: Request, res: Response) {
-    const { title, description, servings, cuisineHint } =
-      generateRecipeDetailsSchema.parse(req.body);
+    const {
+      title, description, servings, cuisineHint,
+      dietaryRestrictions, allergies,
+      ingredientLikes, ingredientDislikes,
+      caloriesMin, caloriesMax,
+      maxPrepTime, maxCookTime,
+      preferredMethods, specificTaste, otherRemarks,
+    } = generateRecipeDetailsSchema.parse(req.body);
 
     const recipe = await aiMealPlanService.generateRecipeDetails(
       TEMP_USER_ID,
       title,
       description,
       servings,
-      cuisineHint
+      cuisineHint,
+      dietaryRestrictions,
+      allergies,
+      ingredientLikes,
+      ingredientDislikes,
+      caloriesMin,
+      caloriesMax,
+      maxPrepTime,
+      maxCookTime,
+      preferredMethods,
+      specificTaste,
+      otherRemarks
     );
 
     res.json({

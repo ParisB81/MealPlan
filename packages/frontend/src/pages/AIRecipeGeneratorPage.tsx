@@ -313,6 +313,7 @@ export default function AIRecipeGeneratorPage() {
           onBack={() => goToStep('preferences')}
           onAllDone={() => goToStep('done')}
           mealPlanId={postCollectionId ? null : mealPlanId}
+          generationInput={state.input}
         />
       )}
 

@@ -68,6 +68,32 @@ export class AIRecipeService {
     // Get recipe library for deduplication awareness
     const recipeLibrary = await getRecipeLibrarySummary();
 
+    // Build explicit forbidden ingredients for suggestions too
+    const suggestionForbidden: string[] = [];
+    const restrictionSetSugg = new Set((input.dietaryRestrictions || []).map(r => r.toLowerCase()));
+    const allergySetSugg = new Set((input.allergies || []).map(a => a.toLowerCase()));
+    if (restrictionSetSugg.has('dairy-free') || allergySetSugg.has('dairy') || allergySetSugg.has('milk') || allergySetSugg.has('lactose')) {
+      suggestionForbidden.push('milk, cheese, butter, cream, yogurt, sour cream, parmesan, mozzarella, feta, ricotta, ghee, whey');
+    }
+    if (restrictionSetSugg.has('gluten-free') || allergySetSugg.has('gluten') || allergySetSugg.has('wheat')) {
+      suggestionForbidden.push('wheat flour, pasta, bread, couscous, soy sauce, barley, rye, breadcrumbs');
+    }
+    if (restrictionSetSugg.has('vegan')) {
+      suggestionForbidden.push('all dairy, eggs, honey, meat, poultry, fish, seafood, gelatin');
+    }
+    if (restrictionSetSugg.has('vegetarian')) {
+      suggestionForbidden.push('meat, poultry, fish, seafood, gelatin');
+    }
+    if (allergySetSugg.has('nuts') || allergySetSugg.has('tree nuts')) {
+      suggestionForbidden.push('almonds, walnuts, cashews, pecans, pistachios, hazelnuts, pine nuts');
+    }
+    if (allergySetSugg.has('shellfish')) {
+      suggestionForbidden.push('shrimp, crab, lobster, mussels, clams, scallops');
+    }
+    const forbiddenSuggestionText = suggestionForbidden.length > 0
+      ? `\n- FORBIDDEN INGREDIENTS (must NOT appear in any suggested recipe): ${suggestionForbidden.join('; ')}\n- Do NOT suggest recipes that traditionally contain forbidden ingredients (e.g., do NOT suggest mac & cheese if dairy-free, do NOT suggest pasta carbonara if dairy-free)`
+      : '';
+
     const systemPrompt = `You are a professional recipe creator. Generate exactly ${input.count} recipe suggestion(s) as valid JSON.
 
 IMPORTANT RULES:
@@ -75,7 +101,7 @@ IMPORTANT RULES:
 - Each recipe must be a real, authentic dish — no made-up names
 - Provide realistic estimated nutrition per serving
 - Provide realistic prep and cook times
-- Respect ALL dietary restrictions and allergies absolutely
+- CRITICAL: You MUST respect ALL dietary restrictions and allergies. Do NOT suggest any recipe that would require a forbidden ingredient, even as a minor component${forbiddenSuggestionText}
 - Suggest recipes that are DIFFERENT from each other
 - Avoid duplicating recipes already in the user's library (provided below for reference)
 - Every suggestion MUST include: title, description, estimatedCalories, estimatedProtein, estimatedCarbs, estimatedFat, cuisineTag, estimatedPrepTime, estimatedCookTime`;

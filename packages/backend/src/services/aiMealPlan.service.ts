@@ -246,7 +246,7 @@ IMPORTANT RULES:
 - Return ONLY valid JSON, no explanations or markdown
 - For existing recipes, use the EXACT id and title from the library
 - For new recipes (if allowed), provide realistic prep/cook times based on actual culinary knowledge
-- Respect ALL dietary restrictions and allergies absolutely
+- CRITICAL: You MUST respect ALL dietary restrictions and allergies. NEVER suggest a recipe that contains a restricted ingredient, even as a minor component. For example, if "Dairy-free" is specified, do NOT suggest any recipe containing milk, cheese, butter, cream, yogurt, or any dairy product.
 - Respect cooking time limits: check if each date is a weekday or weekend and apply the appropriate limits
 - Distribute meals to meet nutritional targets approximately across the day
 - ${varietyDescription}
@@ -522,7 +522,18 @@ Return ONLY valid JSON:
     title: string,
     description?: string,
     servings: number = 4,
-    cuisineHint?: string
+    cuisineHint?: string,
+    dietaryRestrictions?: string[],
+    allergies?: string[],
+    ingredientLikes?: string,
+    ingredientDislikes?: string,
+    caloriesMin?: number | null,
+    caloriesMax?: number | null,
+    maxPrepTime?: number | null,
+    maxCookTime?: number | null,
+    preferredMethods?: string[],
+    specificTaste?: string,
+    otherRemarks?: string
   ) {
     checkRateLimit(userId);
 
@@ -535,15 +546,91 @@ Return ONLY valid JSON:
     });
     const ingredientList = dbIngredients.map(i => i.name).join(', ');
 
+    // Build dietary constraints section
+    const dietaryConstraints: string[] = [];
+    if (dietaryRestrictions?.length) {
+      dietaryConstraints.push(`MANDATORY DIETARY RESTRICTIONS: ${dietaryRestrictions.join(', ')}`);
+    }
+    if (allergies?.length) {
+      dietaryConstraints.push(`MANDATORY ALLERGIES TO AVOID: ${allergies.join(', ')}`);
+    }
+
+    // Build explicit forbidden ingredients list based on restrictions
+    const forbiddenIngredients: string[] = [];
+    const restrictionSet = new Set((dietaryRestrictions || []).map(r => r.toLowerCase()));
+    const allergySet = new Set((allergies || []).map(a => a.toLowerCase()));
+
+    if (restrictionSet.has('dairy-free') || allergySet.has('dairy') || allergySet.has('milk') || allergySet.has('lactose')) {
+      forbiddenIngredients.push('milk', 'cheese', 'butter', 'cream', 'yogurt', 'sour cream', 'cream cheese', 'parmesan', 'mozzarella', 'cheddar', 'feta', 'ricotta', 'ghee', 'whey', 'casein', 'heavy cream', 'half-and-half', 'condensed milk', 'evaporated milk', 'ice cream', 'whipped cream', 'gouda', 'brie', 'gruyere', 'provolone', 'mascarpone', 'cottage cheese', 'parmesan cheese', 'feta cheese', 'mozzarella cheese', 'cheddar cheese', 'cream cheese');
+    }
+    if (restrictionSet.has('gluten-free') || allergySet.has('gluten') || allergySet.has('wheat')) {
+      forbiddenIngredients.push('wheat flour', 'all-purpose flour', 'bread flour', 'pasta', 'spaghetti', 'penne', 'couscous', 'bread', 'breadcrumbs', 'panko', 'soy sauce', 'barley', 'rye', 'semolina', 'bulgur');
+    }
+    if (restrictionSet.has('vegan')) {
+      forbiddenIngredients.push('milk', 'cheese', 'butter', 'cream', 'yogurt', 'egg', 'eggs', 'honey', 'sour cream', 'cream cheese', 'parmesan', 'mozzarella', 'feta', 'ricotta', 'ghee', 'whey', 'heavy cream', 'chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'salmon', 'tuna', 'bacon', 'ham', 'turkey', 'duck', 'veal', 'anchovies', 'gelatin', 'lard', 'parmesan cheese', 'feta cheese', 'mozzarella cheese', 'cheddar cheese', 'cream cheese');
+    }
+    if (restrictionSet.has('vegetarian')) {
+      forbiddenIngredients.push('chicken', 'beef', 'pork', 'lamb', 'fish', 'shrimp', 'salmon', 'tuna', 'bacon', 'ham', 'turkey', 'duck', 'veal', 'anchovies', 'gelatin', 'lard');
+    }
+    if (allergySet.has('eggs') || allergySet.has('egg')) {
+      forbiddenIngredients.push('egg', 'eggs', 'mayonnaise');
+    }
+    if (allergySet.has('nuts') || allergySet.has('tree nuts')) {
+      forbiddenIngredients.push('almond', 'almonds', 'walnut', 'walnuts', 'cashew', 'cashews', 'pecan', 'pecans', 'pistachio', 'pistachios', 'hazelnut', 'hazelnuts', 'pine nuts', 'macadamia', 'almond flour', 'almond milk');
+    }
+    if (allergySet.has('peanuts') || allergySet.has('peanut')) {
+      forbiddenIngredients.push('peanut', 'peanuts', 'peanut butter', 'peanut oil');
+    }
+    if (allergySet.has('shellfish')) {
+      forbiddenIngredients.push('shrimp', 'crab', 'lobster', 'mussels', 'clams', 'oysters', 'scallops', 'crawfish', 'squid', 'calamari');
+    }
+    if (allergySet.has('fish')) {
+      forbiddenIngredients.push('salmon', 'tuna', 'cod', 'tilapia', 'halibut', 'trout', 'anchovy', 'anchovies', 'sardines', 'fish sauce', 'fish stock');
+    }
+    if (allergySet.has('soy')) {
+      forbiddenIngredients.push('soy sauce', 'tofu', 'tempeh', 'edamame', 'soybean', 'soy milk', 'miso');
+    }
+    if (allergySet.has('sesame')) {
+      forbiddenIngredients.push('sesame seeds', 'sesame oil', 'tahini');
+    }
+
+    let forbiddenSection = '';
+    if (forbiddenIngredients.length > 0) {
+      const uniqueForbidden = [...new Set(forbiddenIngredients)];
+      forbiddenSection = `\nFORBIDDEN INGREDIENTS — DO NOT USE ANY OF THESE: ${uniqueForbidden.join(', ')}\nUsing ANY forbidden ingredient will make the recipe invalid. Find dairy-free/gluten-free/vegan alternatives instead.\n`;
+    }
+
+    const dietarySection = dietaryConstraints.length > 0
+      ? `\n${dietaryConstraints.join('\n')}\n${forbiddenSection}`
+      : '';
+
+    // Build soft preference constraints section
+    const prefConstraints: string[] = [];
+    if (ingredientLikes) prefConstraints.push(`Preferred ingredients to include (use these when appropriate): ${ingredientLikes}`);
+    if (ingredientDislikes) prefConstraints.push(`Ingredients to avoid (do NOT use these in the recipe): ${ingredientDislikes}`);
+    if (specificTaste) prefConstraints.push(`Desired taste/flavor profile: ${specificTaste}`);
+    if (preferredMethods?.length) prefConstraints.push(`Preferred cooking methods (use one of these if the recipe allows): ${preferredMethods.join(', ')}`);
+    if (caloriesMin || caloriesMax) {
+      prefConstraints.push(`Target calories per serving: ${caloriesMin || 'any'}–${caloriesMax || 'any'} kcal. Adjust ingredient quantities so the nutrition falls in this range.`);
+    }
+    if (maxPrepTime) prefConstraints.push(`Maximum prep time: ${maxPrepTime} minutes. Set prepTime ≤ ${maxPrepTime} and design the recipe to be achievable within this time.`);
+    if (maxCookTime) prefConstraints.push(`Maximum cook time: ${maxCookTime} minutes. Set cookTime ≤ ${maxCookTime} and design the recipe to be achievable within this time.`);
+    if (otherRemarks) prefConstraints.push(`Additional requirements: ${otherRemarks}`);
+    const prefSection = prefConstraints.length > 0
+      ? `\nUSER PREFERENCES:\n${prefConstraints.map(c => `- ${c}`).join('\n')}\n`
+      : '';
+
     const userPrompt = `Create a complete, detailed recipe for: "${title}"
 ${description ? `Description: ${description}` : ''}
 Target servings: ${servings}
 ${cuisineHint ? `Cuisine: ${cuisineHint}` : ''}
-
+${dietarySection}${prefSection}
 IMPORTANT RULES:
 - INGREDIENT NAMES MUST come from this approved ingredient database. Use ONLY ingredients from this list (use the exact names as shown):
 ${ingredientList}
 - If a recipe would typically use an ingredient not in the list, substitute with the closest available ingredient from the list or omit it
+${dietaryConstraints.length > 0 ? '- CRITICAL: You MUST respect ALL dietary restrictions and allergies listed above. Do NOT include any forbidden ingredients. If the recipe traditionally uses a restricted ingredient, you MUST substitute it with an allowed alternative or omit it entirely.' : ''}
+${prefConstraints.length > 0 ? '- You MUST follow all USER PREFERENCES listed above, including avoiding disliked ingredients, respecting time limits, and hitting calorie targets.' : ''}
 - All ingredient names must be lowercase
 - All units must be from this exact list: ${validUnitsList}
 - Quantities must be positive numbers with at most 2 decimal places

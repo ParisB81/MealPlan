@@ -3,6 +3,7 @@ import {
   generateMealPlan,
   swapMeal,
   generateRecipeDetails,
+  type GenerateRecipeDetailsParams,
 } from '../services/aiMealPlan.service';
 import type { PinnedMeal } from '../types/mealPlanPreference';
 import toast from 'react-hot-toast';
@@ -39,12 +40,7 @@ export function useSwapMeal() {
 
 export function useGenerateRecipeDetails() {
   return useMutation({
-    mutationFn: ({ title, description, servings, cuisineHint }: {
-      title: string;
-      description?: string;
-      servings?: number;
-      cuisineHint?: string;
-    }) => generateRecipeDetails(title, description, servings, cuisineHint),
+    mutationFn: (params: GenerateRecipeDetailsParams) => generateRecipeDetails(params),
     onError: () => {
       toast.error('Failed to generate recipe details');
     },

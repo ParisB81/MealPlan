@@ -67,6 +67,17 @@ export const generateRecipeDetailsSchema = z.object({
   description: z.string().optional(),
   servings: z.number().int().positive().default(4),
   cuisineHint: z.string().optional(),
+  dietaryRestrictions: z.array(z.string()).optional(),
+  allergies: z.array(z.string()).optional(),
+  ingredientLikes: z.string().optional(),
+  ingredientDislikes: z.string().optional(),
+  caloriesMin: z.number().int().nonnegative().nullable().optional(),
+  caloriesMax: z.number().int().nonnegative().nullable().optional(),
+  maxPrepTime: z.number().int().nonnegative().nullable().optional(),
+  maxCookTime: z.number().int().nonnegative().nullable().optional(),
+  preferredMethods: z.array(z.string()).optional(),
+  specificTaste: z.string().optional(),
+  otherRemarks: z.string().optional(),
 });
 
 export type CreatePreferenceInput = z.infer<typeof createPreferenceSchema>;

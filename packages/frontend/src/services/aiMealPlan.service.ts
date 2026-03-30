@@ -33,17 +33,25 @@ export async function swapMeal(
   return data.data;
 }
 
-export async function generateRecipeDetails(
-  title: string,
-  description?: string,
-  servings?: number,
-  cuisineHint?: string
-): Promise<any> {
-  const { data } = await api.post('/ai-meal-plan/generate-recipe-details', {
-    title,
-    description,
-    servings,
-    cuisineHint,
-  });
+export interface GenerateRecipeDetailsParams {
+  title: string;
+  description?: string;
+  servings?: number;
+  cuisineHint?: string;
+  dietaryRestrictions?: string[];
+  allergies?: string[];
+  ingredientLikes?: string;
+  ingredientDislikes?: string;
+  caloriesMin?: number | null;
+  caloriesMax?: number | null;
+  maxPrepTime?: number | null;
+  maxCookTime?: number | null;
+  preferredMethods?: string[];
+  specificTaste?: string;
+  otherRemarks?: string;
+}
+
+export async function generateRecipeDetails(params: GenerateRecipeDetailsParams): Promise<any> {
+  const { data } = await api.post('/ai-meal-plan/generate-recipe-details', params);
   return data.data;
 }

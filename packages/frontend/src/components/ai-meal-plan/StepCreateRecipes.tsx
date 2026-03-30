@@ -228,6 +228,16 @@ export default function StepCreateRecipes({
         description: entry.description,
         servings: preferences.numberOfPersons || 1,
         cuisineHint: entry.cuisineTag,
+        dietaryRestrictions: preferences.dietaryRestrictions,
+        allergies: preferences.allergies,
+        ingredientLikes: preferences.ingredientLikes || undefined,
+        ingredientDislikes: preferences.ingredientDislikes || undefined,
+        caloriesMin: preferences.caloriesMin,
+        caloriesMax: preferences.caloriesMax,
+        // Meal plan preferences use weekday/weekend time limits; use weekday as default
+        maxPrepTime: preferences.weekdayMaxPrep,
+        maxCookTime: preferences.weekdayMaxCook,
+        preferredMethods: preferences.preferredMethods,
       });
 
       navigate('/recipes/new', {

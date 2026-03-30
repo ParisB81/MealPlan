@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Card, Badge } from '../ui';
 import { useGenerateRecipeDetails } from '../../hooks/useAIMealPlan';
 import { useNavigate } from 'react-router-dom';
-import type { AIRecipeSuggestion, AIRecipeQueueEntry } from '../../types/aiRecipe';
+import type { AIRecipeSuggestion, AIRecipeQueueEntry, GenerateRecipeSuggestionsInput } from '../../types/aiRecipe';
 import { ChevronLeft, Loader2, ChefHat, Clock, Flame, SkipForward, ExternalLink } from 'lucide-react';
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   onBack: () => void;
   onAllDone: () => void;
   mealPlanId?: string | null;
+  generationInput?: GenerateRecipeSuggestionsInput;
 }
 
 export default function StepReviewCreate({
@@ -21,6 +22,7 @@ export default function StepReviewCreate({
   onBack,
   onAllDone,
   mealPlanId,
+  generationInput,
 }: Props) {
   const navigate = useNavigate();
   const generateDetails = useGenerateRecipeDetails();
@@ -47,6 +49,17 @@ export default function StepReviewCreate({
         title: suggestion.title,
         description: suggestion.description,
         cuisineHint: suggestion.cuisineTag,
+        dietaryRestrictions: generationInput?.dietaryRestrictions,
+        allergies: generationInput?.allergies,
+        ingredientLikes: generationInput?.ingredientLikes,
+        ingredientDislikes: generationInput?.ingredientDislikes,
+        caloriesMin: generationInput?.caloriesMin,
+        caloriesMax: generationInput?.caloriesMax,
+        maxPrepTime: generationInput?.maxPrepTime,
+        maxCookTime: generationInput?.maxCookTime,
+        preferredMethods: generationInput?.preferredMethods,
+        specificTaste: generationInput?.specificTaste,
+        otherRemarks: generationInput?.otherRemarks,
       });
 
       // Navigate to recipe form with prefill data — same pattern as URL import
