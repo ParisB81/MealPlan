@@ -113,8 +113,8 @@ export default function StepRecipePreferences({
                   onClick={() => toggleMealType(m.value)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                     (input.mealTypes || []).includes(m.value)
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-surface-alt text-text-secondary hover:bg-emerald-100'
+                      ? 'bg-violet-500 text-white'
+                      : 'bg-surface-alt text-text-secondary hover:bg-violet-100'
                   }`}
                 >
                   {m.label}
@@ -294,7 +294,7 @@ export default function StepRecipePreferences({
           variant="primary"
           onClick={onGenerate}
           disabled={isGenerating}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-violet-600 hover:bg-violet-700"
         >
           {isGenerating ? (
             <>

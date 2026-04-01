@@ -60,9 +60,9 @@ const DEFAULT_KEYS: CustomThemeKeys = PREDEFINED_THEME_KEYS.classic;
 function resolveKeys(keys: CustomThemeKeys): CustomThemeKeys {
   return {
     ...keys,
-    secPrefs: keys.secPrefs || '#8b7db8',
+    secPrefs: keys.secPrefs || '#be185d',
     secAi: keys.secAi || '#7c3aed',
-    secAiRecipes: keys.secAiRecipes || '#059669',
+    secAiRecipes: keys.secAiRecipes || '#7c3aed',
   };
 }
 

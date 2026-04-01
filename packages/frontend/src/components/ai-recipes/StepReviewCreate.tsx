@@ -100,7 +100,7 @@ export default function StepReviewCreate({
 
         return (
           <Card key={entry.tempKey} className={`${
-            entry.status === 'created' ? 'ring-2 ring-emerald-300 bg-emerald-50/30' :
+            entry.status === 'created' ? 'ring-2 ring-violet-300 bg-violet-50/30' :
             entry.status === 'skipped' ? 'opacity-50' : ''
           }`}>
             <div className="flex items-start justify-between gap-3 mb-3">
@@ -148,7 +148,7 @@ export default function StepReviewCreate({
                   size="sm"
                   onClick={() => handleCreateRecipe(entry, suggestion)}
                   disabled={isAnyCreating}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-violet-600 hover:bg-violet-700"
                 >
                   <ChefHat className="w-4 h-4 mr-1" />
                   Create Recipe
@@ -165,7 +165,7 @@ export default function StepReviewCreate({
               </div>
             )}
             {entry.status === 'creating' && (
-              <div className="flex items-center gap-2 text-sm text-emerald-600">
+              <div className="flex items-center gap-2 text-sm text-violet-600">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Generating full recipe details...
               </div>
@@ -175,7 +175,7 @@ export default function StepReviewCreate({
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate(`/recipes/${entry.createdRecipeId}`)}
-                className="text-emerald-600"
+                className="text-violet-600"
               >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 View Recipe
@@ -195,7 +195,7 @@ export default function StepReviewCreate({
           <Button
             variant="primary"
             onClick={onAllDone}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-violet-600 hover:bg-violet-700"
           >
             {createdCount > 0 ? 'Done' : 'Finish'}
           </Button>

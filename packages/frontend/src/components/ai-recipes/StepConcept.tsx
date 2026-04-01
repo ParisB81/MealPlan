@@ -49,8 +49,8 @@ export default function StepConcept({
               onClick={() => onCountChange(n)}
               className={`w-12 h-12 rounded-lg text-lg font-semibold transition-colors ${
                 count === n
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-surface-alt text-text-secondary hover:bg-emerald-100'
+                  ? 'bg-violet-500 text-white'
+                  : 'bg-surface-alt text-text-secondary hover:bg-violet-100'
               }`}
             >
               {n}
@@ -84,7 +84,7 @@ export default function StepConcept({
           Select a recipe to create a variation or alternative version of it.
         </p>
         {baseRecipeId && baseRecipeTitle ? (
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+          <div className="flex items-center gap-2 p-3 rounded-lg bg-violet-50 border border-violet-200">
             <span className="flex-1 text-sm text-text-primary font-medium truncate">{baseRecipeTitle}</span>
             <button
               onClick={() => onBaseRecipeChange(null, null)}
@@ -98,7 +98,7 @@ export default function StepConcept({
           <Button
             variant="ghost"
             onClick={() => setShowPicker(true)}
-            className="text-emerald-600 hover:bg-emerald-50"
+            className="text-violet-600 hover:bg-violet-50"
           >
             Select a recipe...
           </Button>
@@ -111,7 +111,7 @@ export default function StepConcept({
           variant="primary"
           onClick={onNext}
           disabled={!canProceed}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-violet-600 hover:bg-violet-700"
         >
           Next: Preferences
           <ChevronRight className="w-4 h-4 ml-1.5" />

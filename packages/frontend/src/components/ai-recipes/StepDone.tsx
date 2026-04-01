@@ -16,7 +16,7 @@ export default function StepDone({ queue, onStartOver, mealPlanId }: Props) {
   return (
     <div className="space-y-6">
       <Card className="text-center py-8">
-        <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
+        <CheckCircle className="w-16 h-16 text-violet-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-text-primary mb-2">All Done!</h2>
         <p className="text-text-secondary">
           {created.length > 0
@@ -37,7 +37,7 @@ export default function StepDone({ queue, onStartOver, mealPlanId }: Props) {
                 to={`/recipes/${entry.createdRecipeId}`}
                 className="flex items-center gap-2 p-2 rounded-lg hover:bg-hover-bg transition-colors"
               >
-                <ChefHat className="w-4 h-4 text-emerald-500" />
+                <ChefHat className="w-4 h-4 text-violet-500" />
                 <span className="flex-1 text-sm text-text-primary font-medium">{entry.title}</span>
                 <ExternalLink className="w-4 h-4 text-text-muted" />
               </Link>
@@ -59,7 +59,7 @@ export default function StepDone({ queue, onStartOver, mealPlanId }: Props) {
         <Button
           variant="primary"
           onClick={onStartOver}
-          className="bg-emerald-600 hover:bg-emerald-700"
+          className="bg-violet-600 hover:bg-violet-700"
         >
           Generate More Recipes
         </Button>

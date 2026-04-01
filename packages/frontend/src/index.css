@@ -43,8 +43,8 @@
   --color-sec-prefs-light: #fff1f2;    /* rose-50 */
   --color-sec-ai: #7c3aed;            /* violet-600 */
   --color-sec-ai-light: #f5f3ff;       /* violet-50 */
-  --color-sec-ai-recipes: #a16207;     /* yellow-700 (amber family) */
-  --color-sec-ai-recipes-light: #fefce8;/* yellow-50 */
+  --color-sec-ai-recipes: #7c3aed;     /* violet-600 (same as AI) */
+  --color-sec-ai-recipes-light: #f5f3ff;/* violet-50 */
 
   /* — Hero Card Backgrounds — */
   --color-hero-recipes: #b45309;
@@ -455,8 +455,8 @@
   --color-sec-prefs-light: #4c0519;    /* rose-950 */
   --color-sec-ai: #a78bfa;
   --color-sec-ai-light: #2e1065;       /* violet-950 */
-  --color-sec-ai-recipes: #ca8a04;
-  --color-sec-ai-recipes-light: #422006;/* yellow-950 */
+  --color-sec-ai-recipes: #a78bfa;     /* violet-400 (same as AI dark) */
+  --color-sec-ai-recipes-light: #2e1065;/* violet-950 */
 
   /* — Feature List Cards (dark surface, Jewel Tone borders) — */
   --color-card-recipes: #1e293b;

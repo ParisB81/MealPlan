@@ -228,7 +228,7 @@ export function deriveAllVariables(keys: CustomThemeKeys): Record<string, string
   // — Resolve optional section colors (backward compat: derive if absent) —
   const secPrefs     = keys.secPrefs     || '#be185d';
   const secAi        = keys.secAi        || '#7c3aed';
-  const secAiRecipes = keys.secAiRecipes || '#a16207';
+  const secAiRecipes = keys.secAiRecipes || '#7c3aed';
 
   // — Surface & Text —
   const surface      = dark ? lighten(pageBg, 10) : '#ffffff';

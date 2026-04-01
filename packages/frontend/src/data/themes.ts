@@ -88,7 +88,7 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroCooking: '#064e3b',
     secPrefs: '#be185d',
     secAi: '#7c3aed',
-    secAiRecipes: '#a16207',
+    secAiRecipes: '#7c3aed',
   },
   ocean: {
     pageBg: '#f0f9ff',
@@ -99,7 +99,7 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroCooking: '#064e3b',
     secPrefs: '#be185d',
     secAi: '#7c3aed',
-    secAiRecipes: '#a16207',
+    secAiRecipes: '#7c3aed',
   },
   forest: {
     pageBg: '#fafaf9',
@@ -110,7 +110,7 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroCooking: '#064e3b',
     secPrefs: '#be185d',
     secAi: '#7c3aed',
-    secAiRecipes: '#a16207',
+    secAiRecipes: '#7c3aed',
   },
   sunset: {
     pageBg: '#fff7ed',
@@ -121,7 +121,7 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroCooking: '#064e3b',
     secPrefs: '#be185d',
     secAi: '#7c3aed',
-    secAiRecipes: '#a16207',
+    secAiRecipes: '#7c3aed',
   },
   midnight: {
     pageBg: '#0f172a',
@@ -132,7 +132,7 @@ export const PREDEFINED_THEME_KEYS: Record<ThemeName, CustomThemeKeys> = {
     heroCooking: '#065f46',
     secPrefs: '#db2777',
     secAi: '#a78bfa',
-    secAiRecipes: '#ca8a04',
+    secAiRecipes: '#a78bfa',
   },
 };
 

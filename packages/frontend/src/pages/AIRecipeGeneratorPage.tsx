@@ -232,7 +232,7 @@ export default function AIRecipeGeneratorPage() {
       </Link>
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
-        <Sparkles className="w-7 h-7 text-emerald-500" />
+        <Sparkles className="w-7 h-7 text-violet-500" />
         <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
           AI Recipe Generator
         </h1>
@@ -254,19 +254,19 @@ export default function AIRecipeGeneratorPage() {
           return (
             <div key={s} className="flex items-center">
               {i > 0 && (
-                <div className={`w-6 md:w-10 h-0.5 ${isCompleted ? 'bg-emerald-500' : 'bg-border-default'}`} />
+                <div className={`w-6 md:w-10 h-0.5 ${isCompleted ? 'bg-violet-500' : 'bg-border-default'}`} />
               )}
               <button
                 onClick={() => i <= currentStepIndex && goToStep(s)}
                 disabled={i > currentStepIndex}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap
-                  ${isActive ? 'bg-emerald-500 text-white' : ''}
-                  ${isCompleted ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 cursor-pointer' : ''}
+                  ${isActive ? 'bg-violet-500 text-white' : ''}
+                  ${isCompleted ? 'bg-violet-100 text-violet-700 hover:bg-violet-200 cursor-pointer' : ''}
                   ${!isActive && !isCompleted ? 'bg-surface-alt text-text-muted' : ''}
                 `}
               >
                 <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs
-                  ${isActive ? 'bg-white/20' : isCompleted ? 'bg-emerald-200' : 'bg-border-default'}
+                  ${isActive ? 'bg-white/20' : isCompleted ? 'bg-violet-200' : 'bg-border-default'}
                 `}>
                   {isCompleted ? '✓' : i + 1}
                 </span>
