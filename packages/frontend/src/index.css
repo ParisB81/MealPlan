@@ -28,55 +28,55 @@
   --color-accent-light: #eff6ff;       /* blue-50 */
   --color-accent-ring: #2563eb;        /* blue-600 */
 
-  /* — Section Colors (parametrized per-section identity) — */
-  --color-sec-recipes: #c2602a;        /* terracotta */
-  --color-sec-recipes-light: #fdf3ed;
-  --color-sec-collections: #a04d22;    /* darker terracotta */
-  --color-sec-collections-light: #faf0e8;
-  --color-sec-mealplans: #4a7a6b;     /* sage green */
-  --color-sec-mealplans-light: #eef5f2;
-  --color-sec-shopping: #3d6b5e;      /* deeper sage */
-  --color-sec-shopping-light: #e8f3ef;
-  --color-sec-cooking: #2d5b4e;       /* darkest sage */
-  --color-sec-cooking-light: #e2f0ec;
-  --color-sec-prefs: #8b7db8;         /* light purple */
-  --color-sec-prefs-light: #f0ecf7;
-  --color-sec-ai: #7c3aed;            /* purple */
-  --color-sec-ai-light: #f3effc;
-  --color-sec-ai-recipes: #059669;    /* emerald-600 */
-  --color-sec-ai-recipes-light: #ecfdf5;
+  /* — Section Colors (Jewel Tones — fixed across all themes) — */
+  --color-sec-recipes: #b45309;        /* amber-700 */
+  --color-sec-recipes-light: #fffbeb;  /* amber-50 */
+  --color-sec-collections: #92400e;    /* amber-800 */
+  --color-sec-collections-light: #fef3c7; /* amber-100 */
+  --color-sec-mealplans: #047857;      /* emerald-700 */
+  --color-sec-mealplans-light: #ecfdf5;/* emerald-50 */
+  --color-sec-shopping: #065f46;       /* emerald-800 */
+  --color-sec-shopping-light: #d1fae5; /* emerald-100 */
+  --color-sec-cooking: #064e3b;        /* emerald-900 */
+  --color-sec-cooking-light: #d1fae5;  /* emerald-100 */
+  --color-sec-prefs: #be185d;          /* rose-700 */
+  --color-sec-prefs-light: #fff1f2;    /* rose-50 */
+  --color-sec-ai: #7c3aed;            /* violet-600 */
+  --color-sec-ai-light: #f5f3ff;       /* violet-50 */
+  --color-sec-ai-recipes: #a16207;     /* yellow-700 (amber family) */
+  --color-sec-ai-recipes-light: #fefce8;/* yellow-50 */
 
-  /* — Hero Card Backgrounds (kept for other themes) — */
-  --color-hero-recipes: #c2602a;
-  --color-hero-recipes-border: #a84e20;
-  --color-hero-collections: #a04d22;
-  --color-hero-collections-border: #8a4420;
-  --color-hero-mealplans: #4a7a6b;
-  --color-hero-mealplans-border: #3d6b5e;
-  --color-hero-shopping: #3d6b5e;
-  --color-hero-shopping-border: #2d5b4e;
-  --color-hero-cooking: #2d5b4e;
-  --color-hero-cooking-border: #22433a;
-  --color-hero-prefs: #8b7db8;
-  --color-hero-prefs-border: #7a6ca8;
+  /* — Hero Card Backgrounds — */
+  --color-hero-recipes: #b45309;
+  --color-hero-recipes-border: #92400e;
+  --color-hero-collections: #92400e;
+  --color-hero-collections-border: #78350f;
+  --color-hero-mealplans: #047857;
+  --color-hero-mealplans-border: #065f46;
+  --color-hero-shopping: #065f46;
+  --color-hero-shopping-border: #064e3b;
+  --color-hero-cooking: #064e3b;
+  --color-hero-cooking-border: #052e16;
+  --color-hero-prefs: #be185d;
+  --color-hero-prefs-border: #9f1239;
   --color-hero-ai: #7c3aed;
   --color-hero-ai-border: #6d28d9;
 
   /* — Feature List Cards — */
-  --color-card-recipes: #fdf3ed;
-  --color-card-recipes-border: #e7d5c8;
-  --color-card-mealplans: #eef5f2;
-  --color-card-mealplans-border: #c8ddd4;
-  --color-card-shopping: #eef5f2;
-  --color-card-shopping-border: #c8ddd4;
-  --color-card-cooking: #eef5f2;
-  --color-card-cooking-border: #c8ddd4;
+  --color-card-recipes: #fffbeb;       /* amber-50 */
+  --color-card-recipes-border: #fde68a;/* amber-200 */
+  --color-card-mealplans: #ecfdf5;     /* emerald-50 */
+  --color-card-mealplans-border: #a7f3d0;/* emerald-200 */
+  --color-card-shopping: #ecfdf5;
+  --color-card-shopping-border: #a7f3d0;
+  --color-card-cooking: #ecfdf5;
+  --color-card-cooking-border: #a7f3d0;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #c8ddd4;
-  --color-detail-mealplans-border: #4a7a6b;
-  --color-detail-cooking-from: #365e52;
-  --color-detail-cooking-to: #4a7a6b;
+  --color-detail-mealplans: #a7f3d0;   /* emerald-200 */
+  --color-detail-mealplans-border: #047857;
+  --color-detail-cooking-from: #065f46;
+  --color-detail-cooking-to: #047857;
   --color-card-cooking-text: #1c1917;
   --color-card-cooking-meta: #78716c;
 
@@ -127,57 +127,57 @@
   --color-accent-light: #ecfeff;       /* cyan-50 */
   --color-accent-ring: #06b6d4;        /* cyan-500 */
 
-  /* — Feature Hero Cards — */
-  --color-hero-recipes: #0d9488;       /* teal-600 */
-  --color-hero-recipes-border: #0f766e;/* teal-700 */
-  --color-hero-mealplans: #0284c7;     /* sky-600 */
-  --color-hero-mealplans-border: #0369a1;/* sky-700 */
-  --color-hero-shopping: #4338ca;      /* indigo-700 */
-  --color-hero-shopping-border: #3730a3;/* indigo-800 */
-  --color-hero-cooking: #334155;       /* slate-700 */
-  --color-hero-cooking-border: #1e293b;/* slate-800 */
-  --color-hero-collections: #0d7b82;   /* teal-700 */
-  --color-hero-collections-border: #0a5f65;
-  --color-hero-prefs: #64748b;         /* slate-500 */
-  --color-hero-prefs-border: #475569;
-  --color-hero-ai: #7c3aed;           /* violet-600 */
+  /* — Hero Card Backgrounds (Jewel Tones) — */
+  --color-hero-recipes: #b45309;
+  --color-hero-recipes-border: #92400e;
+  --color-hero-collections: #92400e;
+  --color-hero-collections-border: #78350f;
+  --color-hero-mealplans: #047857;
+  --color-hero-mealplans-border: #065f46;
+  --color-hero-shopping: #065f46;
+  --color-hero-shopping-border: #064e3b;
+  --color-hero-cooking: #064e3b;
+  --color-hero-cooking-border: #052e16;
+  --color-hero-prefs: #be185d;
+  --color-hero-prefs-border: #9f1239;
+  --color-hero-ai: #7c3aed;
   --color-hero-ai-border: #6d28d9;
 
-  /* — Section Colors — */
-  --color-sec-recipes: #0d9488;
-  --color-sec-recipes-light: #ecfeff;
-  --color-sec-collections: #0f766e;
-  --color-sec-collections-light: #ccfbf1;
-  --color-sec-mealplans: #0284c7;
-  --color-sec-mealplans-light: #f0f9ff;
-  --color-sec-shopping: #0369a1;
-  --color-sec-shopping-light: #e0f2fe;
-  --color-sec-cooking: #075985;
-  --color-sec-cooking-light: #dbeafe;
-  --color-sec-prefs: #64748b;
-  --color-sec-prefs-light: #f8fafc;
+  /* — Section Colors (Jewel Tones) — */
+  --color-sec-recipes: #b45309;
+  --color-sec-recipes-light: #fffbeb;
+  --color-sec-collections: #92400e;
+  --color-sec-collections-light: #fef3c7;
+  --color-sec-mealplans: #047857;
+  --color-sec-mealplans-light: #ecfdf5;
+  --color-sec-shopping: #065f46;
+  --color-sec-shopping-light: #d1fae5;
+  --color-sec-cooking: #064e3b;
+  --color-sec-cooking-light: #d1fae5;
+  --color-sec-prefs: #be185d;
+  --color-sec-prefs-light: #fff1f2;
   --color-sec-ai: #7c3aed;
   --color-sec-ai-light: #f5f3ff;
-  --color-sec-ai-recipes: #059669;
-  --color-sec-ai-recipes-light: #ecfdf5;
+  --color-sec-ai-recipes: #a16207;
+  --color-sec-ai-recipes-light: #fefce8;
 
   /* — Feature List Cards — */
-  --color-card-recipes: #99f6e4;       /* teal-200 */
-  --color-card-recipes-border: #5eead4;/* teal-300 */
-  --color-card-mealplans: #e0f2fe;     /* sky-100 */
-  --color-card-mealplans-border: #bae6fd;/* sky-200 */
-  --color-card-shopping: #c7d2fe;      /* indigo-200 */
-  --color-card-shopping-border: #a5b4fc;/* indigo-300 */
-  --color-card-cooking: #94a3b8;       /* slate-400 */
-  --color-card-cooking-border: #64748b;/* slate-500 */
+  --color-card-recipes: #fffbeb;
+  --color-card-recipes-border: #fde68a;
+  --color-card-mealplans: #ecfdf5;
+  --color-card-mealplans-border: #a7f3d0;
+  --color-card-shopping: #ecfdf5;
+  --color-card-shopping-border: #a7f3d0;
+  --color-card-cooking: #ecfdf5;
+  --color-card-cooking-border: #a7f3d0;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #7dd3fc;   /* sky-300 */
-  --color-detail-mealplans-border: #0ea5e9;/* sky-500 */
-  --color-detail-cooking-from: #334155;/* slate-700 */
-  --color-detail-cooking-to: #475569;  /* slate-600 */
-  --color-card-cooking-text: #ffffff;
-  --color-card-cooking-meta: #e2e8f0;  /* slate-200 */
+  --color-detail-mealplans: #a7f3d0;
+  --color-detail-mealplans-border: #047857;
+  --color-detail-cooking-from: #065f46;
+  --color-detail-cooking-to: #047857;
+  --color-card-cooking-text: #1c1917;
+  --color-card-cooking-meta: #78716c;
 
   /* — Buttons — */
   --color-btn-primary: #0891b2;        /* cyan-600 */
@@ -226,23 +226,23 @@
   --color-accent-light: #ecfdf5;       /* emerald-50 */
   --color-accent-ring: #10b981;        /* emerald-500 */
 
-  /* — Feature Hero Cards — */
-  --color-hero-recipes: #b45309;       /* amber-700 */
-  --color-hero-recipes-border: #92400e;/* amber-800 */
-  --color-hero-mealplans: #047857;     /* emerald-700 */
-  --color-hero-mealplans-border: #065f46;/* emerald-800 */
-  --color-hero-shopping: #44403c;      /* stone-700 */
-  --color-hero-shopping-border: #292524;/* stone-800 */
-  --color-hero-cooking: #14532d;       /* green-900 */
-  --color-hero-cooking-border: #052e16;/* green-950 */
-  --color-hero-collections: #92400e;   /* amber-800 */
+  /* — Hero Card Backgrounds (Jewel Tones) — */
+  --color-hero-recipes: #b45309;
+  --color-hero-recipes-border: #92400e;
+  --color-hero-collections: #92400e;
   --color-hero-collections-border: #78350f;
-  --color-hero-prefs: #57534e;         /* stone-600 */
-  --color-hero-prefs-border: #44403c;
-  --color-hero-ai: #7c3aed;           /* violet-600 */
+  --color-hero-mealplans: #047857;
+  --color-hero-mealplans-border: #065f46;
+  --color-hero-shopping: #065f46;
+  --color-hero-shopping-border: #064e3b;
+  --color-hero-cooking: #064e3b;
+  --color-hero-cooking-border: #052e16;
+  --color-hero-prefs: #be185d;
+  --color-hero-prefs-border: #9f1239;
+  --color-hero-ai: #7c3aed;
   --color-hero-ai-border: #6d28d9;
 
-  /* — Section Colors — */
+  /* — Section Colors (Jewel Tones) — */
   --color-sec-recipes: #b45309;
   --color-sec-recipes-light: #fffbeb;
   --color-sec-collections: #92400e;
@@ -252,31 +252,31 @@
   --color-sec-shopping: #065f46;
   --color-sec-shopping-light: #d1fae5;
   --color-sec-cooking: #064e3b;
-  --color-sec-cooking-light: #a7f3d0;
-  --color-sec-prefs: #57534e;
-  --color-sec-prefs-light: #fafaf9;
+  --color-sec-cooking-light: #d1fae5;
+  --color-sec-prefs: #be185d;
+  --color-sec-prefs-light: #fff1f2;
   --color-sec-ai: #7c3aed;
   --color-sec-ai-light: #f5f3ff;
-  --color-sec-ai-recipes: #059669;
-  --color-sec-ai-recipes-light: #ecfdf5;
+  --color-sec-ai-recipes: #a16207;
+  --color-sec-ai-recipes-light: #fefce8;
 
   /* — Feature List Cards — */
-  --color-card-recipes: #fde68a;       /* amber-200 */
-  --color-card-recipes-border: #fcd34d;/* amber-300 */
-  --color-card-mealplans: #d1fae5;     /* emerald-100 */
-  --color-card-mealplans-border: #a7f3d0;/* emerald-200 */
-  --color-card-shopping: #e7e5e4;      /* stone-200 */
-  --color-card-shopping-border: #d6d3d1;/* stone-300 */
-  --color-card-cooking: #16a34a;       /* green-600 */
-  --color-card-cooking-border: #15803d;/* green-700 */
+  --color-card-recipes: #fffbeb;
+  --color-card-recipes-border: #fde68a;
+  --color-card-mealplans: #ecfdf5;
+  --color-card-mealplans-border: #a7f3d0;
+  --color-card-shopping: #ecfdf5;
+  --color-card-shopping-border: #a7f3d0;
+  --color-card-cooking: #ecfdf5;
+  --color-card-cooking-border: #a7f3d0;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #6ee7b7;   /* emerald-300 */
-  --color-detail-mealplans-border: #10b981;/* emerald-500 */
-  --color-detail-cooking-from: #14532d;/* green-900 */
-  --color-detail-cooking-to: #166534;  /* green-800 */
-  --color-card-cooking-text: #ffffff;
-  --color-card-cooking-meta: #bbf7d0;  /* green-200 */
+  --color-detail-mealplans: #a7f3d0;
+  --color-detail-mealplans-border: #047857;
+  --color-detail-cooking-from: #065f46;
+  --color-detail-cooking-to: #047857;
+  --color-card-cooking-text: #1c1917;
+  --color-card-cooking-meta: #78716c;
 
   /* — Buttons — */
   --color-btn-primary: #047857;        /* emerald-700 */
@@ -325,57 +325,57 @@
   --color-accent-light: #fff1f2;       /* rose-50 */
   --color-accent-ring: #f43f5e;        /* rose-500 */
 
-  /* — Feature Hero Cards — */
-  --color-hero-recipes: #d97706;       /* amber-600 */
-  --color-hero-recipes-border: #b45309;/* amber-700 */
-  --color-hero-mealplans: #e11d48;     /* rose-600 */
-  --color-hero-mealplans-border: #be123c;/* rose-700 */
-  --color-hero-shopping: #a21caf;      /* fuchsia-700 */
-  --color-hero-shopping-border: #86198f;/* fuchsia-800 */
-  --color-hero-cooking: #1e293b;       /* slate-800 */
-  --color-hero-cooking-border: #0f172a;/* slate-900 */
-  --color-hero-collections: #c2410c;   /* orange-700 */
-  --color-hero-collections-border: #9a3412;
-  --color-hero-prefs: #57534e;         /* stone-600 */
-  --color-hero-prefs-border: #44403c;
-  --color-hero-ai: #9333ea;           /* purple-600 */
-  --color-hero-ai-border: #7e22ce;
+  /* — Hero Card Backgrounds (Jewel Tones) — */
+  --color-hero-recipes: #b45309;
+  --color-hero-recipes-border: #92400e;
+  --color-hero-collections: #92400e;
+  --color-hero-collections-border: #78350f;
+  --color-hero-mealplans: #047857;
+  --color-hero-mealplans-border: #065f46;
+  --color-hero-shopping: #065f46;
+  --color-hero-shopping-border: #064e3b;
+  --color-hero-cooking: #064e3b;
+  --color-hero-cooking-border: #052e16;
+  --color-hero-prefs: #be185d;
+  --color-hero-prefs-border: #9f1239;
+  --color-hero-ai: #7c3aed;
+  --color-hero-ai-border: #6d28d9;
 
-  /* — Section Colors — */
-  --color-sec-recipes: #d97706;
+  /* — Section Colors (Jewel Tones) — */
+  --color-sec-recipes: #b45309;
   --color-sec-recipes-light: #fffbeb;
-  --color-sec-collections: #c2410c;
-  --color-sec-collections-light: #fff7ed;
-  --color-sec-mealplans: #e11d48;
-  --color-sec-mealplans-light: #fff1f2;
-  --color-sec-shopping: #a21caf;
-  --color-sec-shopping-light: #fdf4ff;
-  --color-sec-cooking: #86198f;
-  --color-sec-cooking-light: #fae8ff;
-  --color-sec-prefs: #57534e;
-  --color-sec-prefs-light: #fafaf9;
-  --color-sec-ai: #9333ea;
-  --color-sec-ai-light: #faf5ff;
-  --color-sec-ai-recipes: #059669;
-  --color-sec-ai-recipes-light: #ecfdf5;
+  --color-sec-collections: #92400e;
+  --color-sec-collections-light: #fef3c7;
+  --color-sec-mealplans: #047857;
+  --color-sec-mealplans-light: #ecfdf5;
+  --color-sec-shopping: #065f46;
+  --color-sec-shopping-light: #d1fae5;
+  --color-sec-cooking: #064e3b;
+  --color-sec-cooking-light: #d1fae5;
+  --color-sec-prefs: #be185d;
+  --color-sec-prefs-light: #fff1f2;
+  --color-sec-ai: #7c3aed;
+  --color-sec-ai-light: #f5f3ff;
+  --color-sec-ai-recipes: #a16207;
+  --color-sec-ai-recipes-light: #fefce8;
 
   /* — Feature List Cards — */
-  --color-card-recipes: #fde68a;       /* amber-200 */
-  --color-card-recipes-border: #fcd34d;/* amber-300 */
-  --color-card-mealplans: #ffe4e6;     /* rose-100 */
-  --color-card-mealplans-border: #fecdd3;/* rose-200 */
-  --color-card-shopping: #f5d0fe;      /* fuchsia-200 */
-  --color-card-shopping-border: #f0abfc;/* fuchsia-300 */
-  --color-card-cooking: #94a3b8;       /* slate-400 */
-  --color-card-cooking-border: #64748b;/* slate-500 */
+  --color-card-recipes: #fffbeb;
+  --color-card-recipes-border: #fde68a;
+  --color-card-mealplans: #ecfdf5;
+  --color-card-mealplans-border: #a7f3d0;
+  --color-card-shopping: #ecfdf5;
+  --color-card-shopping-border: #a7f3d0;
+  --color-card-cooking: #ecfdf5;
+  --color-card-cooking-border: #a7f3d0;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #fda4af;   /* rose-300 */
-  --color-detail-mealplans-border: #f43f5e;/* rose-500 */
-  --color-detail-cooking-from: #1e293b;/* slate-800 */
-  --color-detail-cooking-to: #334155;  /* slate-700 */
-  --color-card-cooking-text: #ffffff;
-  --color-card-cooking-meta: #e2e8f0;  /* slate-200 */
+  --color-detail-mealplans: #a7f3d0;
+  --color-detail-mealplans-border: #047857;
+  --color-detail-cooking-from: #065f46;
+  --color-detail-cooking-to: #047857;
+  --color-card-cooking-text: #1c1917;
+  --color-card-cooking-meta: #78716c;
 
   /* — Buttons — */
   --color-btn-primary: #e11d48;        /* rose-600 */
@@ -424,57 +424,57 @@
   --color-accent-light: #0c4a6e;       /* sky-900 (dark tint) */
   --color-accent-ring: #38bdf8;        /* sky-400 */
 
-  /* — Feature Hero Cards — */
-  --color-hero-recipes: #f97316;       /* orange-500 */
-  --color-hero-recipes-border: #ea580c;/* orange-600 */
-  --color-hero-mealplans: #3b82f6;     /* blue-500 */
-  --color-hero-mealplans-border: #2563eb;/* blue-600 */
-  --color-hero-shopping: #f43f5e;      /* rose-500 */
-  --color-hero-shopping-border: #e11d48;/* rose-600 */
-  --color-hero-cooking: #475569;       /* slate-600 */
-  --color-hero-cooking-border: #334155;/* slate-700 */
-  --color-hero-collections: #ea580c;   /* orange-600 */
-  --color-hero-collections-border: #c2410c;
-  --color-hero-prefs: #64748b;         /* slate-500 */
-  --color-hero-prefs-border: #475569;
-  --color-hero-ai: #a78bfa;           /* violet-400 */
+  /* — Hero Card Backgrounds (Jewel Tones — brighter for dark bg) — */
+  --color-hero-recipes: #d97706;       /* amber-600 (brighter on dark) */
+  --color-hero-recipes-border: #b45309;
+  --color-hero-collections: #b45309;
+  --color-hero-collections-border: #92400e;
+  --color-hero-mealplans: #059669;     /* emerald-600 (brighter on dark) */
+  --color-hero-mealplans-border: #047857;
+  --color-hero-shopping: #047857;
+  --color-hero-shopping-border: #065f46;
+  --color-hero-cooking: #065f46;
+  --color-hero-cooking-border: #064e3b;
+  --color-hero-prefs: #db2777;         /* pink-600 (brighter on dark) */
+  --color-hero-prefs-border: #be185d;
+  --color-hero-ai: #a78bfa;           /* violet-400 (brighter on dark) */
   --color-hero-ai-border: #8b5cf6;
 
-  /* — Section Colors — */
-  --color-sec-recipes: #f97316;
-  --color-sec-recipes-light: #431407;
-  --color-sec-collections: #ea580c;
-  --color-sec-collections-light: #431407;
-  --color-sec-mealplans: #3b82f6;
-  --color-sec-mealplans-light: #172554;
-  --color-sec-shopping: #f43f5e;
-  --color-sec-shopping-light: #4c0519;
-  --color-sec-cooking: #475569;
-  --color-sec-cooking-light: #1e293b;
-  --color-sec-prefs: #94a3b8;
-  --color-sec-prefs-light: #1e293b;
+  /* — Section Colors (Jewel Tones — brighter main, dark light-variants) — */
+  --color-sec-recipes: #d97706;
+  --color-sec-recipes-light: #451a03;  /* amber-950 */
+  --color-sec-collections: #b45309;
+  --color-sec-collections-light: #451a03;
+  --color-sec-mealplans: #059669;
+  --color-sec-mealplans-light: #022c22;/* emerald-950 */
+  --color-sec-shopping: #047857;
+  --color-sec-shopping-light: #022c22;
+  --color-sec-cooking: #065f46;
+  --color-sec-cooking-light: #022c22;
+  --color-sec-prefs: #db2777;
+  --color-sec-prefs-light: #4c0519;    /* rose-950 */
   --color-sec-ai: #a78bfa;
-  --color-sec-ai-light: #2e1065;
-  --color-sec-ai-recipes: #34d399;
-  --color-sec-ai-recipes-light: #064e3b;
+  --color-sec-ai-light: #2e1065;       /* violet-950 */
+  --color-sec-ai-recipes: #ca8a04;
+  --color-sec-ai-recipes-light: #422006;/* yellow-950 */
 
-  /* — Feature List Cards (same surface, colored borders) — */
-  --color-card-recipes: #1e293b;       /* slate-800 (surface) */
-  --color-card-recipes-border: #c2410c;/* orange-700 */
-  --color-card-mealplans: #1e293b;     /* slate-800 */
-  --color-card-mealplans-border: #1d4ed8;/* blue-700 */
-  --color-card-shopping: #1e293b;      /* slate-800 */
-  --color-card-shopping-border: #be123c;/* rose-700 */
-  --color-card-cooking: #1e293b;       /* slate-800 */
-  --color-card-cooking-border: #475569;/* slate-600 */
+  /* — Feature List Cards (dark surface, Jewel Tone borders) — */
+  --color-card-recipes: #1e293b;
+  --color-card-recipes-border: #b45309;
+  --color-card-mealplans: #1e293b;
+  --color-card-mealplans-border: #047857;
+  --color-card-shopping: #1e293b;
+  --color-card-shopping-border: #065f46;
+  --color-card-cooking: #1e293b;
+  --color-card-cooking-border: #064e3b;
 
   /* — Feature Detail — */
-  --color-detail-mealplans: #1e40af;   /* blue-800 */
-  --color-detail-mealplans-border: #3b82f6;/* blue-500 */
-  --color-detail-cooking-from: #1e293b;/* slate-800 */
-  --color-detail-cooking-to: #334155;  /* slate-700 */
-  --color-card-cooking-text: #f1f5f9;  /* slate-100 */
-  --color-card-cooking-meta: #94a3b8;  /* slate-400 */
+  --color-detail-mealplans: #022c22;
+  --color-detail-mealplans-border: #059669;
+  --color-detail-cooking-from: #022c22;
+  --color-detail-cooking-to: #064e3b;
+  --color-card-cooking-text: #f1f5f9;
+  --color-card-cooking-meta: #94a3b8;
 
   /* — Buttons (brighter for dark background) — */
   --color-btn-primary: #0ea5e9;        /* sky-500 */
