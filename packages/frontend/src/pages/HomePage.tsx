@@ -45,7 +45,7 @@ export default function HomePage() {
           <p className="text-sm text-text-secondary mt-1">{getTodayLabel()}</p>
         </div>
 
-        {/* 2-column tile grid */}
+        {/* 2x2 tile grid */}
         <div className="grid grid-cols-2 gap-3 px-4 pb-3">
 
           {/* Tile 1: Plan my Meals */}
@@ -94,82 +94,71 @@ export default function HomePage() {
             </span>
           </button>
 
-          {/* Think of Something! CTA — above Preferences */}
-          <button
-            onClick={() => setIsThinkSheetOpen(true)}
-            className="col-span-2 rounded-3xl active:scale-[0.98] transition-transform overflow-hidden relative"
-            style={{
-              background: 'linear-gradient(135deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)',
-              boxShadow: '0 6px 28px rgba(0,0,0,0.22)',
-            }}
-          >
-            {/* Shimmer overlay */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: 'radial-gradient(ellipse at 25% 50%, rgba(255,255,255,0.12) 0%, transparent 55%)' }}
-            />
-            <div className="flex items-center gap-4 px-5 py-5 relative">
-              <div className="w-14 h-14 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/25">
-                <Sparkles className="w-7 h-7 text-white" />
-              </div>
-              <div className="flex-1 text-left">
-                <div className="text-[10px] font-bold tracking-widest uppercase text-white/55 mb-0.5">
-                  ✦ AI-Powered
-                </div>
-                <div className="text-xl font-black text-white tracking-tight">
-                  Think of Something!
-                </div>
-                <div className="text-sm text-white/70 mt-0.5">
-                  What would you like to do today?
-                </div>
-              </div>
-              <span className="text-2xl text-white/60 font-light">›</span>
-            </div>
-          </button>
-
-          {/* Wide tile: My Preferences */}
+          {/* Tile 3: My Preferences — square tile matching above */}
           <button
             onClick={() => navigate('/preferences')}
-            className="col-span-2 flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="flex flex-col items-center p-5 rounded-3xl border border-border-default active:scale-[0.97] transition-transform text-left"
             style={{
-              background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
             }}
           >
             <div
-              className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: 'var(--color-sec-prefs)', boxShadow: '0 4px 12px rgba(0,0,0,0.18)' }}
+              className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
+              style={{ background: 'var(--color-sec-prefs)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-prefs-light)' }}
             >
-              <SlidersHorizontal className="w-7 h-7 text-white" />
+              <SlidersHorizontal className="w-10 h-10 text-white" />
             </div>
-            <div className="flex-1 min-w-0 text-left">
-              <div className="font-extrabold text-xl" style={{ color: 'var(--color-sec-prefs)' }}>
-                My Preferences
-              </div>
-              <div className="text-sm text-text-muted mt-0.5">
-                Taste & Diet · Cuisines · Cooking Methods
-              </div>
-            </div>
-            <span className="text-2xl text-text-muted font-light">›</span>
+            <span className="text-xl font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-prefs)' }}>
+              My<br />Preferences
+            </span>
+            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
+              Taste · Diet · Cuisines
+            </span>
           </button>
 
-          {/* Developer button — same size as My Preferences */}
+          {/* Tile 4: Think of Something! — square tile matching above */}
+          <button
+            onClick={() => setIsThinkSheetOpen(true)}
+            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative text-left"
+            style={{
+              background: 'linear-gradient(155deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
+            }}
+          >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 55%)' }} />
+            <div
+              className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative"
+            >
+              <Sparkles className="w-10 h-10 text-white" />
+            </div>
+            <span className="text-xl font-black text-white text-center leading-tight relative">
+              Think of<br />Something!
+            </span>
+            <span className="text-sm text-white/70 mt-1 text-center leading-snug relative">
+              AI-Powered
+            </span>
+          </button>
+        </div>
+
+        {/* Developer Tools — below 2x2 grid */}
+        <div className="px-4 pb-3">
           <button
             onClick={() => navigate('/developer')}
-            className="col-span-2 flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="w-full flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
             style={{
               background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%)',
               boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
             }}
           >
-            <div className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 bg-text-muted/20">
-              <Wrench className="w-7 h-7 text-text-secondary" />
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-text-muted/20">
+              <Wrench className="w-6 h-6 text-text-secondary" />
             </div>
             <div className="flex-1 min-w-0 text-left">
-              <div className="font-extrabold text-xl text-text-secondary">Developer Tools</div>
-              <div className="text-sm text-text-muted mt-0.5">Assets · Tags · Ingredients</div>
+              <div className="font-extrabold text-base text-text-secondary">Developer Tools</div>
+              <div className="text-xs text-text-muted mt-0.5">Assets · Tags · Ingredients</div>
             </div>
-            <span className="text-2xl text-text-muted font-light">›</span>
+            <span className="text-xl text-text-muted font-light">›</span>
           </button>
         </div>
       </div>
@@ -211,12 +200,15 @@ export default function HomePage() {
       {/* ─── DESKTOP LAYOUT (hidden on mobile) ─── */}
       <div className="hidden md:block container mx-auto px-6 py-10 max-w-6xl">
 
-        {/* Greeting */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold text-text-primary tracking-tight">
-            {getGreeting()} 👋
-          </h1>
-          <p className="text-text-secondary mt-2 text-base">{getTodayLabel()}</p>
+        {/* Greeting + discreet theme picker */}
+        <div className="flex items-start justify-between mb-10">
+          <div>
+            <h1 className="text-4xl font-extrabold text-text-primary tracking-tight">
+              {getGreeting()} 👋
+            </h1>
+            <p className="text-text-secondary mt-2 text-base">{getTodayLabel()}</p>
+          </div>
+          <ThemePicker />
         </div>
 
         {/* 5-column tile grid — same order as mobile */}
@@ -332,11 +324,6 @@ export default function HomePage() {
             </span>
           </button>
 
-        </div>
-
-        {/* Theme Picker row */}
-        <div className="bg-surface border border-border-default rounded-2xl px-5 py-4 shadow-sm max-w-sm">
-          <ThemePicker inline />
         </div>
 
       </div>
