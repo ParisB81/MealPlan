@@ -46,16 +46,20 @@ export default function MobileTabBar() {
       <div className="flex items-center justify-around h-16">
         {TABS.map(({ to, label, icon: Icon, matches, exact }) => {
           const active = exact ? pathname === '/' : matches.some((m) => pathname.startsWith(m));
+          const isDeveloper = to === '/developer';
+          const isSecondary = to === '/preferences' || isDeveloper;
+          const iconSize = isSecondary ? 'w-5 h-5' : 'w-6 h-6';
+          const inactiveColor = isDeveloper ? 'text-text-muted' : 'text-text-secondary';
           return (
             <Link
               key={to}
               to={to}
               className={`flex flex-col items-center gap-1 min-w-[68px] px-2 py-2 rounded-xl transition-colors active:bg-hover-bg ${
-                active ? 'text-accent' : 'text-text-secondary'
+                active ? 'text-accent' : inactiveColor
               }`}
             >
-              <Icon className="w-6 h-6" />
-              <span className="text-xs font-semibold leading-tight">{label}</span>
+              <Icon className={iconSize} />
+              <span className={`text-xs font-semibold leading-tight ${isDeveloper && !active ? 'opacity-60' : ''}`}>{label}</span>
               {active && (
                 <span className="w-1 h-1 rounded-full bg-accent mt-0.5" />
               )}

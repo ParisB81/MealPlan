@@ -1,25 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ThemePicker from '../components/ThemePicker';
 import GoalPlanner from '../components/GoalPlanner';
 import {
   CalendarDays, BookOpen, SlidersHorizontal,
   Sparkles, Wrench, X,
 } from 'lucide-react';
 
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  if (hour < 21) return 'Good evening';
-  return 'Good night';
-}
+/** Fixed brand colors per tile — theme-independent (Palette C: Jewel Tones) */
+const TILE = {
+  meals:     { from: '#047857', to: '#059669' },
+  recipes:   { from: '#b45309', to: '#d97706' },
+  prefs:     { from: '#be185d', to: '#db2777' },
+  think:     { from: '#7c3aed', to: '#a855f7' },
+  developer: { from: '#475569', to: '#64748b' },
+} as const;
 
-function getTodayLabel() {
-  return new Date().toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-  });
-}
+const SHIMMER = 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 55%)';
 
 export default function HomePage() {
   const [isThinkSheetOpen, setIsThinkSheetOpen] = useState(false);
@@ -31,42 +27,26 @@ export default function HomePage() {
       {/* ─── MOBILE LAYOUT (hidden on md+) ─── */}
       <div className="md:hidden min-h-screen bg-page-bg pb-20">
 
-        {/* Logo bar */}
-        <div className="flex items-center justify-between px-4 py-3 bg-surface border-b border-border-default">
-          <span className="text-lg font-extrabold text-text-primary tracking-tight">🍽 MealPlan</span>
-          <ThemePicker />
-        </div>
-
-        {/* Greeting */}
-        <div className="px-5 pt-5 pb-3">
-          <h2 className="text-2xl font-extrabold text-text-primary tracking-tight">
-            {getGreeting()} 👋
-          </h2>
-          <p className="text-sm text-text-secondary mt-1">{getTodayLabel()}</p>
-        </div>
-
         {/* 2x2 tile grid */}
-        <div className="grid grid-cols-2 gap-3 px-4 pb-3">
+        <div className="grid grid-cols-2 gap-3 px-4 pt-4 pb-3">
 
           {/* Tile 1: Plan my Meals */}
           <button
             onClick={() => navigate('/plan-my-meals')}
-            className="flex flex-col items-center p-5 rounded-3xl border border-border-default bg-surface active:scale-[0.97] transition-transform text-left"
+            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-mealplans-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              background: `linear-gradient(155deg, ${TILE.meals.from} 0%, ${TILE.meals.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
-              style={{ background: 'var(--color-sec-mealplans)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-mealplans-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative">
               <CalendarDays className="w-10 h-10 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-mealplans)' }}>
+            <span className="text-xl font-extrabold text-white text-center leading-tight relative">
               Plan my<br />Meals
             </span>
-            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
+            <span className="text-sm text-white/70 mt-1 text-center leading-snug relative">
               Plans · Shopping · Cooking
             </span>
           </button>
@@ -74,62 +54,56 @@ export default function HomePage() {
           {/* Tile 2: Recipes & Collections */}
           <button
             onClick={() => navigate('/recipes-collections')}
-            className="flex flex-col items-center p-5 rounded-3xl border border-border-default bg-surface active:scale-[0.97] transition-transform text-left"
+            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-recipes-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              background: `linear-gradient(155deg, ${TILE.recipes.from} 0%, ${TILE.recipes.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
-              style={{ background: 'var(--color-sec-recipes)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-recipes-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative">
               <BookOpen className="w-10 h-10 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-recipes)' }}>
+            <span className="text-xl font-extrabold text-white text-center leading-tight relative">
               Recipes &<br />Collections
             </span>
-            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
+            <span className="text-sm text-white/70 mt-1 text-center leading-snug relative">
               Browse · Collect · AI
             </span>
           </button>
 
-          {/* Tile 3: My Preferences — square tile matching above */}
+          {/* Tile 3: My Preferences */}
           <button
             onClick={() => navigate('/preferences')}
-            className="flex flex-col items-center p-5 rounded-3xl border border-border-default active:scale-[0.97] transition-transform text-left"
+            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+              background: `linear-gradient(155deg, ${TILE.prefs.from} 0%, ${TILE.prefs.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-3"
-              style={{ background: 'var(--color-sec-prefs)', boxShadow: '0 4px 16px rgba(0,0,0,0.22), 0 0 0 4px var(--color-sec-prefs-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative">
               <SlidersHorizontal className="w-10 h-10 text-white" />
             </div>
-            <span className="text-xl font-extrabold text-center leading-tight" style={{ color: 'var(--color-sec-prefs)' }}>
+            <span className="text-xl font-extrabold text-white text-center leading-tight relative">
               My<br />Preferences
             </span>
-            <span className="text-sm text-text-muted mt-1 text-center leading-snug">
+            <span className="text-sm text-white/70 mt-1 text-center leading-snug relative">
               Taste · Diet · Cuisines
             </span>
           </button>
 
-          {/* Tile 4: Think of Something! — square tile matching above */}
+          {/* Tile 4: Think of Something! */}
           <button
             onClick={() => setIsThinkSheetOpen(true)}
-            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative text-left"
+            className="flex flex-col items-center p-5 rounded-3xl active:scale-[0.97] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)',
+              background: `linear-gradient(155deg, ${TILE.think.from} 0%, ${TILE.think.to} 100%)`,
               boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 55%)' }} />
-            <div
-              className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative"
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-3 border border-white/25 relative">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
             <span className="text-xl font-black text-white text-center leading-tight relative">
@@ -145,20 +119,20 @@ export default function HomePage() {
         <div className="px-4 pb-3">
           <button
             onClick={() => navigate('/developer')}
-            className="w-full flex items-center gap-4 px-5 py-4 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="w-full flex items-center gap-4 px-5 py-4 rounded-3xl active:scale-[0.98] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-alt) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+              background: `linear-gradient(135deg, ${TILE.developer.from} 0%, ${TILE.developer.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
             }}
           >
-            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-text-muted/20">
-              <Wrench className="w-6 h-6 text-text-secondary" />
+            <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-white/15 border border-white/25">
+              <Wrench className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1 min-w-0 text-left">
-              <div className="font-extrabold text-base text-text-secondary">Developer Tools</div>
-              <div className="text-xs text-text-muted mt-0.5">Assets · Tags · Ingredients</div>
+              <div className="font-extrabold text-base text-white">Developer Tools</div>
+              <div className="text-xs text-white/70 mt-0.5">Assets · Tags · Ingredients</div>
             </div>
-            <span className="text-xl text-text-muted font-light">›</span>
+            <span className="text-xl text-white/60 font-light">›</span>
           </button>
         </div>
       </div>
@@ -198,38 +172,28 @@ export default function HomePage() {
       )}
 
       {/* ─── DESKTOP LAYOUT (hidden on mobile) ─── */}
-      <div className="hidden md:block container mx-auto px-6 py-10 max-w-6xl">
+      <div className="hidden md:block container mx-auto px-6 pt-6 pb-10 max-w-6xl">
 
-        {/* Greeting */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold text-text-primary tracking-tight">
-            {getGreeting()} 👋
-          </h1>
-          <p className="text-text-secondary mt-2 text-base">{getTodayLabel()}</p>
-        </div>
-
-        {/* 5-column tile grid — same order as mobile */}
+        {/* 5-column tile grid */}
         <div className="grid grid-cols-5 gap-5 mb-6">
 
           {/* 1. Plan my Meals */}
           <button
             onClick={() => navigate('/plan-my-meals')}
-            className="flex flex-col items-center p-7 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] hover:scale-[1.02] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-mealplans-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+              background: `linear-gradient(155deg, ${TILE.meals.from} 0%, ${TILE.meals.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-4"
-              style={{ background: 'var(--color-sec-mealplans)', boxShadow: '0 4px 16px rgba(0,0,0,0.20), 0 0 0 5px var(--color-sec-mealplans-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-4 border border-white/25 relative">
               <CalendarDays className="w-11 h-11 text-white" />
             </div>
-            <span className="text-base font-extrabold leading-tight text-center" style={{ color: 'var(--color-sec-mealplans)' }}>
+            <span className="text-base font-extrabold text-white leading-tight text-center relative">
               Plan my Meals
             </span>
-            <span className="text-xs text-text-muted mt-2 text-center leading-snug">
+            <span className="text-xs text-white/70 mt-2 text-center leading-snug relative">
               Plans · Shopping · Cooking
             </span>
           </button>
@@ -237,22 +201,20 @@ export default function HomePage() {
           {/* 2. Recipes & Collections */}
           <button
             onClick={() => navigate('/recipes-collections')}
-            className="flex flex-col items-center p-7 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] hover:scale-[1.02] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-recipes-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+              background: `linear-gradient(155deg, ${TILE.recipes.from} 0%, ${TILE.recipes.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-4"
-              style={{ background: 'var(--color-sec-recipes)', boxShadow: '0 4px 16px rgba(0,0,0,0.20), 0 0 0 5px var(--color-sec-recipes-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-4 border border-white/25 relative">
               <BookOpen className="w-11 h-11 text-white" />
             </div>
-            <span className="text-base font-extrabold leading-tight text-center" style={{ color: 'var(--color-sec-recipes)' }}>
+            <span className="text-base font-extrabold text-white leading-tight text-center relative">
               Recipes &amp; Collections
             </span>
-            <span className="text-xs text-text-muted mt-2 text-center leading-snug">
+            <span className="text-xs text-white/70 mt-2 text-center leading-snug relative">
               Browse · Collect · AI
             </span>
           </button>
@@ -260,13 +222,13 @@ export default function HomePage() {
           {/* 3. Think of Something! — opens GoalPlanner modal */}
           <button
             onClick={() => setIsDesktopGoalOpen(true)}
-            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] transition-transform overflow-hidden relative"
+            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] hover:scale-[1.02] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)',
-              boxShadow: '0 6px 28px rgba(0,0,0,0.18)',
+              background: `linear-gradient(155deg, ${TILE.think.from} 0%, ${TILE.think.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.12) 0%, transparent 55%)' }} />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
             <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-4 border border-white/25 relative flex-shrink-0">
               <Sparkles className="w-11 h-11 text-white" />
             </div>
@@ -274,29 +236,27 @@ export default function HomePage() {
               Think of<br />Something!
             </span>
             <span className="text-xs text-white/70 mt-2 text-center relative leading-snug">
-              AI-Powered Goal Planner
+              AI-Powered
             </span>
           </button>
 
           {/* 4. My Preferences */}
           <button
             onClick={() => navigate('/preferences')}
-            className="flex flex-col items-center p-7 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] hover:scale-[1.02] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-sec-prefs-light) 100%)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.10)',
+              background: `linear-gradient(155deg, ${TILE.prefs.from} 0%, ${TILE.prefs.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.18)',
             }}
           >
-            <div
-              className="w-24 h-24 rounded-full flex items-center justify-center mb-4"
-              style={{ background: 'var(--color-sec-prefs)', boxShadow: '0 4px 16px rgba(0,0,0,0.20), 0 0 0 5px var(--color-sec-prefs-light)' }}
-            >
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-4 border border-white/25 relative">
               <SlidersHorizontal className="w-11 h-11 text-white" />
             </div>
-            <span className="text-base font-extrabold leading-tight text-center" style={{ color: 'var(--color-sec-prefs)' }}>
+            <span className="text-base font-extrabold text-white leading-tight text-center relative">
               My Preferences
             </span>
-            <span className="text-xs text-text-muted mt-2 text-center leading-snug">
+            <span className="text-xs text-white/70 mt-2 text-center leading-snug relative">
               Taste &amp; Diet · Cuisines
             </span>
           </button>
@@ -304,19 +264,20 @@ export default function HomePage() {
           {/* 5. Developer Tools */}
           <button
             onClick={() => navigate('/developer')}
-            className="flex flex-col items-center p-7 rounded-3xl border border-border-default active:scale-[0.98] transition-transform"
+            className="flex flex-col items-center p-7 rounded-3xl active:scale-[0.98] hover:scale-[1.02] transition-transform overflow-hidden relative"
             style={{
-              background: 'linear-gradient(155deg, var(--color-surface) 0%, var(--color-surface-alt) 100%)',
-              boxShadow: '0 2px 12px rgba(0,0,0,0.07)',
+              background: `linear-gradient(155deg, ${TILE.developer.from} 0%, ${TILE.developer.to} 100%)`,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
             }}
           >
-            <div className="w-24 h-24 rounded-full bg-text-muted/15 flex items-center justify-center mb-4">
-              <Wrench className="w-11 h-11 text-text-secondary" />
+            <div className="absolute inset-0 pointer-events-none" style={{ background: SHIMMER }} />
+            <div className="w-24 h-24 rounded-full bg-white/15 flex items-center justify-center mb-4 border border-white/25 relative">
+              <Wrench className="w-11 h-11 text-white" />
             </div>
-            <span className="text-base font-bold text-text-secondary leading-tight text-center">
+            <span className="text-base font-extrabold text-white leading-tight text-center relative">
               Developer Tools
             </span>
-            <span className="text-xs text-text-muted mt-2 text-center leading-snug">
+            <span className="text-xs text-white/70 mt-2 text-center leading-snug relative">
               Assets · Tags · More
             </span>
           </button>
@@ -333,7 +294,7 @@ export default function HomePage() {
             {/* Modal header */}
             <div
               className="px-6 py-5 relative overflow-hidden"
-              style={{ background: 'linear-gradient(135deg, var(--color-sec-ai) 0%, var(--color-sec-prefs) 100%)' }}
+              style={{ background: `linear-gradient(135deg, ${TILE.think.from} 0%, ${TILE.think.to} 100%)` }}
             >
               <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 25% 50%, rgba(255,255,255,0.12) 0%, transparent 55%)' }} />
               <div className="flex items-center justify-between relative">
