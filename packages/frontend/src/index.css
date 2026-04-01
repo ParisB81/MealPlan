@@ -158,8 +158,8 @@
   --color-sec-prefs-light: #fff1f2;
   --color-sec-ai: #7c3aed;
   --color-sec-ai-light: #f5f3ff;
-  --color-sec-ai-recipes: #a16207;
-  --color-sec-ai-recipes-light: #fefce8;
+  --color-sec-ai-recipes: #7c3aed;     /* violet-600 (same as AI) */
+  --color-sec-ai-recipes-light: #f5f3ff;/* violet-50 */
 
   /* — Feature List Cards — */
   --color-card-recipes: #fffbeb;
@@ -257,8 +257,8 @@
   --color-sec-prefs-light: #fff1f2;
   --color-sec-ai: #7c3aed;
   --color-sec-ai-light: #f5f3ff;
-  --color-sec-ai-recipes: #a16207;
-  --color-sec-ai-recipes-light: #fefce8;
+  --color-sec-ai-recipes: #7c3aed;     /* violet-600 (same as AI) */
+  --color-sec-ai-recipes-light: #f5f3ff;/* violet-50 */
 
   /* — Feature List Cards — */
   --color-card-recipes: #fffbeb;
@@ -356,8 +356,8 @@
   --color-sec-prefs-light: #fff1f2;
   --color-sec-ai: #7c3aed;
   --color-sec-ai-light: #f5f3ff;
-  --color-sec-ai-recipes: #a16207;
-  --color-sec-ai-recipes-light: #fefce8;
+  --color-sec-ai-recipes: #7c3aed;     /* violet-600 (same as AI) */
+  --color-sec-ai-recipes-light: #f5f3ff;/* violet-50 */
 
   /* — Feature List Cards — */
   --color-card-recipes: #fffbeb;
