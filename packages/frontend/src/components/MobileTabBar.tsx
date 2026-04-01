@@ -1,7 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { CalendarDays, BookOpen, SlidersHorizontal, Code2 } from 'lucide-react';
+import { Home, CalendarDays, BookOpen, SlidersHorizontal, Code2 } from 'lucide-react';
 
 const TABS = [
+  {
+    to: '/',
+    label: 'Home',
+    icon: Home,
+    exact: true,
+    matches: ['/'],
+  },
   {
     to: '/plan-my-meals',
     label: 'Plans',
@@ -37,8 +44,8 @@ export default function MobileTabBar() {
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="flex items-center justify-around h-16">
-        {TABS.map(({ to, label, icon: Icon, matches }) => {
-          const active = matches.some((m) => pathname.startsWith(m));
+        {TABS.map(({ to, label, icon: Icon, matches, exact }) => {
+          const active = exact ? pathname === '/' : matches.some((m) => pathname.startsWith(m));
           return (
             <Link
               key={to}

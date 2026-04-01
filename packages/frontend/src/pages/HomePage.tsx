@@ -200,15 +200,12 @@ export default function HomePage() {
       {/* ─── DESKTOP LAYOUT (hidden on mobile) ─── */}
       <div className="hidden md:block container mx-auto px-6 py-10 max-w-6xl">
 
-        {/* Greeting + discreet theme picker */}
-        <div className="flex items-start justify-between mb-10">
-          <div>
-            <h1 className="text-4xl font-extrabold text-text-primary tracking-tight">
-              {getGreeting()} 👋
-            </h1>
-            <p className="text-text-secondary mt-2 text-base">{getTodayLabel()}</p>
-          </div>
-          <ThemePicker />
+        {/* Greeting */}
+        <div className="mb-10">
+          <h1 className="text-4xl font-extrabold text-text-primary tracking-tight">
+            {getGreeting()} 👋
+          </h1>
+          <p className="text-text-secondary mt-2 text-base">{getTodayLabel()}</p>
         </div>
 
         {/* 5-column tile grid — same order as mobile */}

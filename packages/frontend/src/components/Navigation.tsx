@@ -1,8 +1,15 @@
 import { useLocation, Link } from 'react-router-dom';
-import { CalendarDays, BookOpen, SlidersHorizontal, Code2 } from 'lucide-react';
+import { Home, CalendarDays, BookOpen, SlidersHorizontal, Code2 } from 'lucide-react';
 import ThemePicker from './ThemePicker';
 
 const NAV_TABS = [
+  {
+    to: '/',
+    label: 'Home',
+    icon: Home,
+    exact: true,
+    matches: ['/'],
+  },
   {
     to: '/plan-my-meals',
     label: 'Plans',
@@ -32,9 +39,6 @@ const NAV_TABS = [
 export default function Navigation() {
   const { pathname } = useLocation();
 
-  // Hide navigation on home page
-  if (pathname === '/') return null;
-
   return (
     <nav className="bg-surface shadow-sm border-b border-border-default sticky top-0 z-40">
       <div className="container mx-auto px-4 py-3">
@@ -42,8 +46,8 @@ export default function Navigation() {
         {/* Desktop nav — 4 hub tabs matching mobile tab bar */}
         <div className="hidden md:flex items-center gap-1">
           <div className="flex-1 flex items-center gap-1">
-            {NAV_TABS.map(({ to, label, icon: Icon, matches }) => {
-              const active = matches.some((m) => pathname.startsWith(m));
+            {NAV_TABS.map(({ to, label, icon: Icon, matches, exact }) => {
+              const active = exact ? pathname === '/' : matches.some((m) => pathname.startsWith(m));
               return (
                 <Link
                   key={to}
