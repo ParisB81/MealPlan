@@ -123,35 +123,42 @@ export default function RecipeDetailPage() {
           />
 
           <div className="p-4 md:p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
-              <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{recipe.title}</h1>
+            {/* Title */}
+            <h1 className="text-2xl md:text-3xl font-bold text-text-primary mb-3">{recipe.title}</h1>
+
+            {/* Action buttons — two rows */}
+            <div className="flex flex-col gap-2 mb-4">
+              {/* Row 1: Add-to actions */}
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setShowAddToMealPlan(true)}
                   className="inline-flex items-center px-3 py-2 bg-sec-mealplans text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <CalendarPlus className="w-4 h-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Meal Plan</span>
+                  <CalendarPlus className="w-4 h-4 mr-1.5" />
+                  Meal Plan
                 </button>
                 <button
                   onClick={() => setShowAddToCollection(true)}
                   className="inline-flex items-center px-3 py-2 bg-sec-collections text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <FolderPlus className="w-4 h-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Collection</span>
+                  <FolderPlus className="w-4 h-4 mr-1.5" />
+                  Collection
                 </button>
                 <button
                   onClick={() => setShowAddToShoppingList(true)}
                   className="inline-flex items-center px-3 py-2 bg-sec-shopping text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <ShoppingCart className="w-4 h-4 sm:mr-1" />
-                  <span className="hidden sm:inline">Shopping</span>
+                  <ShoppingCart className="w-4 h-4 mr-1.5" />
+                  Shopping List
                 </button>
+              </div>
+              {/* Row 2: Edit / Delete */}
+              <div className="flex flex-wrap gap-2">
                 <Link
                   to={`/recipes/${id}/edit`}
                   className="inline-flex items-center px-3 py-2 bg-btn-secondary text-white rounded-lg hover:bg-btn-secondary-hover text-sm active:scale-95"
                 >
-                  Edit
+                  Edit Recipe
                 </Link>
                 <button
                   onClick={handleDelete}
