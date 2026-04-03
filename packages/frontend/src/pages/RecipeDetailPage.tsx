@@ -122,41 +122,41 @@ export default function RecipeDetailPage() {
             className="w-full h-64"
           />
 
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-4">
+          <div className="p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-3 mb-4">
               <h1 className="text-2xl md:text-3xl font-bold text-text-primary">{recipe.title}</h1>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setShowAddToMealPlan(true)}
-                  className="inline-flex items-center px-4 py-2 bg-sec-mealplans text-white rounded-lg hover:opacity-90"
+                  className="inline-flex items-center px-3 py-2 bg-sec-mealplans text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <CalendarPlus className="w-4 h-4 mr-1" />
-                  Meal Plan
+                  <CalendarPlus className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Meal Plan</span>
                 </button>
                 <button
                   onClick={() => setShowAddToCollection(true)}
-                  className="inline-flex items-center px-4 py-2 bg-sec-collections text-white rounded-lg hover:opacity-90"
+                  className="inline-flex items-center px-3 py-2 bg-sec-collections text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <FolderPlus className="w-4 h-4 mr-1" />
-                  Collection
+                  <FolderPlus className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Collection</span>
                 </button>
                 <button
                   onClick={() => setShowAddToShoppingList(true)}
-                  className="inline-flex items-center px-4 py-2 bg-sec-shopping text-white rounded-lg hover:opacity-90"
+                  className="inline-flex items-center px-3 py-2 bg-sec-shopping text-white rounded-lg hover:opacity-90 text-sm active:scale-95"
                 >
-                  <ShoppingCart className="w-4 h-4 mr-1" />
-                  Shopping List
+                  <ShoppingCart className="w-4 h-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Shopping</span>
                 </button>
                 <Link
                   to={`/recipes/${id}/edit`}
-                  className="px-4 py-2 bg-btn-secondary text-white rounded-lg hover:bg-btn-secondary-hover"
+                  className="inline-flex items-center px-3 py-2 bg-btn-secondary text-white rounded-lg hover:bg-btn-secondary-hover text-sm active:scale-95"
                 >
                   Edit
                 </Link>
                 <button
                   onClick={handleDelete}
                   disabled={deleteRecipe.isPending}
-                  className="px-4 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover disabled:opacity-50"
+                  className="inline-flex items-center px-3 py-2 bg-btn-danger text-white rounded-lg hover:bg-btn-danger-hover disabled:opacity-50 text-sm active:scale-95"
                 >
                   Delete
                 </button>
