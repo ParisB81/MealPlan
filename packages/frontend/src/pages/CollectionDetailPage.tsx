@@ -8,7 +8,7 @@ import {
   useAddRecipeToCollection,
 } from '../hooks/useCollections';
 import { Button, Card, Badge, Modal, Input, TextArea } from '../components/ui';
-import RecipePicker from '../components/RecipePicker';
+import AddRecipeToCollectionModal from '../components/AddRecipeToCollectionModal';
 import { ArrowLeft, Plus, Pencil, Trash2, X, Clock, Users, CalendarPlus } from 'lucide-react';
 import { getCategoryForTag } from '../data/tagDefinitions';
 import AddToMealPlanModal from '../components/AddToMealPlanModal';
@@ -65,7 +65,6 @@ export default function CollectionDetailPage() {
   const handleAddRecipe = (recipe: Recipe) => {
     if (!id) return;
     addRecipe.mutate({ collectionId: id, recipeId: recipe.id });
-    setShowRecipePicker(false);
   };
 
   const handleImageUpload = (imageUrl: string) => {
@@ -168,13 +167,13 @@ export default function CollectionDetailPage() {
               className="cursor-pointer bg-surface border border-border-default relative group"
               onClick={() => navigate(`/recipes/${recipe.id}`)}
             >
-              {/* Remove button */}
+              {/* Remove button (always visible on mobile, hover-reveal on desktop) */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleRemoveRecipe(recipe.id, recipe.title);
                 }}
-                className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-surface border border-border-default text-text-muted hover:text-red-500 hover:border-red-300 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full bg-surface border border-border-default text-text-muted hover:text-red-500 hover:border-red-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity z-10"
                 title="Remove from collection"
               >
                 <X className="w-4 h-4" />
@@ -223,17 +222,26 @@ export default function CollectionDetailPage() {
                   )}
                 </div>
 
-                {/* Add to Meal Plan */}
-                <div className="mt-3 pt-3 border-t border-border-default">
+                {/* Card actions */}
+                <div className="mt-3 pt-3 border-t border-border-default flex gap-2">
                   <button
-                    className="w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-sm bg-sec-mealplans text-white hover:opacity-90"
+                    className="flex-1 inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-sm bg-sec-mealplans text-white hover:opacity-90 active:scale-95"
                     onClick={(e) => {
                       e.stopPropagation();
                       setAddToMealPlan({ id: recipe.id, title: recipe.title });
                     }}
                   >
                     <CalendarPlus className="w-4 h-4 mr-1 inline" />
-                    Add to Meal Plan
+                    Meal Plan
+                  </button>
+                  <button
+                    className="inline-flex items-center justify-center font-medium rounded-lg transition-colors px-3 py-1.5 text-sm border border-border-strong text-text-muted hover:text-red-500 hover:border-red-300 active:scale-95"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveRecipe(recipe.id, recipe.title);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -252,11 +260,13 @@ export default function CollectionDetailPage() {
         />
       )}
 
-      {/* RecipePicker modal */}
-      <RecipePicker
+      {/* Add Recipe to Collection modal */}
+      <AddRecipeToCollectionModal
+        collectionId={id!}
         isOpen={showRecipePicker}
         onClose={() => setShowRecipePicker(false)}
-        onSelectRecipe={handleAddRecipe}
+        existingRecipeIds={new Set(collection.recipes.map(r => r.id))}
+        onAddRecipe={handleAddRecipe}
       />
 
       {/* Edit modal */}

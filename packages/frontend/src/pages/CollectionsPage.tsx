@@ -106,7 +106,7 @@ export default function CollectionsPage() {
         ← Back to Recipes
       </Link>
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
         <div className="flex items-center gap-3">
           <FolderHeart className="w-8 h-8 text-text-secondary" />
           <div>

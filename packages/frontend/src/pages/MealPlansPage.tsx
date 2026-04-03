@@ -62,14 +62,14 @@ export default function MealPlansPage() {
         <Link to="/plan-my-meals" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
           ← Back to Plans
         </Link>
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6 md:mb-8">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-text-primary">Meal Plans</h1>
             <p className="text-text-secondary mt-1">
               {mealPlans?.length || 0} meal plans
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 sm:gap-3">
             <Button onClick={() => setShowCreateForm(true)}>
               + Create Meal Plan
             </Button>

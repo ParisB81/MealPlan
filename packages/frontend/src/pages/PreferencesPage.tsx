@@ -56,7 +56,7 @@ export default function PreferencesPage() {
       <Link to="/" className="inline-flex items-center text-accent hover:text-accent-hover mb-6">
         ← Back to Home
       </Link>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
         <div className="flex items-center gap-3">
           <Sparkles className="w-6 h-6 text-sec-prefs" />
           <h1 className="text-2xl md:text-3xl font-bold text-text-primary">
