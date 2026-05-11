@@ -642,9 +642,17 @@ export default function MealPlanDetailPage() {
                               >
                                 <div className="flex-1">
                                   <div className="flex items-center gap-3">
-                                    <Badge variant="blue" className="uppercase">
-                                      {meal.mealType}
-                                    </Badge>
+                                    <span className="flex items-center gap-1.5">
+                                      <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${{
+                                        breakfast: 'bg-amber-400',
+                                        lunch: 'bg-green-400',
+                                        dinner: 'bg-blue-400',
+                                        snack: 'bg-purple-400',
+                                      }[meal.mealType as 'breakfast' | 'lunch' | 'dinner' | 'snack'] ?? 'bg-gray-400'}`} />
+                                      <Badge variant="blue" className="uppercase">
+                                        {meal.mealType}
+                                      </Badge>
+                                    </span>
                                     <Link
                                       to={`/recipes/${meal.recipe.id}?servings=${meal.servings}`}
                                       className="text-lg font-medium text-text-primary hover:text-accent"
