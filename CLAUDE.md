@@ -1401,6 +1401,40 @@ The 7-step process (fix units → merge plurals → remove noise → resolve vag
 `produce → pulses → dairy → meat → seafood → pantry → grains → oils → nuts → herbs → spices → Other`
 Items within each category are sorted **alphabetically** by ingredient name.
 
+### Imperial → Metric unit conversion (run after importing recipes from US/Anglo sources)
+Script at `scripts/convert-to-metric.ts` bulk-converts all `RecipeIngredient` rows that use imperial units to metric equivalents:
+
+| Imperial | → Metric |
+|----------|----------|
+| `oz`, `lb` | `g` (< 1000 g) or `kg` (≥ 1000 g) |
+| `fl oz`, `pt`, `qt`, `gal` | `ml` (< 1000 ml) or `l` (≥ 1000 ml) |
+
+**Local database:**
+```bash
+# Dry run (preview only — no changes saved)
+cd "C:\00 Paris\MealPlan\packages\backend"
+"C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" "../../scripts/convert-to-metric.ts"
+
+# Apply
+"C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" "../../scripts/convert-to-metric.ts" -- --apply
+```
+
+**Production Railway database:**
+```powershell
+# Requires Railway CLI logged in: railway login (continue with GitHub)
+# Project already linked — if not: railway link --project protective-vibrancy
+
+# Dry run against production
+cd "C:\00 Paris\MealPlan\packages\backend"
+$env:DATABASE_URL="postgresql://postgres:KzOBxMxfwIPeeFOpgvYIIQGBsbbualYw@metro.proxy.rlwy.net:38152/railway"
+& "C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" "../../scripts/convert-to-metric.ts"
+
+# Apply
+& "C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" "../../scripts/convert-to-metric.ts" -- --apply
+```
+
+Always run the dry run first — it prints every affected ingredient (recipe name, ingredient name, old value → new value) before touching anything.
+
 ## Git Workflow
 - **Main branch:** `master`
 - **Remote:** `origin` → `github.com/ParisB81/MealPlan`

@@ -10,7 +10,7 @@ import { mealPlansService } from '../services/mealPlans.service';
 import AddRecipeModal from '../components/AddRecipeModal';
 import MealPlanCalendar from '../components/MealPlanCalendar';
 import WeekGridView from '../components/WeekGridView';
-import { Button, Card, Badge, Modal } from '../components/ui';
+import { Button, Card, Badge, Modal, Collapsible } from '../components/ui';
 import type { CopyState, MealType } from '../types/mealPlan';
 
 export default function MealPlanDetailPage() {
@@ -36,6 +36,7 @@ export default function MealPlanDetailPage() {
   const [renameName, setRenameName] = useState('');
   const [showPersonsEdit, setShowPersonsEdit] = useState(false);
   const [preSelectedRecipeId, setPreSelectedRecipeId] = useState<string | undefined>(undefined);
+  const [dayOpenStates, setDayOpenStates] = useState<Record<string, boolean>>({});
   const updateMealPlan = useUpdateMealPlan();
   const queryClient = useQueryClient();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -171,6 +172,8 @@ export default function MealPlanDetailPage() {
   };
 
   const handleDateClick = useCallback((dateKey: string) => {
+    // Auto-expand the day so meals are visible after scrolling
+    setDayOpenStates(prev => ({ ...prev, [dateKey]: true }));
     const el = dateRefs.current[dateKey];
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -459,15 +462,15 @@ export default function MealPlanDetailPage() {
 
         {/* Nutrition Summary */}
         {nutrition && nutrition.mealsCount > 0 && dailyNutrition.length > 0 && (
-          <Card className="mb-6">
-            <div className="flex items-baseline justify-between mb-4">
-              <h2 className="text-xl font-bold text-text-primary">Plan Nutrition Summary</h2>
-              {nutrition.mealsWithNutrition !== undefined && nutrition.mealsWithNutrition < nutrition.mealsCount && (
-                <span className="text-xs text-text-muted">
-                  Based on {nutrition.mealsWithNutrition} of {nutrition.mealsCount} meals
-                </span>
-              )}
-            </div>
+          <Collapsible
+            title="Plan Nutrition Summary"
+            subtitle={
+              nutrition.mealsWithNutrition !== undefined && nutrition.mealsWithNutrition < nutrition.mealsCount
+                ? `Based on ${nutrition.mealsWithNutrition} of ${nutrition.mealsCount} meals`
+                : undefined
+            }
+            className="mb-6"
+          >
 
             {/* Per-person daily average */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
@@ -524,7 +527,7 @@ export default function MealPlanDetailPage() {
                 </table>
               </div>
             </div>
-          </Card>
+          </Collapsible>
         )}
 
         {/* Empty State */}
@@ -588,59 +591,86 @@ export default function MealPlanDetailPage() {
 
             {/* Card View (existing day cards) */}
             {viewMode === 'cards' && (
-              <div className="space-y-6">
-                {Object.entries(mealsByDate).map(([dateKey, meals]) => (
-                  <Card key={dateKey} ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }} className="transition-all duration-300 bg-detail-mealplans border border-detail-mealplans-border">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-text-primary">
-                        {format(new Date(dateKey), 'EEEE, MMMM d')}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
-                        className="p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors"
-                        title="Add meal to this day"
-                      >
-                        <PlusCircle size={20} />
-                      </button>
-                    </div>
-                    <div className="space-y-3">
-                      {meals.map((meal) => (
-                        <div
-                          key={meal.id}
-                          className="flex items-center justify-between p-4 bg-surface rounded-lg"
+              <div className="space-y-3">
+                {Object.entries(mealsByDate).map(([dateKey, meals]) => {
+                  const isOpen = !!dayOpenStates[dateKey];
+                  return (
+                    <div
+                      key={dateKey}
+                      ref={(el: HTMLDivElement | null) => { dateRefs.current[dateKey] = el; }}
+                      className="bg-detail-mealplans border border-detail-mealplans-border rounded-xl shadow-sm transition-all duration-300"
+                    >
+                      {/* Day header \u2014 always visible */}
+                      <div className="flex items-center justify-between px-5 py-3">
+                        <button
+                          type="button"
+                          onClick={() => setDayOpenStates(prev => ({ ...prev, [dateKey]: !prev[dateKey] }))}
+                          className="flex items-center gap-2 flex-1 text-left min-w-0"
                         >
-                          <div className="flex-1">
-                            <div className="flex items-center gap-3">
-                              <Badge variant="blue" className="uppercase">
-                                {meal.mealType}
-                              </Badge>
-                              <Link
-                                to={`/recipes/${meal.recipe.id}?servings=${meal.servings}`}
-                                className="text-lg font-medium text-text-primary hover:text-accent"
+                          <ChevronDown
+                            size={18}
+                            className={`shrink-0 text-text-muted transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                          />
+                          <h3 className="text-base font-semibold text-text-primary">
+                            {format(new Date(dateKey), 'EEEE, MMMM d')}
+                          </h3>
+                          <span className="text-sm text-text-muted shrink-0">
+                            {meals.length} {meals.length === 1 ? 'meal' : 'meals'}
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
+                          className="ml-2 p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors shrink-0"
+                          title="Add meal to this day"
+                        >
+                          <PlusCircle size={20} />
+                        </button>
+                      </div>
+
+                      {/* Collapsible meals list */}
+                      <div className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+                        <div className="overflow-hidden">
+                          <div className="px-5 pb-4 space-y-3">
+                            {meals.map((meal) => (
+                              <div
+                                key={meal.id}
+                                className="flex items-center justify-between p-4 bg-surface rounded-lg"
                               >
-                                {meal.recipe.title}
-                              </Link>
-                            </div>
-                            <p className="text-sm text-text-secondary mt-1">
-                              {meal.servings} serving{meal.servings > 1 ? 's' : ''}
-                              {meal.notes && ` \u2022 ${meal.notes}`}
-                            </p>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-3">
+                                    <Badge variant="blue" className="uppercase">
+                                      {meal.mealType}
+                                    </Badge>
+                                    <Link
+                                      to={`/recipes/${meal.recipe.id}?servings=${meal.servings}`}
+                                      className="text-lg font-medium text-text-primary hover:text-accent"
+                                    >
+                                      {meal.recipe.title}
+                                    </Link>
+                                  </div>
+                                  <p className="text-sm text-text-secondary mt-1">
+                                    {meal.servings} serving{meal.servings > 1 ? 's' : ''}
+                                    {meal.notes && ` \u2022 ${meal.notes}`}
+                                  </p>
+                                </div>
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  onClick={() => handleRemoveRecipe(meal.id)}
+                                  disabled={removeRecipe.isPending}
+                                  className="ml-4 text-red-600 hover:text-red-700 no-underline hover:bg-red-50"
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            ))}
                           </div>
-                          <Button
-                            variant="link"
-                            size="sm"
-                            onClick={() => handleRemoveRecipe(meal.id)}
-                            disabled={removeRecipe.isPending}
-                            className="ml-4 text-red-600 hover:text-red-700 no-underline hover:bg-red-50"
-                          >
-                            Remove
-                          </Button>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  </Card>
-                ))}
+                  );
+                })}
               </div>
             )}
           </>
@@ -648,8 +678,7 @@ export default function MealPlanDetailPage() {
 
         {/* Calendar */}
         {mealPlan.meals.length > 0 && (
-          <Card className="mb-6">
-            <h2 className="text-xl font-bold text-text-primary mb-4">Meal Calendar</h2>
+          <Collapsible title="Meal Calendar" className="mb-6 mt-6">
             <MealPlanCalendar
               startDate={mealPlan.startDate}
               endDate={mealPlan.endDate}
@@ -661,7 +690,7 @@ export default function MealPlanDetailPage() {
               onCancelCopy={handleCancelCopy}
               isPasting={isPasting}
             />
-          </Card>
+          </Collapsible>
         )}
 
         {/* Add Recipe Modal */}
