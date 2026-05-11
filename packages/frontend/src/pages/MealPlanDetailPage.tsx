@@ -632,7 +632,10 @@ export default function MealPlanDetailPage() {
                       <div className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
                         <div className="overflow-hidden">
                           <div className="px-5 pb-4 space-y-3">
-                            {meals.map((meal) => (
+                            {[...meals].sort((a, b) => {
+                              const order = { breakfast: 0, snack: 1, lunch: 2, dinner: 3 };
+                              return (order[a.mealType as keyof typeof order] ?? 4) - (order[b.mealType as keyof typeof order] ?? 4);
+                            }).map((meal) => (
                               <div
                                 key={meal.id}
                                 className="flex items-center justify-between p-4 bg-surface rounded-lg"
