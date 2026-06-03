@@ -22,7 +22,11 @@
 //   Cucumber: 1 medium ≈ 1.5 cups = 355 ml ≈ 200g
 //   Butter:   1 tbsp = 14.79 ml → 14.2g; just unify everything to g
 //   Parmesan: 1 cup grated ≈ 100g; 1 tbsp ≈ 6g
-//   Feta:     1 cup ≈ 150g; 1 oz = 28.35g; 1 tbsp ≈ 15g
+//   Feta:         1 cup ≈ 150g; 1 oz = 28.35g; 1 tbsp ≈ 15g
+//   Olive:        1 olive ≈ 5g, ≈ 5ml (kalamata/black/green similar)
+//   Tomato:       1 medium ≈ 150g, ≈ 123ml
+//   Cherry tomato:1 ≈ 17g, ≈ 14ml
+//   Olive oil:    density ≈ 0.92 g/ml → 1 g = 1/0.92 ml (keep in ml)
 //   Herbs (parsley/cilantro/mint/dill/basil): 1 bunch ≈ 236.59 ml (1 cup packed)
 
 export interface IngredientOverride {
@@ -45,10 +49,21 @@ export const INGREDIENT_UNIT_OVERRIDES: Record<string, IngredientOverride> = {
   'zucchini':         { toUnit: 'piece', fromVolume_ml: 236.59, fromWeight_g: 200,  fromSize: 1,   round: true },
   'eggplant':         { toUnit: 'piece', fromVolume_ml: 946,    fromWeight_g: 500,  fromSize: 1,   round: true },
   'cucumber':         { toUnit: 'piece', fromVolume_ml: 355,    fromWeight_g: 200,  fromSize: 1,   round: true },
+  // ── Olives: weight/volume → piece ───────────────────────────────────────
+  'olive':            { toUnit: 'piece', fromVolume_ml: 5,      fromWeight_g: 5,    fromSize: 1,   round: true },
+  'kalamata olive':   { toUnit: 'piece', fromVolume_ml: 5,      fromWeight_g: 5,    fromSize: 1,   round: true },
+  'black olive':      { toUnit: 'piece', fromVolume_ml: 5,      fromWeight_g: 5,    fromSize: 1,   round: true },
+  'green olive':      { toUnit: 'piece', fromVolume_ml: 5,      fromWeight_g: 5,    fromSize: 1,   round: true },
+  // ── Tomatoes: weight/volume → piece ─────────────────────────────────────
+  'tomato':           { toUnit: 'piece', fromVolume_ml: 123,    fromWeight_g: 150,  fromSize: 1,   round: true },
+  'cherry tomato':    { toUnit: 'piece', fromVolume_ml: 14,     fromWeight_g: 17,   fromSize: 1,   round: true },
+  'grape tomato':     { toUnit: 'piece', fromVolume_ml: 14,     fromWeight_g: 17,   fromSize: 1,   round: true },
   // ── Dairy / fats: volume/count → grams ──────────────────────────────────
   'butter':           { toUnit: 'g',     fromVolume_ml: 1/0.96, fromWeight_g: 1,    round: false },
   'parmesan cheese':  { toUnit: 'g',     fromVolume_ml: 1/0.42, fromWeight_g: 1,    round: false },
   'feta cheese':      { toUnit: 'g',     fromVolume_ml: 1/0.63, fromWeight_g: 1,    round: false },
+  // ── Oils: weight → ml (keep in volume for shopping) ─────────────────────
+  'olive oil':        { toUnit: 'ml',    fromVolume_ml: 1,      fromWeight_g: 1/0.92, round: false },
   // ── Herbs: volume/weight → bunch ────────────────────────────────────────
   'parsley':          { toUnit: 'bunch', fromVolume_ml: 236.59, fromWeight_g: 60,   round: true },
   'cilantro':         { toUnit: 'bunch', fromVolume_ml: 236.59, fromWeight_g: 60,   round: true },
