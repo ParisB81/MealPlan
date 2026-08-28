@@ -33,6 +33,84 @@ export function getClient(): Anthropic {
   return new Anthropic({ apiKey });
 }
 
+// Strip parenthetical qualifiers (e.g. "greek yogurt (full fat)" -> "greek yogurt")
+// for loose ingredient-name comparison.
+function stripQualifiers(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)\s*/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Very light singular/plural normalization — only strips trailing 's' patterns.
+// A false negative here (no match found) is harmless: the AI's name is used
+// as-is and a new ingredient is created, same as today. A false positive
+// would silently rename an ingredient, so this stays conservative.
+function singularize(name: string): string {
+  if (name.endsWith('ies') && name.length > 3) return name.slice(0, -3) + 'y';
+  if (/(ch|sh|x|z|ss|o)es$/.test(name)) return name.slice(0, -2);
+  if (name.endsWith('s') && !name.endsWith('ss')) return name.slice(0, -1);
+  return name;
+}
+
+/**
+ * Resolve AI-generated ingredient names against the existing ingredient
+ * database before a recipe is saved, so near-duplicates (plurals, or names
+ * differing only by a parenthetical qualifier like "(full fat)") collapse
+ * onto the existing row instead of silently minting a new one.
+ *
+ * Only replaces a name when exactly one existing ingredient matches —
+ * genuinely new ingredients, and ambiguous cases where multiple existing
+ * ingredients share the same normalized form (e.g. "greek yogurt" could mean
+ * either the low-fat or full-fat entry), are left untouched so the normal
+ * create-on-save flow adds them as new entries rather than guessing.
+ */
+export function matchIngredientNames(
+  aiNames: string[],
+  dbIngredients: { name: string }[]
+): string[] {
+  const exactMap = new Map<string, string>();
+  const qualifierMap = new Map<string, string[]>();
+  const singularMap = new Map<string, string[]>();
+
+  for (const { name } of dbIngredients) {
+    const lower = name.toLowerCase();
+    exactMap.set(lower, name);
+
+    const stripped = stripQualifiers(lower);
+    qualifierMap.set(stripped, [...(qualifierMap.get(stripped) || []), name]);
+
+    const singular = singularize(stripped);
+    singularMap.set(singular, [...(singularMap.get(singular) || []), name]);
+  }
+
+  return aiNames.map(rawName => {
+    const aiLower = rawName.toLowerCase().trim();
+
+    // 1. Exact match — already canonical
+    const exact = exactMap.get(aiLower);
+    if (exact) return exact;
+
+    // 2. Match after stripping parenthetical qualifiers (only if unambiguous)
+    const strippedCandidates = qualifierMap.get(stripQualifiers(aiLower));
+    if (strippedCandidates?.length === 1) {
+      console.log(`AI ingredient "${rawName}" matched to existing "${strippedCandidates[0]}"`);
+      return strippedCandidates[0];
+    }
+
+    // 3. Match after singularizing (only if unambiguous)
+    const singularCandidates = singularMap.get(singularize(stripQualifiers(aiLower)));
+    if (singularCandidates?.length === 1) {
+      console.log(`AI ingredient "${rawName}" matched to existing "${singularCandidates[0]}"`);
+      return singularCandidates[0];
+    }
+
+    // No confident match — genuinely new (or ambiguous) ingredient, pass through
+    return aiLower;
+  });
+}
+
 // Fetch condensed recipe library for AI context
 export async function getRecipeLibrarySummary(collectionId?: string | null): Promise<string> {
   let recipeIds: string[] | undefined;
@@ -693,11 +771,15 @@ Return ONLY valid JSON matching this exact schema:
     try {
       const recipe = JSON.parse(jsonStr);
 
-      // Ensure ingredient names are lowercase
+      // Resolve ingredient names against the existing database (catches
+      // near-duplicates the prompt-level instruction misses) before
+      // lowercasing. Genuinely new ingredients pass through unchanged.
       if (recipe.ingredients) {
-        recipe.ingredients = recipe.ingredients.map((ing: any) => ({
+        const rawNames = recipe.ingredients.map((ing: any) => String(ing.name));
+        const resolvedNames = matchIngredientNames(rawNames, dbIngredients);
+        recipe.ingredients = recipe.ingredients.map((ing: any, i: number) => ({
           ...ing,
-          name: ing.name.toLowerCase().trim(),
+          name: resolvedNames[i],
         }));
       }
 
