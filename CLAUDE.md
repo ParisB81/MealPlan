@@ -605,7 +605,7 @@ Located in `packages/frontend/src/components/ui/`:
 
 ### 16. AI-Powered Meal Plan Generation (Complete)
 - **Multi-step wizard** at `/ai-meal-plan` with 5 steps: Plan Setup → Taste & Diet → Review Plan → Create Recipes → Confirm & Save
-- **Anthropic Claude integration:** Uses `@anthropic-ai/sdk` with `claude-sonnet-4-20250514` model for plan generation, meal swapping, and recipe detail generation
+- **Anthropic Claude integration:** Uses `@anthropic-ai/sdk` with `claude-sonnet-5` model for plan generation, meal swapping, and recipe detail generation
 - **Preference profiles** (`MealPlanPreference` model): Saved per-user profiles with dietary restrictions, allergies, cuisine preferences, cooking time limits (weekday/weekend), calorie/macro targets, recipe source mode (library-only, library+AI, or collection-only), meal variety (1-5 scale), cooking-free days, preferred cooking methods, seasonal preference (Spring/Summer/Autumn/Winter)
 - **Step 1 — Plan Setup** (collapsible accordion sections): Profile management (load/save), plan dates with duration presets (1-28 days), meals & servings, recipe source, pinned meals, meal variety (1-5 slider), cooking-free days (calendar picker), cooking time limits (weekday/weekend), nutrition targets (calories + macro split)
 - **Step 2 — Taste & Diet** (uses shared components): Dietary restrictions, allergies, cuisine preferences, ingredient likes/dislikes, preferred cooking methods + **Generate Plan** button
@@ -1434,6 +1434,17 @@ $env:DATABASE_URL="postgresql://postgres:KzOBxMxfwIPeeFOpgvYIIQGBsbbualYw@metro.
 ```
 
 Always run the dry run first — it prints every affected ingredient (recipe name, ingredient name, old value → new value) before touching anything.
+
+### Full recipe database export to Excel
+Script at `scripts/export-recipes.ts` exports all active recipes to `C:\Users\Kat\Desktop\recipes-export.xlsx` with two sheets:
+- **Recipes** — one row per recipe: title, servings, prep/cook/total time, tags, ingredients (concatenated), full nutrition, description, source URL
+- **Ingredients** — one row per ingredient line: recipe title, ingredient, quantity, unit, notes, category
+
+```powershell
+cd "C:\00 Paris\MealPlan\packages\backend"
+$env:DATABASE_URL="postgresql://postgres:KzOBxMxfwIPeeFOpgvYIIQGBsbbualYw@metro.proxy.rlwy.net:38152/railway"
+& "C:\Program Files\nodejs\node.exe" "../../node_modules/tsx/dist/cli.mjs" "../../scripts/export-recipes.ts"
+```
 
 ## Git Workflow
 - **Main branch:** `master`

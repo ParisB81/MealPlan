@@ -314,7 +314,7 @@ Return this exact JSON structure:
     const client = getClient();
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-5',
       max_tokens: 16384,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
@@ -493,7 +493,7 @@ Return ONLY valid JSON:
 
     const client = getClient();
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-5',
       max_tokens: 2048,
       system: 'You are a meal planning assistant. Return only valid JSON.',
       messages: [{ role: 'user', content: userPrompt }],
@@ -665,7 +665,7 @@ Return ONLY valid JSON matching this exact schema:
 
     const client = getClient();
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-5',
       max_tokens: 4096,
       system: 'You are a professional recipe writer. Return only valid JSON. Create authentic recipes based on real culinary traditions with accurate ingredients, proportions, and techniques. You MUST only use ingredients from the approved ingredient database provided in the prompt.',
       messages: [{ role: 'user', content: userPrompt }],

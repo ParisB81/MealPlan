@@ -132,7 +132,7 @@ Generate exactly ${input.count} recipe suggestion(s). Return this exact JSON str
     const client = getClient();
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-sonnet-5',
       max_tokens: 4096,
       system: systemPrompt,
       messages: [{ role: 'user', content: userPrompt }],
