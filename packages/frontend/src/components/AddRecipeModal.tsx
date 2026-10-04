@@ -102,6 +102,8 @@ interface AddRecipeModalProps {
   onClose: () => void;
   /** Pre-fill the date picker with this date (YYYY-MM-DD) */
   defaultDate?: string;
+  /** Pre-select this meal type (e.g., when opened from a week-grid cell) */
+  defaultMealType?: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   /** Auto-select this recipe and jump to details step (e.g., after AI creation) */
   preSelectedRecipeId?: string;
   /** Number of persons eating — used as default servings */
@@ -117,7 +119,7 @@ interface QuickAddState {
   servings: number;
 }
 
-export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate, preSelectedRecipeId, numberOfPersons = 1 }: AddRecipeModalProps) {
+export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDate, defaultMealType, preSelectedRecipeId, numberOfPersons = 1 }: AddRecipeModalProps) {
   const navigate = useNavigate();
   const addRecipe = useAddRecipeToMealPlan();
 
@@ -221,6 +223,9 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       if (defaultDate) {
         setDate(defaultDate);
       }
+      if (defaultMealType) {
+        setMealType(defaultMealType);
+      }
     } else {
       // When closing, reset all state
       setStep('browse');
@@ -237,7 +242,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
       setShowFilters(false);
       setFilters({ maxCalories: '', minProtein: '', maxCarbs: '', maxFat: '', maxTotalTime: '', maxPrepTime: '' });
     }
-  }, [isOpen, defaultDate]);
+  }, [isOpen, defaultDate, defaultMealType]);
 
   // Auto-select a recipe when preSelectedRecipeId is provided (e.g., after AI creation)
   useEffect(() => {
@@ -294,7 +299,7 @@ export default function AddRecipeModal({ mealPlanId, isOpen, onClose, defaultDat
     setQuickAdd({
       recipeId: recipe.id,
       date: defaultDate || new Date().toISOString().split('T')[0],
-      mealType: 'dinner',
+      mealType: defaultMealType || 'dinner',
       servings: numberOfPersons,
     });
   };

@@ -27,11 +27,12 @@ export default function MealPlanDetailPage() {
   const { data: existingLists } = useShoppingLists('active');
   const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false);
   const [addRecipeDate, setAddRecipeDate] = useState<string | undefined>(undefined);
+  const [addRecipeMealType, setAddRecipeMealType] = useState<MealType | undefined>(undefined);
   const [shoppingDropdownOpen, setShoppingDropdownOpen] = useState(false);
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
   const [copyState, setCopyState] = useState<CopyState | null>(null);
   const [isPasting, setIsPasting] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'grid'>('cards');
+  const [viewMode, setViewMode] = useState<'cards' | 'grid'>('grid');
   const [showRename, setShowRename] = useState(false);
   const [renameName, setRenameName] = useState('');
   const [showPersonsEdit, setShowPersonsEdit] = useState(false);
@@ -240,6 +241,40 @@ export default function MealPlanDetailPage() {
     }
   }, [copyState, id, isPasting, queryClient]);
 
+  // Move a meal to another day / meal type (drag & drop in the week grid).
+  // Optimistically updates the cached plan so the dish lands instantly; rolls back on failure.
+  const handleMoveMeal = useCallback(async (mealId: string, dateKey: string, mealType: MealType) => {
+    if (!id) return;
+    const queryKey = ['meal-plans', id];
+    const previous = queryClient.getQueryData<any>(queryKey);
+    const meal = previous?.meals?.find((m: any) => m.id === mealId);
+    if (!meal) return;
+
+    // Same yyyy-MM-dd → ISO convention as paste
+    const isoDate = new Date(dateKey + 'T00:00:00.000Z').toISOString();
+    await queryClient.cancelQueries({ queryKey });
+    queryClient.setQueryData(queryKey, {
+      ...previous,
+      meals: previous.meals.map((m: any) => (m.id === mealId ? { ...m, date: isoDate, mealType } : m)),
+    });
+
+    try {
+      await mealPlansService.updateRecipe(id, mealId, { date: isoDate, mealType });
+      toast.success(`Moved ${meal.recipe?.title || 'meal'} to ${mealType}, ${format(new Date(dateKey + 'T12:00:00'), 'EEE MMM d')}`);
+    } catch {
+      queryClient.setQueryData(queryKey, previous);
+      toast.error('Failed to move meal');
+    } finally {
+      queryClient.invalidateQueries({ queryKey });
+    }
+  }, [id, queryClient]);
+
+  const handleAddMealToSlot = useCallback((dateKey: string, mealType: MealType) => {
+    setAddRecipeDate(dateKey);
+    setAddRecipeMealType(mealType);
+    setIsAddRecipeModalOpen(true);
+  }, []);
+
   // Cancel copy mode
   const handleCancelCopy = useCallback(() => {
     setCopyState(null);
@@ -390,7 +425,7 @@ export default function MealPlanDetailPage() {
               </p>
             </div>
             <div className="flex gap-2 sm:gap-3 flex-wrap">
-              <Button onClick={() => { setAddRecipeDate(undefined); setIsAddRecipeModalOpen(true); }}>
+              <Button onClick={() => { setAddRecipeDate(undefined); setAddRecipeMealType(undefined); setIsAddRecipeModalOpen(true); }}>
                 Add Recipe
               </Button>
 
@@ -584,7 +619,9 @@ export default function MealPlanDetailPage() {
                   mealsByDate={mealsByDate}
                   startDate={mealPlan.startDate}
                   endDate={mealPlan.endDate}
-                  onDateClick={handleDateClick}
+                  onDateClick={(dateKey) => { setViewMode('cards'); setTimeout(() => handleDateClick(dateKey), 50); }}
+                  onMoveMeal={handleMoveMeal}
+                  onAddMeal={handleAddMealToSlot}
                 />
               </Card>
             )}
@@ -620,7 +657,7 @@ export default function MealPlanDetailPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => { setAddRecipeDate(dateKey); setIsAddRecipeModalOpen(true); }}
+                          onClick={() => { setAddRecipeDate(dateKey); setAddRecipeMealType(undefined); setIsAddRecipeModalOpen(true); }}
                           className="ml-2 p-1.5 rounded-lg text-accent hover:bg-accent-light transition-colors shrink-0"
                           title="Add meal to this day"
                         >
@@ -709,8 +746,9 @@ export default function MealPlanDetailPage() {
           <AddRecipeModal
             mealPlanId={id}
             isOpen={isAddRecipeModalOpen}
-            onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); setPreSelectedRecipeId(undefined); }}
+            onClose={() => { setIsAddRecipeModalOpen(false); setAddRecipeDate(undefined); setAddRecipeMealType(undefined); setPreSelectedRecipeId(undefined); }}
             defaultDate={addRecipeDate}
+            defaultMealType={addRecipeMealType}
             preSelectedRecipeId={preSelectedRecipeId}
             numberOfPersons={mealPlan?.numberOfPersons || 1}
           />

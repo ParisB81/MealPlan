@@ -145,7 +145,7 @@ C:\00 Paris\MealPlan/
 │   │   │   │   ├── AddToMealPlanModal.tsx # Modal to add recipe to any meal plan (from RecipesPage/RecipeDetailPage)
 │   │   │   │   ├── AddToCollectionModal.tsx # Toggle-on-check modal to add/remove recipe from collections
 │   │   │   │   ├── AddToShoppingListModal.tsx # Modal to add recipe to new/existing shopping list
-│   │   │   │   ├── WeekGridView.tsx       # Compact 7-column week overview for meal plans
+│   │   │   │   ├── WeekGridView.tsx       # Meal-type × day week matrix with pointer-based drag-and-drop to move meals
 │   │   │   │   ├── IngredientAutocomplete.tsx  # Autocomplete for ingredient names
 │   │   │   │   ├── UnitAutocomplete.tsx    # Autocomplete for measurement units
 │   │   │   │   ├── TagAutocomplete.tsx        # Autocomplete for recipe tags (grouped by category, color-coded)
@@ -1236,8 +1236,9 @@ A backup of the pre-mobile/pre-cloud app lives at `C:\00 Paris\mealplanoriginal\
 
 **Nav & UI Refinements (v2.14.0)** — Simplified desktop Navigation from 9 links to 4 hub tabs matching MobileTabBar: Plans (`/plan-my-meals`), Recipes (`/recipes-collections`), Preferences (`/preferences`), Developer (`/developer`). Active detection uses `Array.some(m => pathname.startsWith(m))` across each tab's `matches` array. GoalPlanner gained `noCard` prop to strip outer card wrapper when used inside the desktop modal. MobileTabBar: inactive tab color darkened (`text-text-secondary`), icons enlarged (`w-6 h-6`), labels enlarged (`text-xs`). Back links added to all subsection pages using `inline-flex items-center text-accent hover:text-accent-hover mb-6` pattern: hub pages (Plans/Recipes/Preferences) → "← Back to Home"; Plans subsections (MealPlans, ShoppingLists, CookingPlans) → "← Back to Plans"; Recipes subsections (RecipesPage, CollectionsPage, AIRecipeGeneratorPage) → "← Back to Recipes". DeveloperPage gained Ingredients Database and AI Meal Plans cards.
 
+**Week Grid Drag-and-Drop** — WeekGridView rebuilt as a meal-type × day matrix (rows: breakfast/snack/lunch/dinner, columns: Mon–Sun) and made the default view on MealPlanDetailPage. Dishes can be dragged to any in-plan day/meal-type cell; the page calls the existing `PUT /api/meal-plans/:id/recipes/:mealPlanRecipeId` with `{ date, mealType }` (no backend changes), applying an optimistic React Query cache update with rollback on error. Uses Pointer Events (not HTML5 DnD, which doesn't fire on touch): mouse drags after 5px movement; touch drags after a 300ms long-press, with a non-passive `touchmove` listener blocking scroll only once dragging. Floating ghost follows the pointer, target cell highlights, container/page auto-scroll near edges, sticky meal-type label column on mobile. Each cell has a "+" that opens AddRecipeModal with the new `defaultMealType` prop + `defaultDate`. Key files: `WeekGridView.tsx`, `MealPlanDetailPage.tsx` (`handleMoveMeal`, `handleAddMealToSlot`), `AddRecipeModal.tsx` (`defaultMealType`).
+
 ### Future Enhancements
-- Drag-and-drop meal plan interface
 - Recipe images upload
 - Support for more recipe websites beyond bigrecipe.com, allrecipes.com, akispetretzikis.com, argiro.gr
 - Meal plan templates

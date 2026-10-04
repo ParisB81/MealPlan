@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus, GripVertical } from 'lucide-react';
 import {
   format,
   startOfWeek,
@@ -7,16 +9,21 @@ import {
   eachDayOfInterval,
   addWeeks,
   subWeeks,
-  isWithinInterval,
   isSameDay,
   differenceInWeeks,
+  startOfDay,
 } from 'date-fns';
+import type { MealType } from '../types/mealPlan';
 
 interface WeekGridViewProps {
   mealsByDate: Record<string, any[]>;
   startDate: string;
   endDate: string;
   onDateClick?: (dateKey: string) => void;
+  /** Called when a meal is dropped onto a different day / meal-type cell */
+  onMoveMeal?: (mealId: string, dateKey: string, mealType: MealType) => void;
+  /** Called when the "+" in a cell is pressed */
+  onAddMeal?: (dateKey: string, mealType: MealType) => void;
 }
 
 const MEAL_TYPE_COLORS: Record<string, string> = {
@@ -26,40 +33,272 @@ const MEAL_TYPE_COLORS: Record<string, string> = {
   snack: 'bg-purple-400',
 };
 
-const MEAL_TYPE_ORDER = ['breakfast', 'lunch', 'dinner', 'snack'];
+const MEAL_TYPE_BORDERS: Record<string, string> = {
+  breakfast: 'border-l-amber-400',
+  lunch: 'border-l-green-400',
+  dinner: 'border-l-blue-400',
+  snack: 'border-l-purple-400',
+};
 
-export default function WeekGridView({ mealsByDate, startDate, endDate, onDateClick }: WeekGridViewProps) {
-  const planStart = new Date(startDate);
-  const planEnd = new Date(endDate);
+// Same order as the day cards (breakfast → snack → lunch → dinner)
+const MEAL_TYPE_ORDER: MealType[] = ['breakfast', 'snack', 'lunch', 'dinner'];
+
+const LONG_PRESS_MS = 300;
+const MOUSE_DRAG_THRESHOLD = 5;
+const TOUCH_MOVE_TOLERANCE = 8;
+const EDGE_SCROLL_ZONE = 48;
+const EDGE_SCROLL_SPEED = 12;
+
+interface DragState {
+  meal: any;
+  x: number;
+  y: number;
+  offsetX: number;
+  offsetY: number;
+  width: number;
+}
+
+interface DropTarget {
+  dateKey: string;
+  mealType: MealType;
+}
+
+interface PendingDrag {
+  pointerId: number;
+  pointerType: string;
+  startX: number;
+  startY: number;
+  meal: any;
+  el: HTMLElement;
+  timer?: number;
+}
+
+export default function WeekGridView({
+  mealsByDate,
+  startDate,
+  endDate,
+  onDateClick,
+  onMoveMeal,
+  onAddMeal,
+}: WeekGridViewProps) {
+  const planStart = startOfDay(new Date(startDate));
+  const planEnd = startOfDay(new Date(endDate));
   const today = new Date();
+  const isInPlan = (day: Date) => day >= planStart && day <= planEnd;
 
   // Determine the initial week to show
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    // If today is within the plan range, start on today's week
-    if (isWithinInterval(today, { start: planStart, end: planEnd })) {
+    if (isInPlan(startOfDay(today))) {
       return startOfWeek(today, { weekStartsOn: 1 });
     }
-    // Otherwise start on the plan's first week
     return startOfWeek(planStart, { weekStartsOn: 1 });
   });
 
-  // Compute the days for the current week
   const weekDays = useMemo(() => {
     const weekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 1 });
     return eachDayOfInterval({ start: currentWeekStart, end: weekEnd });
   }, [currentWeekStart]);
 
-  // Navigation
-  const handlePrevWeek = () => setCurrentWeekStart(subWeeks(currentWeekStart, 1));
-  const handleNextWeek = () => setCurrentWeekStart(addWeeks(currentWeekStart, 1));
-
-  // Compute week range bounds for disabling navigation
   const planFirstWeek = startOfWeek(planStart, { weekStartsOn: 1 });
   const planLastWeek = startOfWeek(planEnd, { weekStartsOn: 1 });
-
-  // Week counter for display
   const totalWeeks = differenceInWeeks(planLastWeek, planFirstWeek) + 1;
   const currentWeekNum = differenceInWeeks(currentWeekStart, planFirstWeek) + 1;
+
+  // ---------------------------------------------------------------------------
+  // Drag & drop (Pointer Events — works for mouse and touch)
+  // ---------------------------------------------------------------------------
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const [dropTarget, setDropTarget] = useState<DropTarget | null>(null);
+  const pendingRef = useRef<PendingDrag | null>(null);
+  const dragRef = useRef<DragState | null>(null);
+  const dropTargetRef = useRef<DropTarget | null>(null);
+  const suppressClickRef = useRef(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const onMoveMealRef = useRef(onMoveMeal);
+  onMoveMealRef.current = onMoveMeal;
+
+  const findDropTarget = (x: number, y: number): DropTarget | null => {
+    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+    const cell = el?.closest<HTMLElement>('[data-drop-cell]');
+    if (!cell || cell.dataset.inRange !== 'true') return null;
+    return { dateKey: cell.dataset.date!, mealType: cell.dataset.mealType as MealType };
+  };
+
+  const autoScroll = (x: number, y: number) => {
+    const container = scrollRef.current;
+    if (container) {
+      const rect = container.getBoundingClientRect();
+      if (x < rect.left + EDGE_SCROLL_ZONE) container.scrollLeft -= EDGE_SCROLL_SPEED;
+      else if (x > rect.right - EDGE_SCROLL_ZONE) container.scrollLeft += EDGE_SCROLL_SPEED;
+    }
+    if (y < EDGE_SCROLL_ZONE) window.scrollBy(0, -EDGE_SCROLL_SPEED);
+    else if (y > window.innerHeight - EDGE_SCROLL_ZONE) window.scrollBy(0, EDGE_SCROLL_SPEED);
+  };
+
+  const beginDrag = (pending: PendingDrag, x: number, y: number) => {
+    const rect = pending.el.getBoundingClientRect();
+    const next: DragState = {
+      meal: pending.meal,
+      x,
+      y,
+      offsetX: pending.startX - rect.left,
+      offsetY: pending.startY - rect.top,
+      width: rect.width,
+    };
+    dragRef.current = next;
+    setDrag(next);
+    suppressClickRef.current = true;
+    if (pending.pointerType !== 'mouse' && navigator.vibrate) navigator.vibrate(15);
+  };
+
+  const cleanup = useCallback(() => {
+    const pending = pendingRef.current;
+    if (pending?.timer) window.clearTimeout(pending.timer);
+    pendingRef.current = null;
+    dragRef.current = null;
+    dropTargetRef.current = null;
+    setDrag(null);
+    setDropTarget(null);
+    window.removeEventListener('pointermove', handlePointerMove);
+    window.removeEventListener('pointerup', handlePointerUp);
+    window.removeEventListener('pointercancel', handlePointerCancel);
+    window.removeEventListener('touchmove', blockTouchScroll);
+    // Let the click that follows pointerup be swallowed, then re-enable clicks
+    window.setTimeout(() => { suppressClickRef.current = false; }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Stable handler identities so add/removeEventListener match
+  const handlePointerMove = useRef((e: PointerEvent) => {
+    const pending = pendingRef.current;
+    if (!pending || e.pointerId !== pending.pointerId) return;
+    const dx = e.clientX - pending.startX;
+    const dy = e.clientY - pending.startY;
+
+    if (!dragRef.current) {
+      if (pending.pointerType === 'mouse') {
+        if (Math.hypot(dx, dy) > MOUSE_DRAG_THRESHOLD) beginDrag(pending, e.clientX, e.clientY);
+        else return;
+      } else {
+        // Touch: moving before the long-press fires means the user is scrolling
+        if (Math.hypot(dx, dy) > TOUCH_MOVE_TOLERANCE) cleanupRef.current();
+        return;
+      }
+    }
+
+    const current = dragRef.current!;
+    const next = { ...current, x: e.clientX, y: e.clientY };
+    dragRef.current = next;
+    setDrag(next);
+
+    const target = findDropTarget(e.clientX, e.clientY);
+    const prev = dropTargetRef.current;
+    if (target?.dateKey !== prev?.dateKey || target?.mealType !== prev?.mealType) {
+      dropTargetRef.current = target;
+      setDropTarget(target);
+    }
+    autoScroll(e.clientX, e.clientY);
+  }).current;
+
+  const handlePointerUp = useRef((e: PointerEvent) => {
+    const pending = pendingRef.current;
+    if (!pending || e.pointerId !== pending.pointerId) return;
+    const current = dragRef.current;
+    if (current) {
+      const target = findDropTarget(e.clientX, e.clientY);
+      if (target) {
+        const fromKey = format(new Date(current.meal.date), 'yyyy-MM-dd');
+        if (fromKey !== target.dateKey || current.meal.mealType !== target.mealType) {
+          onMoveMealRef.current?.(current.meal.id, target.dateKey, target.mealType);
+        }
+      }
+    }
+    cleanupRef.current();
+  }).current;
+
+  const handlePointerCancel = useRef(() => cleanupRef.current()).current;
+
+  // Prevent the page from scrolling while a touch drag is in progress
+  const blockTouchScroll = useRef((e: TouchEvent) => {
+    if (dragRef.current) e.preventDefault();
+  }).current;
+
+  const cleanupRef = useRef(cleanup);
+  cleanupRef.current = cleanup;
+
+  useEffect(() => () => cleanupRef.current(), []);
+
+  const handleChipPointerDown = (e: ReactPointerEvent<HTMLElement>, meal: any) => {
+    if (!onMoveMeal) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (pendingRef.current) return;
+
+    const pending: PendingDrag = {
+      pointerId: e.pointerId,
+      pointerType: e.pointerType,
+      startX: e.clientX,
+      startY: e.clientY,
+      meal,
+      el: e.currentTarget,
+    };
+    pendingRef.current = pending;
+
+    if (e.pointerType !== 'mouse') {
+      pending.timer = window.setTimeout(() => {
+        if (pendingRef.current === pending) beginDrag(pending, pending.startX, pending.startY);
+      }, LONG_PRESS_MS);
+    }
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerCancel);
+    window.addEventListener('touchmove', blockTouchScroll, { passive: false });
+  };
+
+  // Swallow the click that a drag's pointerup would otherwise fire on the recipe link
+  const handleChipClickCapture = (e: ReactMouseEvent) => {
+    if (suppressClickRef.current) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------------------
+  const renderChip = (meal: any) => {
+    const isDragging = drag?.meal.id === meal.id;
+    return (
+      <div
+        key={meal.id}
+        onPointerDown={(e) => handleChipPointerDown(e, meal)}
+        onClickCapture={handleChipClickCapture}
+        onContextMenu={(e) => onMoveMeal && e.preventDefault()}
+        className={`group flex items-start gap-1 rounded-md border border-border-default border-l-4 ${
+          MEAL_TYPE_BORDERS[meal.mealType] || 'border-l-gray-400'
+        } bg-surface px-1.5 py-1 shadow-sm select-none [-webkit-touch-callout:none] ${
+          onMoveMeal ? 'cursor-grab active:cursor-grabbing' : ''
+        } ${isDragging ? 'opacity-30' : 'hover:shadow-md'}`}
+      >
+        {onMoveMeal && (
+          <GripVertical className="w-3 h-3 mt-0.5 shrink-0 text-text-muted opacity-50 group-hover:opacity-100" />
+        )}
+        <div className="min-w-0 flex-1">
+          <Link
+            to={`/recipes/${meal.recipe?.id || meal.recipeId}?servings=${meal.servings}`}
+            draggable={false}
+            className="text-xs text-text-primary hover:text-accent leading-snug block break-words line-clamp-3"
+            title={meal.recipe?.title}
+          >
+            {meal.recipe?.title || 'Unknown recipe'}
+          </Link>
+          <span className="text-[10px] text-text-muted">
+            {meal.servings} serving{meal.servings > 1 ? 's' : ''}
+          </span>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -67,7 +306,7 @@ export default function WeekGridView({ mealsByDate, startDate, endDate, onDateCl
       <div className="flex items-center justify-between mb-4">
         <button
           type="button"
-          onClick={handlePrevWeek}
+          onClick={() => setCurrentWeekStart(subWeeks(currentWeekStart, 1))}
           disabled={currentWeekStart <= planFirstWeek}
           className="p-2 rounded-lg hover:bg-hover-bg active:bg-border-default text-text-muted hover:text-text-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Previous week"
@@ -84,7 +323,7 @@ export default function WeekGridView({ mealsByDate, startDate, endDate, onDateCl
         </div>
         <button
           type="button"
-          onClick={handleNextWeek}
+          onClick={() => setCurrentWeekStart(addWeeks(currentWeekStart, 1))}
           disabled={currentWeekStart >= planLastWeek}
           className="p-2 rounded-lg hover:bg-hover-bg active:bg-border-default text-text-muted hover:text-text-secondary transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           aria-label="Next week"
@@ -95,75 +334,83 @@ export default function WeekGridView({ mealsByDate, startDate, endDate, onDateCl
         </button>
       </div>
 
-      {/* 7-column grid — scrollable on mobile */}
-      <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-        <div className="grid grid-cols-7 gap-1 min-w-[700px]">
+      {onMoveMeal && (
+        <p className="text-xs text-text-muted mb-2">
+          <span className="hidden md:inline">Drag</span>
+          <span className="md:hidden">Press and hold</span> a dish to move it to another day or meal.
+        </p>
+      )}
+
+      {/* Meal-type × day matrix — scrollable on mobile */}
+      <div ref={scrollRef} className="overflow-x-auto pb-1">
+        <div
+          className="grid gap-1 md:min-w-[820px]"
+          style={{ gridTemplateColumns: '64px repeat(7, minmax(96px, 1fr))' }}
+        >
+          {/* Header row */}
+          <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)]" />
           {weekDays.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
-            const dayMeals = mealsByDate[dateKey] || [];
             const isToday = isSameDay(day, today);
-            const inRange = isWithinInterval(day, { start: planStart, end: planEnd });
-
-            // Sort meals by type order
-            const sortedMeals = [...dayMeals].sort(
-              (a, b) => MEAL_TYPE_ORDER.indexOf(a.mealType) - MEAL_TYPE_ORDER.indexOf(b.mealType)
-            );
-
+            const hasMeals = (mealsByDate[dateKey] || []).length > 0;
             return (
-              <div
+              <button
                 key={dateKey}
-                className={`rounded-lg border p-2 min-h-[120px] ${
-                  isToday
-                    ? 'border-accent bg-accent-light/50'
-                    : inRange
-                      ? 'border-border-default bg-surface'
-                      : 'border-border-default/50 bg-surface/50 opacity-50'
+                type="button"
+                onClick={() => hasMeals && onDateClick?.(dateKey)}
+                className={`text-center rounded-lg py-1.5 ${
+                  isToday ? 'bg-accent-light' : ''
+                } ${isInPlan(day) ? '' : 'opacity-40'} ${
+                  hasMeals ? 'cursor-pointer hover:text-accent' : 'cursor-default'
                 }`}
               >
-                {/* Day header */}
-                <button
-                  type="button"
-                  onClick={() => dayMeals.length > 0 && onDateClick?.(dateKey)}
-                  className={`w-full text-center mb-2 pb-1 border-b border-border-default/50 ${
-                    dayMeals.length > 0 ? 'cursor-pointer hover:text-accent' : 'cursor-default'
-                  }`}
-                >
-                  <div className={`text-xs font-medium ${isToday ? 'text-accent' : 'text-text-muted'}`}>
-                    {format(day, 'EEE')}
-                  </div>
-                  <div className={`text-sm font-semibold ${isToday ? 'text-accent' : 'text-text-primary'}`}>
-                    {format(day, 'd')}
-                  </div>
-                </button>
-
-                {/* Meals list */}
-                <div className="space-y-1.5">
-                  {sortedMeals.map((meal) => (
-                    <div key={meal.id} className="flex items-start gap-1.5">
-                      <span
-                        className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${MEAL_TYPE_COLORS[meal.mealType] || 'bg-gray-400'}`}
-                        title={meal.mealType}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <Link
-                          to={`/recipes/${meal.recipe?.id || meal.recipeId}`}
-                          className="text-xs text-text-primary hover:text-accent leading-tight block truncate"
-                          title={meal.recipe?.title}
-                        >
-                          {meal.recipe?.title || 'Unknown recipe'}
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                  {sortedMeals.length === 0 && inRange && (
-                    <p className="text-xs text-text-muted text-center italic">No meals</p>
-                  )}
+                <div className={`text-xs font-medium ${isToday ? 'text-accent' : 'text-text-muted'}`}>
+                  {format(day, 'EEE')}
                 </div>
-              </div>
+                <div className={`text-sm font-semibold ${isToday ? 'text-accent' : 'text-text-primary'}`}>
+                  {format(day, 'd')}
+                </div>
+              </button>
             );
           })}
+
+          {/* One row per meal type */}
+          {MEAL_TYPE_ORDER.map((mealType) => (
+            <MealRow
+              key={mealType}
+              mealType={mealType}
+              weekDays={weekDays}
+              mealsByDate={mealsByDate}
+              isInPlan={isInPlan}
+              today={today}
+              dropTarget={dropTarget}
+              isDragging={!!drag}
+              renderChip={renderChip}
+              onAddMeal={onAddMeal}
+            />
+          ))}
         </div>
       </div>
+
+      {/* Floating ghost that follows the pointer while dragging */}
+      {drag && (
+        <div
+          className="fixed z-50 pointer-events-none rotate-2"
+          style={{
+            left: drag.x - drag.offsetX,
+            top: drag.y - drag.offsetY,
+            width: drag.width,
+          }}
+        >
+          <div
+            className={`rounded-md border border-accent border-l-4 ${
+              MEAL_TYPE_BORDERS[drag.meal.mealType] || 'border-l-gray-400'
+            } bg-surface px-1.5 py-1 shadow-xl text-xs text-text-primary leading-snug`}
+          >
+            {drag.meal.recipe?.title}
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-border-default">
@@ -175,5 +422,85 @@ export default function WeekGridView({ mealsByDate, startDate, endDate, onDateCl
         ))}
       </div>
     </div>
+  );
+}
+
+interface MealRowProps {
+  mealType: MealType;
+  weekDays: Date[];
+  mealsByDate: Record<string, any[]>;
+  isInPlan: (day: Date) => boolean;
+  today: Date;
+  dropTarget: DropTarget | null;
+  isDragging: boolean;
+  renderChip: (meal: any) => ReactNode;
+  onAddMeal?: (dateKey: string, mealType: MealType) => void;
+}
+
+function MealRow({
+  mealType,
+  weekDays,
+  mealsByDate,
+  isInPlan,
+  today,
+  dropTarget,
+  isDragging,
+  renderChip,
+  onAddMeal,
+}: MealRowProps) {
+  return (
+    <>
+      {/* Row label */}
+      <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)] flex items-start gap-1.5 pt-2 pr-1">
+        <span className={`w-2 h-2 rounded-full mt-1 shrink-0 ${MEAL_TYPE_COLORS[mealType]}`} />
+        <span className="text-xs font-medium text-text-secondary capitalize">{mealType}</span>
+      </div>
+
+      {weekDays.map((day) => {
+        const dateKey = format(day, 'yyyy-MM-dd');
+        const inRange = isInPlan(day);
+        const isToday = isSameDay(day, today);
+        const cellMeals = (mealsByDate[dateKey] || []).filter((m) => m.mealType === mealType);
+        const isTarget = dropTarget?.dateKey === dateKey && dropTarget?.mealType === mealType;
+
+        return (
+          <div
+            key={dateKey}
+            data-drop-cell
+            data-date={dateKey}
+            data-meal-type={mealType}
+            data-in-range={inRange ? 'true' : 'false'}
+            className={`group/cell relative rounded-lg border p-1 min-h-[64px] flex flex-col gap-1 transition-colors ${
+              isTarget
+                ? 'border-accent bg-accent-light ring-2 ring-accent-ring'
+                : !inRange
+                  ? 'border-border-default/50 bg-page-bg/50 opacity-40'
+                  : isDragging
+                    ? 'border-dashed border-border-strong bg-surface'
+                    : isToday
+                      ? 'border-accent/40 bg-accent-light/30'
+                      : 'border-border-default bg-page-bg/40'
+            }`}
+          >
+            {cellMeals.map(renderChip)}
+
+            {inRange && onAddMeal && !isDragging && (
+              <button
+                type="button"
+                onClick={() => onAddMeal(dateKey, mealType)}
+                className={`flex items-center justify-center rounded-md text-text-muted hover:text-accent hover:bg-accent-light transition-opacity ${
+                  cellMeals.length === 0
+                    ? 'flex-1 min-h-[32px] opacity-40 hover:opacity-100'
+                    : 'h-5 opacity-0 group-hover/cell:opacity-100 focus:opacity-100'
+                }`}
+                title={`Add ${mealType} on ${format(day, 'EEE MMM d')}`}
+              >
+                <Plus className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </>
   );
 }
