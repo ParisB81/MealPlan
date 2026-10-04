@@ -107,13 +107,20 @@ export default function WeekGridView({
     const todayOffset = differenceInCalendarDays(startOfDay(today), planStart);
     return isInPlan(startOfDay(today)) ? Math.floor(todayOffset / 7) : 0;
   });
-  const windowStart = addDays(planStart, weekIndex * 7);
 
-  const weekDays = useMemo(
-    () => Array.from({ length: 7 }, (_, i) => addDays(windowStart, i)),
+  // Every week of the plan is rendered and the inactive ones are hidden (display: none).
+  // A touch drag's events stay bound to the element the finger started on; if flipping weeks
+  // unmounted that chip, touchmove would stop reaching our scroll-blocking listener and the
+  // browser would cancel the drag. Hidden-but-mounted keeps cross-week touch drags alive.
+  const allWeeks = useMemo(
+    () =>
+      Array.from({ length: totalWeeks }, (_, w) =>
+        Array.from({ length: 7 }, (_, i) => addDays(planStart, w * 7 + i))
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [windowStart.getTime()]
+    [planStart.getTime(), totalWeeks]
   );
+  const weekDays = allWeeks[Math.min(weekIndex, totalWeeks - 1)];
 
   const shiftWeek = (dir: -1 | 1) =>
     setWeekIndex((i) => Math.min(totalWeeks - 1, Math.max(0, i + dir)));
@@ -413,7 +420,7 @@ export default function WeekGridView({
             type="button"
             onClick={handleAddWeek}
             disabled={isAddingWeek}
-            className="flex items-center gap-1 px-3 min-h-[40px] rounded-lg text-sm font-medium text-accent hover:bg-accent-light transition-colors disabled:opacity-50"
+            className="flex items-center gap-1 px-3 h-9 rounded-lg text-sm font-medium text-accent hover:bg-accent-light transition-colors disabled:opacity-50"
             title="Extend this plan by 7 days"
           >
             <Plus className="w-4 h-4" />
@@ -446,13 +453,15 @@ export default function WeekGridView({
 
       {/* Meal-type × day matrix — scrollable on mobile */}
       <div ref={scrollRef} className="overflow-x-auto pb-1">
+        {allWeeks.map((days, w) => (
         <div
-          className="grid gap-1 md:min-w-[820px]"
+          key={w}
+          className={`${w === weekIndex ? 'grid' : 'hidden'} gap-1 md:min-w-[820px]`}
           style={{ gridTemplateColumns: '64px repeat(7, minmax(96px, 1fr))' }}
         >
           {/* Header row */}
           <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)]" />
-          {weekDays.map((day) => {
+          {days.map((day) => {
             const dateKey = format(day, 'yyyy-MM-dd');
             const isToday = isSameDay(day, today);
             const hasMeals = (mealsByDate[dateKey] || []).length > 0;
@@ -482,7 +491,7 @@ export default function WeekGridView({
             <MealRow
               key={mealType}
               mealType={mealType}
-              weekDays={weekDays}
+              weekDays={days}
               mealsByDate={mealsByDate}
               isInPlan={isInPlan}
               today={today}
@@ -493,6 +502,7 @@ export default function WeekGridView({
             />
           ))}
         </div>
+        ))}
       </div>
 
       {/* Floating ghost that follows the pointer while dragging */}
@@ -639,11 +649,13 @@ function MealRow({
           >
             {cellMeals.map(renderChip)}
 
-            {onAddMeal && !isDragging && (
+            {/* Kept in the layout while dragging (just invisible) so cells don't resize mid-drag */}
+            {onAddMeal && (
               <button
                 type="button"
                 onClick={() => onAddMeal(dateKey, mealType)}
-                className={`flex items-center justify-center rounded-md text-text-muted hover:text-accent hover:bg-accent-light transition-opacity ${
+                tabIndex={isDragging ? -1 : undefined}
+                className={`${isDragging ? 'invisible' : ''} flex items-center justify-center rounded-md text-text-muted hover:text-accent hover:bg-accent-light transition-opacity ${
                   cellMeals.length === 0
                     ? 'flex-1 min-h-[32px] opacity-40 hover:opacity-100'
                     : 'h-5 opacity-0 group-hover/cell:opacity-100 focus:opacity-100'
