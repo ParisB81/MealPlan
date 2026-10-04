@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3, Pencil } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -8,10 +8,9 @@ import { useMealPlan, useDeleteMealPlan, useMealPlanNutrition, useRemoveRecipeFr
 import { useGenerateShoppingList, useShoppingLists, useAddFromMealPlan } from '../hooks/useShoppingLists';
 import { mealPlansService } from '../services/mealPlans.service';
 import AddRecipeModal from '../components/AddRecipeModal';
-import MealPlanCalendar from '../components/MealPlanCalendar';
 import WeekGridView from '../components/WeekGridView';
 import { Button, Card, Badge, Modal, Collapsible } from '../components/ui';
-import type { CopyState, MealType } from '../types/mealPlan';
+import type { MealType } from '../types/mealPlan';
 
 export default function MealPlanDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -30,8 +29,6 @@ export default function MealPlanDetailPage() {
   const [addRecipeMealType, setAddRecipeMealType] = useState<MealType | undefined>(undefined);
   const [shoppingDropdownOpen, setShoppingDropdownOpen] = useState(false);
   const [isAddToListModalOpen, setIsAddToListModalOpen] = useState(false);
-  const [copyState, setCopyState] = useState<CopyState | null>(null);
-  const [isPasting, setIsPasting] = useState(false);
   const [viewMode, setViewMode] = useState<'cards' | 'grid'>('grid');
   const [showRename, setShowRename] = useState(false);
   const [renameName, setRenameName] = useState('');
@@ -91,21 +88,6 @@ export default function MealPlanDetailPage() {
     }
     return days;
   }, [mealsByDate]);
-
-  // Build calendar data: date -> meal type summary
-  const calendarMealsByDate: Record<string, { mealType: string }[]> = useMemo(() => {
-    const result: Record<string, { mealType: string }[]> = {};
-    if (mealPlan?.meals) {
-      mealPlan.meals.forEach((meal) => {
-        const dateKey = format(new Date(meal.date), 'yyyy-MM-dd');
-        if (!result[dateKey]) {
-          result[dateKey] = [];
-        }
-        result[dateKey].push({ mealType: meal.mealType });
-      });
-    }
-    return result;
-  }, [mealPlan?.meals]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -184,63 +166,6 @@ export default function MealPlanDetailPage() {
     }
   }, []);
 
-  // Copy meals: extract meal data from the source day
-  const handleCopyMeals = useCallback((sourceDate: string, mealTypeFilter: string | 'all') => {
-    const mealsOnDay = mealsByDate[sourceDate] || [];
-
-    const mealsToCopy = mealTypeFilter === 'all'
-      ? mealsOnDay
-      : mealsOnDay.filter((m: any) => m.mealType === mealTypeFilter);
-
-    if (mealsToCopy.length === 0) return;
-
-    const label = mealTypeFilter === 'all'
-      ? `all meals from ${format(new Date(sourceDate), 'EEE MMM d')}`
-      : `${mealTypeFilter} from ${format(new Date(sourceDate), 'EEE MMM d')}`;
-
-    setCopyState({
-      sourceDate,
-      meals: mealsToCopy.map((m: any) => ({
-        recipeId: m.recipe?.id || m.recipeId,
-        mealType: m.mealType as MealType,
-        servings: m.servings,
-        notes: m.notes,
-      })),
-      label,
-    });
-  }, [mealsByDate]);
-
-  // Paste meals: add copied meals to the target day
-  const handlePasteMeals = useCallback(async (targetDate: string) => {
-    if (!copyState || !id || isPasting) return;
-
-    setIsPasting(true);
-    try {
-      // Convert yyyy-MM-dd to ISO datetime for backend validator
-      const isoDate = new Date(targetDate + 'T00:00:00.000Z').toISOString();
-      for (const meal of copyState.meals) {
-        await mealPlansService.addRecipe(id, {
-          recipeId: meal.recipeId,
-          date: isoDate,
-          mealType: meal.mealType,
-          servings: meal.servings,
-          ...(meal.notes ? { notes: meal.notes } : {}),
-        });
-      }
-      // Single invalidation + single toast
-      queryClient.invalidateQueries({ queryKey: ['meal-plans', id] });
-      toast.success(
-        `Pasted ${copyState.meals.length} meal${copyState.meals.length > 1 ? 's' : ''} to ${format(new Date(targetDate), 'EEE MMM d')}`
-      );
-    } catch (error) {
-      toast.error('Failed to paste meals');
-      // Still invalidate to show any partial results
-      queryClient.invalidateQueries({ queryKey: ['meal-plans', id] });
-    } finally {
-      setIsPasting(false);
-    }
-  }, [copyState, id, isPasting, queryClient]);
-
   // Move a meal to another day / meal type (drag & drop in the week grid).
   // Optimistically updates the cached plan so the dish lands instantly; rolls back on failure.
   const handleMoveMeal = useCallback(async (mealId: string, dateKey: string, mealType: MealType) => {
@@ -265,19 +190,45 @@ export default function MealPlanDetailPage() {
       queryClient.setQueryData(queryKey, previous);
       toast.error('Failed to move meal');
     } finally {
-      queryClient.invalidateQueries({ queryKey });
+      // Prefix match also refreshes plan lists — the server may have extended the plan's dates
+      queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
     }
   }, [id, queryClient]);
+
+  // Copy a meal into another day / meal type (drop menu "Copy here" or Ctrl+drop)
+  const handleCopyMeal = useCallback(async (mealId: string, dateKey: string, mealType: MealType) => {
+    if (!id) return;
+    const queryKey = ['meal-plans', id];
+    const meal = queryClient.getQueryData<any>(queryKey)?.meals?.find((m: any) => m.id === mealId);
+    if (!meal) return;
+
+    try {
+      await mealPlansService.addRecipe(id, {
+        recipeId: meal.recipe?.id || meal.recipeId,
+        date: new Date(dateKey + 'T00:00:00.000Z').toISOString(),
+        mealType,
+        servings: meal.servings,
+        ...(meal.notes ? { notes: meal.notes } : {}),
+      });
+      toast.success(`Copied ${meal.recipe?.title || 'meal'} to ${mealType}, ${format(new Date(dateKey + 'T12:00:00'), 'EEE MMM d')}`);
+    } catch {
+      toast.error('Failed to copy meal');
+    } finally {
+      // Prefix match also refreshes plan lists — the server may have extended the plan's dates
+      queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
+    }
+  }, [id, queryClient]);
+
+  const handleAddWeek = useCallback(() => {
+    if (!id || !mealPlan) return;
+    const endDate = addDays(new Date(mealPlan.endDate), 7).toISOString();
+    return updateMealPlan.mutateAsync({ id, input: { endDate } });
+  }, [id, mealPlan, updateMealPlan]);
 
   const handleAddMealToSlot = useCallback((dateKey: string, mealType: MealType) => {
     setAddRecipeDate(dateKey);
     setAddRecipeMealType(mealType);
     setIsAddRecipeModalOpen(true);
-  }, []);
-
-  // Cancel copy mode
-  const handleCancelCopy = useCallback(() => {
-    setCopyState(null);
   }, []);
 
   const handleDelete = async () => {
@@ -621,7 +572,9 @@ export default function MealPlanDetailPage() {
                   endDate={mealPlan.endDate}
                   onDateClick={(dateKey) => { setViewMode('cards'); setTimeout(() => handleDateClick(dateKey), 50); }}
                   onMoveMeal={handleMoveMeal}
+                  onCopyMeal={handleCopyMeal}
                   onAddMeal={handleAddMealToSlot}
+                  onAddWeek={handleAddWeek}
                 />
               </Card>
             )}
@@ -724,22 +677,6 @@ export default function MealPlanDetailPage() {
           </>
         )}
 
-        {/* Calendar */}
-        {mealPlan.meals.length > 0 && (
-          <Collapsible title="Meal Calendar" className="mb-6 mt-6">
-            <MealPlanCalendar
-              startDate={mealPlan.startDate}
-              endDate={mealPlan.endDate}
-              mealsByDate={calendarMealsByDate}
-              onDateClick={handleDateClick}
-              copyState={copyState}
-              onCopyMeals={handleCopyMeals}
-              onPasteMeals={handlePasteMeals}
-              onCancelCopy={handleCancelCopy}
-              isPasting={isPasting}
-            />
-          </Collapsible>
-        )}
 
         {/* Add Recipe Modal */}
         {id && (

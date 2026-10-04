@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, GripVertical } from 'lucide-react';
+import { Plus, GripVertical, MoveRight, Copy, X } from 'lucide-react';
 import {
   format,
   addDays,
@@ -16,10 +16,14 @@ interface WeekGridViewProps {
   startDate: string;
   endDate: string;
   onDateClick?: (dateKey: string) => void;
-  /** Called when a meal is dropped onto a different day / meal-type cell */
+  /** Called when the user chooses "Move here" after dropping a meal on another cell */
   onMoveMeal?: (mealId: string, dateKey: string, mealType: MealType) => void;
+  /** Called when the user chooses "Copy here" (or drops while holding Ctrl/⌘) */
+  onCopyMeal?: (mealId: string, dateKey: string, mealType: MealType) => void;
   /** Called when the "+" in a cell is pressed */
   onAddMeal?: (dateKey: string, mealType: MealType) => void;
+  /** Extend the plan by 7 days (shown as "+ Add week" on the last week) */
+  onAddWeek?: () => Promise<unknown> | void;
 }
 
 const MEAL_TYPE_COLORS: Record<string, string> = {
@@ -54,6 +58,16 @@ interface DragState {
   offsetX: number;
   offsetY: number;
   width: number;
+  /** Ctrl/⌘ held — the drop will copy instead of asking */
+  copy: boolean;
+}
+
+interface DropMenu {
+  meal: any;
+  target: DropTarget;
+  x: number;
+  y: number;
+  openedAt: number;
 }
 
 interface DropTarget {
@@ -77,7 +91,9 @@ export default function WeekGridView({
   endDate,
   onDateClick,
   onMoveMeal,
+  onCopyMeal,
   onAddMeal,
+  onAddWeek,
 }: WeekGridViewProps) {
   const planStart = startOfDay(new Date(startDate));
   const planEnd = startOfDay(new Date(endDate));
@@ -101,6 +117,28 @@ export default function WeekGridView({
 
   const shiftWeek = (dir: -1 | 1) =>
     setWeekIndex((i) => Math.min(totalWeeks - 1, Math.max(0, i + dir)));
+  // After "+ Add week", jump to the new week once the extended plan arrives
+  const advanceAfterExtendRef = useRef(false);
+  const [isAddingWeek, setIsAddingWeek] = useState(false);
+  useEffect(() => {
+    if (advanceAfterExtendRef.current) {
+      advanceAfterExtendRef.current = false;
+      setWeekIndex(totalWeeks - 1);
+    }
+  }, [totalWeeks]);
+  const handleAddWeek = async () => {
+    if (!onAddWeek) return;
+    setIsAddingWeek(true);
+    advanceAfterExtendRef.current = true;
+    try {
+      await onAddWeek();
+    } catch {
+      advanceAfterExtendRef.current = false;
+    } finally {
+      setIsAddingWeek(false);
+    }
+  };
+
   const shiftWeekRef = useRef(shiftWeek);
   shiftWeekRef.current = shiftWeek;
 
@@ -115,8 +153,9 @@ export default function WeekGridView({
   const suppressClickRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const flipRef = useRef<{ dir: -1 | 1; timer: number } | null>(null);
-  const onMoveMealRef = useRef(onMoveMeal);
-  onMoveMealRef.current = onMoveMeal;
+  const [dropMenu, setDropMenu] = useState<DropMenu | null>(null);
+  const onCopyMealRef = useRef(onCopyMeal);
+  onCopyMealRef.current = onCopyMeal;
 
   const findDropTarget = (x: number, y: number): DropTarget | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -165,6 +204,7 @@ export default function WeekGridView({
       offsetX: pending.startX - rect.left,
       offsetY: pending.startY - rect.top,
       width: rect.width,
+      copy: false,
     };
     dragRef.current = next;
     setDrag(next);
@@ -209,7 +249,7 @@ export default function WeekGridView({
     }
 
     const current = dragRef.current!;
-    const next = { ...current, x: e.clientX, y: e.clientY };
+    const next = { ...current, x: e.clientX, y: e.clientY, copy: e.ctrlKey || e.metaKey };
     dragRef.current = next;
     setDrag(next);
 
@@ -231,8 +271,13 @@ export default function WeekGridView({
       const target = findDropTarget(e.clientX, e.clientY);
       if (target) {
         const fromKey = format(new Date(current.meal.date), 'yyyy-MM-dd');
-        if (fromKey !== target.dateKey || current.meal.mealType !== target.mealType) {
-          onMoveMealRef.current?.(current.meal.id, target.dateKey, target.mealType);
+        const sameCell = fromKey === target.dateKey && current.meal.mealType === target.mealType;
+        if (e.ctrlKey || e.metaKey) {
+          // Ctrl/⌘ + drop = copy straight away (also allowed onto the same cell to duplicate)
+          onCopyMealRef.current?.(current.meal.id, target.dateKey, target.mealType);
+        } else if (!sameCell) {
+          // Otherwise ask whether to move or copy
+          setDropMenu({ meal: current.meal, target, x: e.clientX, y: e.clientY, openedAt: Date.now() });
         }
       }
     }
@@ -251,9 +296,27 @@ export default function WeekGridView({
 
   useEffect(() => () => cleanupRef.current(), []);
 
+  // Escape closes the move/copy menu
+  useEffect(() => {
+    if (!dropMenu) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setDropMenu(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [dropMenu]);
+
+  const chooseDropAction = (action: 'move' | 'copy') => {
+    // Ignore the stray click a mouse drag can fire right as the menu appears
+    if (!dropMenu || Date.now() - dropMenu.openedAt < 250) return;
+    const { meal, target } = dropMenu;
+    setDropMenu(null);
+    if (action === 'move') onMoveMeal?.(meal.id, target.dateKey, target.mealType);
+    else onCopyMeal?.(meal.id, target.dateKey, target.mealType);
+  };
+
   const handleChipPointerDown = (e: ReactPointerEvent<HTMLElement>, meal: any) => {
     if (!onMoveMeal) return;
     if (e.pointerType === 'mouse' && e.button !== 0) return;
+    if (dropMenu) return;
     if (pendingRef.current) return;
 
     const pending: PendingDrag = {
@@ -345,6 +408,18 @@ export default function WeekGridView({
           </h3>
           <p className="text-xs text-text-muted">Week {weekIndex + 1} of {totalWeeks}</p>
         </div>
+        {onAddWeek && weekIndex >= totalWeeks - 1 && !drag ? (
+          <button
+            type="button"
+            onClick={handleAddWeek}
+            disabled={isAddingWeek}
+            className="flex items-center gap-1 px-3 min-h-[40px] rounded-lg text-sm font-medium text-accent hover:bg-accent-light transition-colors disabled:opacity-50"
+            title="Extend this plan by 7 days"
+          >
+            <Plus className="w-4 h-4" />
+            {isAddingWeek ? 'Adding…' : 'Add week'}
+          </button>
+        ) : (
         <button
           type="button"
           data-week-flip="1"
@@ -357,12 +432,14 @@ export default function WeekGridView({
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
           </svg>
         </button>
+        )}
       </div>
 
       {onMoveMeal && (
         <p className="text-xs text-text-muted mb-2">
           <span className="hidden md:inline">Drag</span>
-          <span className="md:hidden">Press and hold</span> a dish to move it to another day or meal.
+          <span className="md:hidden">Press and hold</span> a dish to move or copy it to another day or meal.
+          <span className="hidden md:inline"> Hold Ctrl while dropping to copy straight away.</span>
           {totalWeeks > 1 && ' Hold it over an arrow to switch weeks.'}
         </p>
       )}
@@ -409,7 +486,7 @@ export default function WeekGridView({
               mealsByDate={mealsByDate}
               isInPlan={isInPlan}
               today={today}
-              dropTarget={dropTarget}
+              dropTarget={dropTarget ?? dropMenu?.target ?? null}
               isDragging={!!drag}
               renderChip={renderChip}
               onAddMeal={onAddMeal}
@@ -435,7 +512,58 @@ export default function WeekGridView({
           >
             {drag.meal.recipe?.title}
           </div>
+          {drag.copy && (
+            <span className="absolute -top-2 -right-2 rounded-full bg-btn-success text-white text-[10px] font-semibold px-1.5 py-0.5 shadow">
+              + Copy
+            </span>
+          )}
         </div>
+      )}
+
+      {/* Move / Copy choice after a drop */}
+      {dropMenu && (
+        <>
+          <div className="fixed inset-0 z-40" onPointerDown={() => setDropMenu(null)} />
+          <div
+            role="menu"
+            className="fixed z-50 w-48 rounded-lg border border-border-default bg-surface shadow-xl py-1"
+            style={{
+              left: Math.min(dropMenu.x + 8, window.innerWidth - 200),
+              top: Math.min(dropMenu.y + 8, window.innerHeight - 170),
+            }}
+          >
+            <p className="px-3 pt-1 pb-1.5 text-[11px] text-text-muted border-b border-border-default">
+              <span className="font-medium text-text-secondary">{dropMenu.meal.recipe?.title}</span>
+              {' → '}
+              <span className="capitalize">{dropMenu.target.mealType}</span>,{' '}
+              {format(new Date(dropMenu.target.dateKey + 'T12:00:00'), 'EEE MMM d')}
+            </p>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => chooseDropAction('move')}
+              className="flex items-center gap-2 w-full px-3 min-h-[44px] text-sm text-text-primary hover:bg-page-bg"
+            >
+              <MoveRight className="w-4 h-4 text-accent" /> Move here
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => chooseDropAction('copy')}
+              className="flex items-center gap-2 w-full px-3 min-h-[44px] text-sm text-text-primary hover:bg-page-bg"
+            >
+              <Copy className="w-4 h-4 text-btn-success" /> Copy here
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => setDropMenu(null)}
+              className="flex items-center gap-2 w-full px-3 min-h-[44px] text-sm text-text-muted hover:bg-page-bg border-t border-border-default"
+            >
+              <X className="w-4 h-4" /> Cancel
+            </button>
+          </div>
+        </>
       )}
 
       {/* Legend */}
@@ -495,12 +623,13 @@ function MealRow({
             data-drop-cell
             data-date={dateKey}
             data-meal-type={mealType}
-            data-in-range={inRange ? 'true' : 'false'}
+            data-in-range="true"
+            title={inRange ? undefined : 'After the plan end — adding here extends the plan'}
             className={`group/cell relative rounded-lg border p-1 min-h-[64px] flex flex-col gap-1 transition-colors ${
               isTarget
                 ? 'border-accent bg-accent-light ring-2 ring-accent-ring'
                 : !inRange
-                  ? 'border-border-default/50 bg-page-bg/50 opacity-40'
+                  ? 'border-dashed border-border-default bg-page-bg/30 opacity-60'
                   : isDragging
                     ? 'border-dashed border-border-strong bg-surface'
                     : isToday
@@ -510,7 +639,7 @@ function MealRow({
           >
             {cellMeals.map(renderChip)}
 
-            {inRange && onAddMeal && !isDragging && (
+            {onAddMeal && !isDragging && (
               <button
                 type="button"
                 onClick={() => onAddMeal(dateKey, mealType)}

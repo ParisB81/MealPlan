@@ -197,7 +197,28 @@ export class MealPlanService {
   }
 
   // Add recipe to meal plan
+  // Stretch a plan's start/end so it always covers the given meal date.
+  // Compares calendar days (plan dates may carry a time-of-day, meal dates are UTC midnight).
+  private async ensurePlanCoversDate(mealPlanId: string, date: Date) {
+    const plan = await prisma.mealPlan.findUnique({
+      where: { id: mealPlanId },
+      select: { startDate: true, endDate: true },
+    });
+    if (!plan) return;
+
+    const day = (d: Date) => d.toISOString().slice(0, 10);
+    const updateData: { startDate?: Date; endDate?: Date } = {};
+    if (day(date) < day(plan.startDate)) updateData.startDate = date;
+    if (day(date) > day(plan.endDate)) updateData.endDate = date;
+
+    if (updateData.startDate || updateData.endDate) {
+      await prisma.mealPlan.update({ where: { id: mealPlanId }, data: updateData });
+    }
+  }
+
   async addRecipeToMealPlan(mealPlanId: string, data: AddRecipeToMealPlanInput) {
+    await this.ensurePlanCoversDate(mealPlanId, new Date(data.date));
+
     const mealPlanRecipe = await prisma.mealPlanRecipe.create({
       data: {
         mealPlanId,
@@ -235,6 +256,14 @@ export class MealPlanService {
     if (data.servings !== undefined) updateData.servings = data.servings;
     if (data.notes !== undefined) updateData.notes = data.notes;
     if (data.completed !== undefined) updateData.completed = data.completed;
+
+    if (updateData.date) {
+      const existing = await prisma.mealPlanRecipe.findUnique({
+        where: { id: mealPlanRecipeId },
+        select: { mealPlanId: true },
+      });
+      if (existing) await this.ensurePlanCoversDate(existing.mealPlanId, updateData.date);
+    }
 
     const mealPlanRecipe = await prisma.mealPlanRecipe.update({
       where: { id: mealPlanRecipeId },

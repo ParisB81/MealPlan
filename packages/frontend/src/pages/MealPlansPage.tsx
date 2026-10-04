@@ -15,19 +15,24 @@ export default function MealPlansPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newPlanName, setNewPlanName] = useState('');
   const [newPlanPersons, setNewPlanPersons] = useState(1);
+  const todayKey = () => format(new Date(), 'yyyy-MM-dd');
+  const [newPlanStart, setNewPlanStart] = useState(todayKey);
   const navigate = useNavigate();
 
   const handleCreateWeeklyPlan = async () => {
-    const today = new Date();
-    const name = newPlanName || `Week of ${format(today, 'MMM d')}`;
-    const startDate = today.toISOString();
-    const endDate = addDays(today, 6).toISOString();
+    // Plans start as one week; they grow automatically when meals are added beyond the end
+    // (server-side) or via "+ Add week" in the week grid. Stored as UTC midnight like meal dates.
+    const start = new Date((newPlanStart || todayKey()) + 'T00:00:00.000Z');
+    const name = newPlanName || `Week of ${format(new Date(newPlanStart + 'T12:00:00'), 'MMM d')}`;
+    const startDate = start.toISOString();
+    const endDate = addDays(start, 6).toISOString();
 
     try {
       const newPlan = await createMealPlan.mutateAsync({ name, startDate, endDate, numberOfPersons: newPlanPersons });
       setShowCreateForm(false);
       setNewPlanName('');
       setNewPlanPersons(1);
+      setNewPlanStart(todayKey());
       navigate(`/meal-plans/${newPlan.id}`);
     } catch {
       // error handled by hook's onError
@@ -110,14 +115,22 @@ export default function MealPlansPage() {
           size="md"
         >
           <p className="text-text-secondary mb-4">
-            Create a weekly meal plan starting today
+            Plans start as one week and grow automatically as you add meals further ahead.
           </p>
           <Input
             label="Plan Name (optional)"
             value={newPlanName}
             onChange={(e) => setNewPlanName(e.target.value)}
-            placeholder={`Week of ${format(new Date(), 'MMM d')}`}
+            placeholder={`Week of ${format(new Date((newPlanStart || todayKey()) + 'T12:00:00'), 'MMM d')}`}
           />
+          <div className="mt-4">
+            <Input
+              type="date"
+              label="Start Date"
+              value={newPlanStart}
+              onChange={(e) => setNewPlanStart(e.target.value)}
+            />
+          </div>
           <div className="mt-4">
             <label className="block text-sm font-medium text-text-secondary mb-1">Number of Persons</label>
             <div className="flex items-center gap-3">

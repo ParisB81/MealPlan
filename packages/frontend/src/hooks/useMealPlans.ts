@@ -95,8 +95,9 @@ export function useAddRecipeToMealPlan() {
   return useMutation({
     mutationFn: ({ mealPlanId, input }: { mealPlanId: string; input: AddRecipeToMealPlanInput }) =>
       mealPlansService.addRecipe(mealPlanId, input),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: [MEAL_PLANS_KEY, variables.mealPlanId] });
+    onSuccess: () => {
+      // Whole prefix: the server may have extended the plan's date range to fit this meal
+      queryClient.invalidateQueries({ queryKey: [MEAL_PLANS_KEY] });
       toast.success('Recipe added to meal plan!');
     },
     onError: (error: Error) => {
