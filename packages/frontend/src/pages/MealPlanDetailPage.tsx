@@ -766,7 +766,12 @@ export default function MealPlanDetailPage() {
 
             {/* Grid View */}
             {viewMode === 'grid' && (
-              <Card className="mb-6">
+              <Collapsible
+                title="Week Calendar"
+                subtitle={`${mealPlan.meals.length} meals planned`}
+                defaultOpen
+                className="mb-6"
+              >
                 <WeekGridView
                   mealsByDate={mealsByDate}
                   startDate={mealPlan.startDate}
@@ -778,7 +783,7 @@ export default function MealPlanDetailPage() {
                   onAddMeal={handleAddMealToSlot}
                   onAddWeek={handleAddWeek}
                 />
-              </Card>
+              </Collapsible>
             )}
 
             {/* Card View (existing day cards) */}
