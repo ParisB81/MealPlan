@@ -11,6 +11,8 @@ interface CollapsibleProps {
   /** Controlled open state (overrides internal state) */
   open?: boolean;
   onToggle?: (open: boolean) => void;
+  /** Controls shown in the header next to the chevron (kept outside the toggle button) */
+  actions?: ReactNode;
   children: ReactNode;
   className?: string;
 }
@@ -21,6 +23,7 @@ export default function Collapsible({
   defaultOpen = false,
   open: controlledOpen,
   onToggle,
+  actions,
   children,
   className,
 }: CollapsibleProps) {
@@ -35,10 +38,11 @@ export default function Collapsible({
 
   return (
     <div className={twMerge('bg-surface rounded-xl border border-border-default shadow-sm', className)}>
+      <div className="flex items-center">
       <button
         type="button"
         onClick={toggle}
-        className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-hover-bg rounded-lg transition-colors"
+        className="flex-1 min-w-0 flex items-center justify-between px-6 py-4 text-left hover:bg-hover-bg rounded-lg transition-colors"
       >
         <div className="flex items-center gap-3 min-w-0">
           <span className="font-medium text-text-primary">{title}</span>
@@ -52,6 +56,8 @@ export default function Collapsible({
           }`}
         />
       </button>
+      {actions && <div className="flex items-center gap-1 pr-4 shrink-0">{actions}</div>}
+      </div>
       <div
         className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
           isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'

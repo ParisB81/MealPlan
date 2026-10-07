@@ -45,6 +45,10 @@ const MEAL_TYPE_BORDERS: Record<string, string> = {
 // Same order as the day cards (breakfast → snack → lunch → dinner)
 const MEAL_TYPE_ORDER: MealType[] = ['breakfast', 'snack', 'lunch', 'dinner'];
 
+// Saturday / Sunday columns get a soft band behind their cells
+const WEEKEND_SHADE = 'color-mix(in srgb, var(--color-border-strong) 35%, transparent)';
+const isWeekend = (day: Date) => day.getDay() === 0 || day.getDay() === 6;
+
 const LONG_PRESS_MS = 300;
 const MOUSE_DRAG_THRESHOLD = 5;
 const TOUCH_MOVE_TOLERANCE = 8;
@@ -486,16 +490,29 @@ export default function WeekGridView({
       )}
 
       {/* Meal-type × day matrix — scrollable on mobile */}
-      <div ref={scrollRef} className="overflow-x-auto pb-1">
+      <div ref={scrollRef} className="overflow-x-auto pb-1 px-0.5 pt-0.5">
         {allWeeks.map((days, w) => (
         <div
           key={w}
           className={`${w === weekIndex ? 'grid' : 'hidden'} gap-1 md:min-w-[820px]`}
           style={{ gridTemplateColumns: '64px repeat(7, minmax(96px, 1fr))' }}
         >
+          {/* Weekend bands — first in the DOM so the header and cells paint over them.
+              Every item is placed explicitly; auto-placement would treat the band's slots as taken. */}
+          {days.map((day, i) =>
+            isWeekend(day) ? (
+              <div
+                key={`band-${i}`}
+                aria-hidden
+                className="pointer-events-none rounded-lg"
+                style={{ gridColumn: i + 2, gridRow: `1 / span ${MEAL_TYPE_ORDER.length + 1}`, margin: -2, background: WEEKEND_SHADE }}
+              />
+            ) : null
+          )}
+
           {/* Header row */}
-          <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)]" />
-          {days.map((day) => {
+          <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)]" style={{ gridColumn: 1, gridRow: 1 }} />
+          {days.map((day, i) => {
             const dateKey = format(day, 'yyyy-MM-dd');
             const isToday = isSameDay(day, today);
             const hasMeals = (mealsByDate[dateKey] || []).length > 0;
@@ -503,6 +520,7 @@ export default function WeekGridView({
               <button
                 key={dateKey}
                 type="button"
+                style={{ gridColumn: i + 2, gridRow: 1 }}
                 onClick={() => hasMeals && onDateClick?.(dateKey)}
                 className={`text-center rounded-lg py-1.5 ${
                   isToday ? 'bg-accent-light' : ''
@@ -521,9 +539,10 @@ export default function WeekGridView({
           })}
 
           {/* One row per meal type */}
-          {MEAL_TYPE_ORDER.map((mealType) => (
+          {MEAL_TYPE_ORDER.map((mealType, r) => (
             <MealRow
               key={mealType}
+              gridRow={r + 2}
               mealType={mealType}
               weekDays={days}
               mealsByDate={mealsByDate}
@@ -639,6 +658,8 @@ export default function WeekGridView({
 }
 
 interface MealRowProps {
+  /** Explicit grid row (items are placed explicitly so weekend bands can sit underneath) */
+  gridRow: number;
   mealType: MealType;
   weekDays: Date[];
   mealsByDate: Record<string, any[]>;
@@ -651,6 +672,7 @@ interface MealRowProps {
 }
 
 function MealRow({
+  gridRow,
   mealType,
   weekDays,
   mealsByDate,
@@ -664,12 +686,15 @@ function MealRow({
   return (
     <>
       {/* Row label */}
-      <div className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)] flex items-start gap-1.5 pt-2 pr-1">
+      <div
+        className="sticky left-0 z-10 bg-surface shadow-[4px_0_0_0_var(--color-surface)] flex items-start gap-1.5 pt-2 pr-1"
+        style={{ gridColumn: 1, gridRow }}
+      >
         <span className={`w-2 h-2 rounded-full mt-1 shrink-0 ${MEAL_TYPE_COLORS[mealType]}`} />
         <span className="text-xs font-medium text-text-secondary capitalize">{mealType}</span>
       </div>
 
-      {weekDays.map((day) => {
+      {weekDays.map((day, i) => {
         const dateKey = format(day, 'yyyy-MM-dd');
         const inRange = isInPlan(day);
         const isToday = isSameDay(day, today);
@@ -683,6 +708,7 @@ function MealRow({
             data-date={dateKey}
             data-meal-type={mealType}
             data-in-range="true"
+            style={{ gridColumn: i + 2, gridRow }}
             title={inRange ? undefined : 'After the plan end — adding here extends the plan'}
             className={`group/cell relative rounded-lg border p-1 min-h-[64px] flex flex-col gap-1 transition-colors ${
               isTarget

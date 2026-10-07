@@ -733,11 +733,15 @@ export default function MealPlanDetailPage() {
           </Card>
         )}
 
-        {/* View Mode Toggle + Meals */}
+        {/* Meal Calendar — collapsible in both views; the view toggle lives in the header */}
         {Object.keys(mealsByDate).length > 0 && (
-          <>
-            {/* View toggle */}
-            <div className="flex items-center justify-end gap-1 mb-4">
+          <Collapsible
+            title="Meal Calendar"
+            subtitle={`${mealPlan.meals.length} meals planned`}
+            defaultOpen
+            className="mb-6"
+            actions={
+            <>
               <button
                 type="button"
                 onClick={() => setViewMode('cards')}
@@ -762,16 +766,11 @@ export default function MealPlanDetailPage() {
               >
                 <Grid3X3 size={18} />
               </button>
-            </div>
-
+            </>
+            }
+          >
             {/* Grid View */}
             {viewMode === 'grid' && (
-              <Collapsible
-                title="Week Calendar"
-                subtitle={`${mealPlan.meals.length} meals planned`}
-                defaultOpen
-                className="mb-6"
-              >
                 <WeekGridView
                   mealsByDate={mealsByDate}
                   startDate={mealPlan.startDate}
@@ -783,7 +782,6 @@ export default function MealPlanDetailPage() {
                   onAddMeal={handleAddMealToSlot}
                   onAddWeek={handleAddWeek}
                 />
-              </Collapsible>
             )}
 
             {/* Card View (existing day cards) */}
@@ -881,7 +879,7 @@ export default function MealPlanDetailPage() {
                 })}
               </div>
             )}
-          </>
+          </Collapsible>
         )}
 
 
