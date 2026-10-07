@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { format, addDays } from 'date-fns';
-import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3, Pencil } from 'lucide-react';
+import { ShoppingCart, ChevronDown, PlusCircle, ListPlus, CookingPot, LayoutList, Grid3X3, Pencil, Clock } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useMealPlan, useDeleteMealPlan, useMealPlanNutrition, useRemoveRecipeFromMealPlan, useUpdateMealPlanStatus, useUpdateMealPlan } from '../hooks/useMealPlans';
@@ -11,6 +11,34 @@ import AddRecipeModal from '../components/AddRecipeModal';
 import WeekGridView from '../components/WeekGridView';
 import { Button, Card, Badge, Modal, Collapsible } from '../components/ui';
 import type { MealType } from '../types/mealPlan';
+import { getCategoryForTag } from '../data/tagDefinitions';
+
+const MEAL_TYPE_ORDER: MealType[] = ['breakfast', 'snack', 'lunch', 'dinner'];
+const MEAL_TYPE_DOTS: Record<string, string> = {
+  breakfast: 'bg-amber-400',
+  lunch: 'bg-green-400',
+  dinner: 'bg-blue-400',
+  snack: 'bg-purple-400',
+};
+
+interface DishSummary {
+  recipeId: string;
+  title: string;
+  times: number;
+  servings: number;
+  prepTime?: number;
+  cookTime?: number;
+  methods: string[];
+  dates: string[];
+}
+
+const formatMinutes = (min?: number) => {
+  if (!min) return '—';
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m ? `${h}h ${m}m` : `${h}h`;
+};
 
 export default function MealPlanDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -88,6 +116,42 @@ export default function MealPlanDetailPage() {
     }
     return days;
   }, [mealsByDate]);
+
+  // Distinct dishes per meal type — a quick view of what has to be cooked
+  const dishesByMealType = useMemo(() => {
+    const groups: Record<string, DishSummary[]> = {};
+    const sorted = [...(mealPlan?.meals || [])].sort((a: any, b: any) => a.date.localeCompare(b.date));
+    for (const meal of sorted as any[]) {
+      const recipeId = meal.recipe?.id || meal.recipeId;
+      const list = (groups[meal.mealType] ??= []);
+      let dish = list.find((d) => d.recipeId === recipeId);
+      if (!dish) {
+        const tags: string[] = Array.isArray(meal.recipe?.tags)
+          ? meal.recipe.tags
+          : (meal.recipe?.tags || '').split(',').map((t: string) => t.trim()).filter(Boolean);
+        dish = {
+          recipeId,
+          title: meal.recipe?.title || 'Unknown recipe',
+          times: 0,
+          servings: 0,
+          prepTime: meal.recipe?.prepTime,
+          cookTime: meal.recipe?.cookTime,
+          methods: tags.filter((t) => getCategoryForTag(t)?.name === 'Method'),
+          dates: [],
+        };
+        list.push(dish);
+      }
+      dish.times++;
+      dish.servings += meal.servings || 0;
+      const dateKey = format(new Date(meal.date), 'yyyy-MM-dd');
+      if (!dish.dates.includes(dateKey)) dish.dates.push(dateKey);
+    }
+    return groups;
+  }, [mealPlan?.meals]);
+  const distinctDishCount = useMemo(
+    () => new Set((mealPlan?.meals || []).map((m: any) => m.recipe?.id || m.recipeId)).size,
+    [mealPlan?.meals]
+  );
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -215,6 +279,64 @@ export default function MealPlanDetailPage() {
       toast.error('Failed to copy meal');
     } finally {
       // Prefix match also refreshes plan lists — the server may have extended the plan's dates
+      queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
+    }
+  }, [id, queryClient]);
+
+  // Remove a meal from the week grid (× on a dish, or dropped on the remove zone).
+  // Optimistic, with an Undo toast that re-adds the same dish to the same slot.
+  const handleRemoveMeal = useCallback(async (mealId: string) => {
+    if (!id) return;
+    const queryKey = ['meal-plans', id];
+    const previous = queryClient.getQueryData<any>(queryKey);
+    const meal = previous?.meals?.find((m: any) => m.id === mealId);
+    if (!meal) return;
+
+    await queryClient.cancelQueries({ queryKey });
+    queryClient.setQueryData(queryKey, {
+      ...previous,
+      meals: previous.meals.filter((m: any) => m.id !== mealId),
+    });
+
+    const title = meal.recipe?.title || 'Meal';
+    const undo = async () => {
+      try {
+        await mealPlansService.addRecipe(id, {
+          recipeId: meal.recipe?.id || meal.recipeId,
+          date: meal.date,
+          mealType: meal.mealType,
+          servings: meal.servings,
+          ...(meal.notes ? { notes: meal.notes } : {}),
+        });
+        toast.success(`Restored ${title}`);
+      } catch {
+        toast.error('Failed to restore meal');
+      } finally {
+        queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
+      }
+    };
+
+    try {
+      await mealPlansService.removeRecipe(id, mealId);
+      toast(
+        (t) => (
+          <span className="flex items-center gap-3">
+            <span>Removed <strong>{title}</strong></span>
+            <button
+              type="button"
+              onClick={() => { toast.dismiss(t.id); undo(); }}
+              className="font-semibold text-accent underline whitespace-nowrap"
+            >
+              Undo
+            </button>
+          </span>
+        ),
+        { duration: 6000 }
+      );
+    } catch {
+      queryClient.setQueryData(queryKey, previous);
+      toast.error('Failed to remove meal');
+    } finally {
       queryClient.invalidateQueries({ queryKey: ['meal-plans'] });
     }
   }, [id, queryClient]);
@@ -516,6 +638,85 @@ export default function MealPlanDetailPage() {
           </Collapsible>
         )}
 
+        {/* Dishes by meal type — what needs cooking */}
+        {mealPlan.meals.length > 0 && (
+          <Collapsible
+            title="Dishes by Meal Type"
+            subtitle={`${distinctDishCount} distinct dish${distinctDishCount === 1 ? '' : 'es'} across ${mealPlan.meals.length} meals`}
+            className="mb-6"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-text-secondary">
+                    <th className="text-left py-1.5 pr-3 font-medium">Dish</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Times</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Servings</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Prep</th>
+                    <th className="text-right py-1.5 px-2 font-medium">Cook</th>
+                    <th className="text-left py-1.5 px-2 font-medium">Method</th>
+                    <th className="text-left py-1.5 pl-2 font-medium">Days</th>
+                  </tr>
+                </thead>
+                {MEAL_TYPE_ORDER.filter((type) => dishesByMealType[type]?.length).map((type) => {
+                  const dishes = dishesByMealType[type];
+                  const mealCount = dishes.reduce((n, d) => n + d.times, 0);
+                  return (
+                    <tbody key={type}>
+                      <tr>
+                        <td colSpan={7} className="pt-4 pb-1.5">
+                          <span className="flex items-center gap-2 text-xs font-semibold text-text-secondary uppercase tracking-wider">
+                            <span className={`w-2.5 h-2.5 rounded-full ${MEAL_TYPE_DOTS[type]}`} />
+                            {type}
+                            <span className="normal-case tracking-normal font-normal text-text-muted">
+                              {dishes.length} dish{dishes.length === 1 ? '' : 'es'} · {mealCount} meal{mealCount === 1 ? '' : 's'}
+                            </span>
+                          </span>
+                        </td>
+                      </tr>
+                      {dishes.map((dish) => {
+                        const total = (dish.prepTime || 0) + (dish.cookTime || 0);
+                        return (
+                          <tr key={dish.recipeId} className="border-t border-border/50 align-top">
+                            <td className="py-1.5 pr-3 min-w-[160px]">
+                              <Link to={`/recipes/${dish.recipeId}`} className="text-text-primary font-medium hover:text-accent">
+                                {dish.title}
+                              </Link>
+                              {total >= 60 && (
+                                <span className="ml-1.5 inline-flex items-center gap-0.5 text-xs text-text-muted whitespace-nowrap" title="Takes an hour or more in total">
+                                  <Clock className="w-3 h-3" /> {formatMinutes(total)}
+                                </span>
+                              )}
+                            </td>
+                            <td className="text-right py-1.5 px-2 text-text-primary font-semibold">×{dish.times}</td>
+                            <td className="text-right py-1.5 px-2 text-text-primary">{dish.servings}</td>
+                            <td className="text-right py-1.5 px-2 text-text-primary whitespace-nowrap">{formatMinutes(dish.prepTime)}</td>
+                            <td className="text-right py-1.5 px-2 text-text-primary whitespace-nowrap">{formatMinutes(dish.cookTime)}</td>
+                            <td className="py-1.5 px-2">
+                              {dish.methods.length > 0 ? (
+                                <span className="flex flex-wrap gap-1">
+                                  {dish.methods.map((m) => (
+                                    <Badge key={m} variant="red">{m}</Badge>
+                                  ))}
+                                </span>
+                              ) : (
+                                <span className="text-text-muted">—</span>
+                              )}
+                            </td>
+                            <td className="py-1.5 pl-2 text-text-secondary text-xs min-w-[120px]">
+                              {dish.dates.map((d) => format(new Date(d + 'T12:00:00'), 'EEE d')).join(', ')}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  );
+                })}
+              </table>
+            </div>
+          </Collapsible>
+        )}
+
         {/* Empty State */}
         {mealPlan.meals.length === 0 && (
           <Card padding="lg" className="text-center">
@@ -573,6 +774,7 @@ export default function MealPlanDetailPage() {
                   onDateClick={(dateKey) => { setViewMode('cards'); setTimeout(() => handleDateClick(dateKey), 50); }}
                   onMoveMeal={handleMoveMeal}
                   onCopyMeal={handleCopyMeal}
+                  onRemoveMeal={handleRemoveMeal}
                   onAddMeal={handleAddMealToSlot}
                   onAddWeek={handleAddWeek}
                 />

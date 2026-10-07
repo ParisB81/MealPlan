@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PointerEvent as ReactPointerEvent, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, GripVertical, MoveRight, Copy, X } from 'lucide-react';
+import { Plus, GripVertical, MoveRight, Copy, X, Trash2 } from 'lucide-react';
 import {
   format,
   addDays,
@@ -20,6 +20,8 @@ interface WeekGridViewProps {
   onMoveMeal?: (mealId: string, dateKey: string, mealType: MealType) => void;
   /** Called when the user chooses "Copy here" (or drops while holding Ctrl/⌘) */
   onCopyMeal?: (mealId: string, dateKey: string, mealType: MealType) => void;
+  /** Called when a dish is removed (× on the chip, or dropped on the remove zone) */
+  onRemoveMeal?: (mealId: string) => void;
   /** Called when the "+" in a cell is pressed */
   onAddMeal?: (dateKey: string, mealType: MealType) => void;
   /** Extend the plan by 7 days (shown as "+ Add week" on the last week) */
@@ -92,6 +94,7 @@ export default function WeekGridView({
   onDateClick,
   onMoveMeal,
   onCopyMeal,
+  onRemoveMeal,
   onAddMeal,
   onAddWeek,
 }: WeekGridViewProps) {
@@ -163,6 +166,14 @@ export default function WeekGridView({
   const [dropMenu, setDropMenu] = useState<DropMenu | null>(null);
   const onCopyMealRef = useRef(onCopyMeal);
   onCopyMealRef.current = onCopyMeal;
+  const onRemoveMealRef = useRef(onRemoveMeal);
+  onRemoveMealRef.current = onRemoveMeal;
+  // Pointer is over the "drop here to remove" zone
+  const [overRemove, setOverRemove] = useState(false);
+  const overRemoveRef = useRef(false);
+
+  const isOverRemoveZone = (x: number, y: number) =>
+    !!(document.elementFromPoint(x, y) as HTMLElement | null)?.closest('[data-remove-zone]');
 
   const findDropTarget = (x: number, y: number): DropTarget | null => {
     const el = document.elementFromPoint(x, y) as HTMLElement | null;
@@ -226,8 +237,10 @@ export default function WeekGridView({
     pendingRef.current = null;
     dragRef.current = null;
     dropTargetRef.current = null;
+    overRemoveRef.current = false;
     setDrag(null);
     setDropTarget(null);
+    setOverRemove(false);
     window.removeEventListener('pointermove', handlePointerMove);
     window.removeEventListener('pointerup', handlePointerUp);
     window.removeEventListener('pointercancel', handlePointerCancel);
@@ -266,6 +279,11 @@ export default function WeekGridView({
       dropTargetRef.current = target;
       setDropTarget(target);
     }
+    const removing = isOverRemoveZone(e.clientX, e.clientY);
+    if (removing !== overRemoveRef.current) {
+      overRemoveRef.current = removing;
+      setOverRemove(removing);
+    }
     autoScroll(e.clientX, e.clientY);
     updateWeekFlip(e.clientX, e.clientY);
   }).current;
@@ -276,7 +294,9 @@ export default function WeekGridView({
     const current = dragRef.current;
     if (current) {
       const target = findDropTarget(e.clientX, e.clientY);
-      if (target) {
+      if (isOverRemoveZone(e.clientX, e.clientY)) {
+        onRemoveMealRef.current?.(current.meal.id);
+      } else if (target) {
         const fromKey = format(new Date(current.meal.date), 'yyyy-MM-dd');
         const sameCell = fromKey === target.dateKey && current.meal.mealType === target.mealType;
         if (e.ctrlKey || e.metaKey) {
@@ -367,7 +387,7 @@ export default function WeekGridView({
         onPointerDown={(e) => handleChipPointerDown(e, meal)}
         onClickCapture={handleChipClickCapture}
         onContextMenu={(e) => onMoveMeal && e.preventDefault()}
-        className={`group flex items-start gap-1 rounded-md border border-border-default border-l-4 ${
+        className={`group relative flex items-start gap-1 rounded-md border border-border-default border-l-4 ${
           MEAL_TYPE_BORDERS[meal.mealType] || 'border-l-gray-400'
         } bg-surface px-1.5 py-1 shadow-sm select-none [-webkit-touch-callout:none] ${
           onMoveMeal ? 'cursor-grab active:cursor-grabbing' : ''
@@ -389,6 +409,19 @@ export default function WeekGridView({
             {meal.servings} serving{meal.servings > 1 ? 's' : ''}
           </span>
         </div>
+        {onRemoveMeal && !drag && (
+          <button
+            type="button"
+            // Don't let the press start a drag / long-press on the chip
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => { e.stopPropagation(); onRemoveMeal(meal.id); }}
+            className="absolute -top-1 -right-1 z-[1] w-5 h-5 flex items-center justify-center rounded-full border border-border-default bg-surface text-text-muted shadow-sm hover:text-white hover:bg-btn-danger hover:border-btn-danger md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 transition-opacity"
+            title={`Remove ${meal.recipe?.title || 'dish'}`}
+            aria-label={`Remove ${meal.recipe?.title || 'dish'}`}
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     );
   };
@@ -445,7 +478,8 @@ export default function WeekGridView({
       {onMoveMeal && (
         <p className="text-xs text-text-muted mb-2">
           <span className="hidden md:inline">Drag</span>
-          <span className="md:hidden">Press and hold</span> a dish to move or copy it to another day or meal.
+          <span className="md:hidden">Press and hold</span> a dish to move or copy it to another day or meal
+          {onRemoveMeal ? ', or onto the bin to remove it' : ''}.
           <span className="hidden md:inline"> Hold Ctrl while dropping to copy straight away.</span>
           {totalWeeks > 1 && ' Hold it over an arrow to switch weeks.'}
         </p>
@@ -505,6 +539,21 @@ export default function WeekGridView({
         ))}
       </div>
 
+      {/* Remove zone — only shown while dragging; sits above the mobile tab bar */}
+      {drag && onRemoveMeal && (
+        <div
+          data-remove-zone
+          className={`fixed z-40 left-1/2 -translate-x-1/2 bottom-24 md:bottom-8 flex items-center gap-2 px-6 h-14 rounded-full border-2 border-dashed shadow-lg text-sm font-medium transition-all ${
+            overRemove
+              ? 'bg-btn-danger border-btn-danger text-white scale-110'
+              : 'bg-surface border-btn-danger text-btn-danger'
+          }`}
+        >
+          <Trash2 className="w-5 h-5" />
+          Drop here to remove
+        </div>
+      )}
+
       {/* Floating ghost that follows the pointer while dragging */}
       {drag && (
         <div
@@ -522,7 +571,7 @@ export default function WeekGridView({
           >
             {drag.meal.recipe?.title}
           </div>
-          {drag.copy && (
+          {drag.copy && !overRemove && (
             <span className="absolute -top-2 -right-2 rounded-full bg-btn-success text-white text-[10px] font-semibold px-1.5 py-0.5 shadow">
               + Copy
             </span>
