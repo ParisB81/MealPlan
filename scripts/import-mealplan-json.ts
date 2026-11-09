@@ -382,7 +382,18 @@ async function main() {
   console.log(`New master ingredients (${newIngredients.size}): ${[...newIngredients].sort().join(', ')}\n`);
 
   // ── 2. Collections ──
-  for (const c of data.collections) {
+  // Explicit "collections" list, plus any collection named only in a recipe's own
+  // "collection" field (e.g. "Everyday"), so every recipe lands in its group.
+  const collections: JsonCollection[] = [...data.collections];
+  const listed = new Set(collections.map(c => c.name));
+  const derived = new Map<string, string[]>();
+  for (const r of data.recipes) {
+    if (r.collection && !listed.has(r.collection)) derived.set(r.collection, [...(derived.get(r.collection) ?? []), r.id]);
+  }
+  for (const [name, recipeIds] of derived) {
+    collections.push({ name, description: `${name} recipes from the Nov–Dec 2026 1,600 kcal plan.`, recipeIds });
+  }
+  for (const c of collections) {
     let col = await prisma.recipeCollection.findFirst({ where: { userId: USER_ID, name: c.name, status: 'active' } });
     const recipeDbIds = c.recipeIds.map(id => jsonIdToDbId.get(id)).filter((x): x is string => !!x);
     if (!APPLY) {
