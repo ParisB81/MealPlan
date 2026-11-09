@@ -313,8 +313,14 @@ async function main() {
   // Ingredient lookup (name → id), with simple plural fallback.
   const allIngs = await prisma.ingredient.findMany({ select: { id: true, name: true } });
   const ingByName = new Map(allIngs.map(i => [i.name, i.id]));
+  // Per-database fallbacks (production's ingredient list was refined differently from local).
+  const FALLBACKS: Record<string, string[]> = {
+    'greek yogurt': ['greek yogurt (low fat)', 'greek yogurt (full fat)', 'strained yogurt'],
+  };
   const resolveName = (n: string) => {
     if (ingByName.has(n)) return n;
+    const fb = FALLBACKS[n]?.find(f => ingByName.has(f));
+    if (fb) return fb;
     if (n.endsWith('es') && ingByName.has(n.slice(0, -2))) return n.slice(0, -2);
     if (n.endsWith('s') && ingByName.has(n.slice(0, -1))) return n.slice(0, -1);
     return n;
