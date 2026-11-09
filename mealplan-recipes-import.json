@@ -1,0 +1,2382 @@
+{
+  "source": "Meal plan Nov–Dec 2026 (Claude)",
+  "version": 1,
+  "generated": "2026-11-09",
+  "units": "metric, raw weights; 1 tsp olive oil = 5 g",
+  "recipes": [
+    {
+      "id": "B1",
+      "name": "Yogurt, oats & pomegranate",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 370,
+      "protein_g": 26,
+      "ingredients": [
+        "200 g 2% Greek yogurt",
+        "40 g rolled oats",
+        "50 g pomegranate seeds",
+        "10 g honey"
+      ],
+      "method": "Stir the oats into the yogurt 10 minutes ahead (or the night before). Top with pomegranate and honey.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B2",
+      "name": "Spinach egg scramble + toast",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 390,
+      "protein_g": 24,
+      "ingredients": [
+        "2 eggs + 2 egg whites",
+        "60 g spinach",
+        "1 tsp olive oil",
+        "1 slice wholegrain bread",
+        "1 orange"
+      ],
+      "method": "Wilt the spinach in the oil for 1 minute, add the beaten eggs and stir on low heat for 2 minutes. Season with oregano and pepper.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B3",
+      "name": "Overnight oats, pear & walnuts",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 375,
+      "protein_g": 25,
+      "ingredients": [
+        "40 g rolled oats",
+        "150 ml skimmed milk",
+        "100 g skyr",
+        "½ pear, grated",
+        "10 g walnuts",
+        "Cinnamon"
+      ],
+      "method": "Mix everything except the walnuts in a jar the night before. Top with walnuts in the morning.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B4",
+      "name": "Feta-tomato omelette + toast",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 385,
+      "protein_g": 22,
+      "ingredients": [
+        "2 eggs",
+        "30 g feta",
+        "1 tomato, diced",
+        "1 tsp olive oil",
+        "Oregano",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Cook the eggs for 3 minutes, add tomato and crumbled feta, fold and cook 1 minute more.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B5",
+      "name": "Cottage cheese & tomato toast",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 345,
+      "protein_g": 28,
+      "ingredients": [
+        "200 g low-fat cottage cheese (or anthotyro)",
+        "1 slice wholegrain bread",
+        "1 tomato",
+        "½ cucumber",
+        "1 tsp olive oil",
+        "Oregano"
+      ],
+      "method": "Toast the bread. Serve with the cheese and sliced veg dressed with oil and oregano.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B6",
+      "name": "Skyr bowl, kiwi & walnuts",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 375,
+      "protein_g": 32,
+      "ingredients": [
+        "250 g 0% skyr",
+        "30 g rolled oats",
+        "1 kiwi",
+        "10 g walnuts",
+        "Cinnamon"
+      ],
+      "method": "Stir the oats into the skyr. Top with sliced kiwi and walnuts.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L1",
+      "name": "Chicken, bulgur & village salad",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 475,
+      "protein_g": 39,
+      "ingredients": [
+        "150 g chicken breast",
+        "50 g dry bulgur",
+        "1 tomato, ½ cucumber, ¼ red onion, ½ green pepper",
+        "1 tbsp olive oil",
+        "Oregano, vinegar"
+      ],
+      "method": "Grill the chicken 5–6 minutes per side (or use Sunday’s batch). Simmer the bulgur in double its volume of water for 12 minutes. Chop and dress the salad.",
+      "trainingDayTopUp": "+25 g bulgur (+85 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L2",
+      "name": "Fakes with feta",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 480,
+      "protein_g": 24,
+      "ingredients": [
+        "80 g dry brown lentils",
+        "1 carrot, ½ onion, 2 garlic cloves",
+        "1 bay leaf",
+        "1 tbsp tomato paste",
+        "1 tbsp olive oil",
+        "Splash of red-wine vinegar",
+        "30 g feta"
+      ],
+      "method": "Simmer everything except the oil and vinegar in 700 ml water for 35–40 minutes. Stir in the oil and vinegar at the end; crumble feta on top. Batch 4 portions.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L3",
+      "name": "Tuna-yogurt wrap + apple",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 460,
+      "protein_g": 34,
+      "ingredients": [
+        "1 wholegrain tortilla (60 g)",
+        "1 can tuna in water (120 g drained)",
+        "50 g Greek yogurt",
+        "1 tsp mustard, lemon",
+        "Lettuce, ½ tomato, 30 g sweetcorn",
+        "1 apple"
+      ],
+      "method": "Mix tuna, yogurt, mustard and lemon. Wrap with the vegetables. Apple on the side.",
+      "trainingDayTopUp": "+½ tortilla (+90 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L4",
+      "name": "Chicken & broccoli stir-fry",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 505,
+      "protein_g": 40,
+      "ingredients": [
+        "150 g chicken breast strips",
+        "200 g broccoli, red pepper and carrot",
+        "1 tbsp olive oil",
+        "1 tbsp soy sauce",
+        "Garlic, fresh ginger",
+        "50 g dry rice"
+      ],
+      "method": "Boil the rice. Stir-fry the chicken on high for 5 minutes, add the veg for 4 minutes, soy at the end.",
+      "trainingDayTopUp": "+25 g rice (+90 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L5",
+      "name": "Chickpea & tuna salad",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 500,
+      "protein_g": 42,
+      "ingredients": [
+        "180 g cooked chickpeas, drained",
+        "1 can tuna in water (120 g)",
+        "Tomato, cucumber, red onion, parsley",
+        "1 tbsp olive oil",
+        "Lemon, cumin"
+      ],
+      "method": "Toss everything together. Keeps 2 days in the fridge.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L6",
+      "name": "Turkey sandwich + skyr",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 450,
+      "protein_g": 40,
+      "ingredients": [
+        "2 slices wholegrain bread",
+        "100 g sliced turkey breast",
+        "20 g light cheese",
+        "Lettuce, tomato, mustard",
+        "150 g skyr with cinnamon"
+      ],
+      "method": "Assemble the sandwich; skyr on the side.",
+      "trainingDayTopUp": "+1 apple (+80 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D1",
+      "name": "Baked salmon, roast cauliflower-broccoli, potato",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 455,
+      "protein_g": 30,
+      "ingredients": [
+        "130 g salmon fillet",
+        "200 g cauliflower and broccoli florets",
+        "100 g potato",
+        "1 tsp olive oil",
+        "Lemon, dill"
+      ],
+      "method": "Roast the veg and potato cubes at 200 °C for 25 minutes. Add the salmon for the last 12–14 minutes.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "Grilled sea bream, horta, potato",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 475,
+      "protein_g": 33,
+      "ingredients": [
+        "150 g sea bream fillet (or a 300 g whole fish)",
+        "200 g horta (vlita or radikia)",
+        "100 g potato",
+        "1 tbsp olive oil, split",
+        "Lemon",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Boil the horta and potato. Grill the fish 3–4 minutes per side. Dress with oil and lemon.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "Chicken souvlaki, tzatziki, pita",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 440,
+      "protein_g": 40,
+      "ingredients": [
+        "150 g chicken breast cubes",
+        "Lemon, oregano, garlic marinade",
+        "80 g tzatziki (2% yogurt, cucumber, garlic, dill, ½ tsp oil)",
+        "1 pita (60 g)",
+        "Tomato-onion salad"
+      ],
+      "method": "Marinate 15 minutes or more. Skewer and grill or pan-cook 10–12 minutes, turning. Warm the pita.",
+      "trainingDayTopUp": "+½ pita (+80 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D4",
+      "name": "Lean beef patty, roast pumpkin, salad",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 445,
+      "protein_g": 30,
+      "ingredients": [
+        "130 g 5%-fat beef mince",
+        "Grated onion, parsley, cumin",
+        "200 g pumpkin cubes",
+        "Lettuce, rocket, cabbage",
+        "2 tsp olive oil, split; lemon",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Roast the pumpkin at 200 °C for 25 minutes. Shape and pan-sear the patty 4 minutes per side.",
+      "trainingDayTopUp": "+100 g potato with the pumpkin (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D5",
+      "name": "Garides saganaki with orzo",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 520,
+      "protein_g": 48,
+      "ingredients": [
+        "180 g raw peeled prawns",
+        "150 g grated tomato or passata",
+        "2 garlic cloves, chilli flakes",
+        "30 g feta",
+        "1 tsp olive oil",
+        "50 g dry orzo",
+        "Parsley"
+      ],
+      "method": "Simmer garlic and tomato for 8 minutes. Add the prawns for 3 minutes, crumble feta on top. Serve over boiled orzo.",
+      "trainingDayTopUp": "+25 g orzo (+90 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D6",
+      "name": "Turkey keftedakia & pasta",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 470,
+      "protein_g": 40,
+      "ingredients": [
+        "150 g lean turkey mince",
+        "Grated onion, parsley, mint, 1 egg white",
+        "150 g passata, garlic",
+        "60 g dry wholewheat pasta",
+        "10 g grated kefalotyri"
+      ],
+      "method": "Shape 8 balls and bake at 200 °C for 18 minutes. Finish 5 minutes in simmering sauce. Serve on the pasta. Batch 2–3 portions.",
+      "trainingDayTopUp": "+20 g pasta (+70 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D7",
+      "name": "Vegetable & feta frittata",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 460,
+      "protein_g": 25,
+      "ingredients": [
+        "3 eggs",
+        "150 g courgette, pepper, spinach and leek",
+        "20 g feta",
+        "1 tsp olive oil",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Sauté the veg 5 minutes in an ovenproof pan. Pour in the eggs, crumble feta, bake at 180 °C for 10 minutes.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D8",
+      "name": "Lemon chicken traybake",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 430,
+      "protein_g": 32,
+      "ingredients": [
+        "150 g skinless chicken thigh",
+        "150 g potato wedges",
+        "150 g green beans",
+        "2 tsp olive oil",
+        "Lemon, garlic, oregano, 1 tsp mustard"
+      ],
+      "method": "Toss everything on one tray and roast at 200 °C for 40 minutes.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D9",
+      "name": "Grilled sardines, horta, bread",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 505,
+      "protein_g": 35,
+      "ingredients": [
+        "150 g cleaned fresh sardines (or tinned in water)",
+        "200 g horta",
+        "1 tsp olive oil",
+        "Lemon, coarse salt",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Grill or pan-sear the sardines 3 minutes per side. Serve with boiled horta and lemon.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D10",
+      "name": "Chicken avgolemono soup",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 410,
+      "protein_g": 40,
+      "ingredients": [
+        "150 g chicken breast",
+        "40 g rice",
+        "1 egg",
+        "Juice of 1 lemon",
+        "1 carrot, 1 celery stick, ½ onion"
+      ],
+      "method": "Poach the chicken with the veg in 800 ml water for 20 minutes; shred. Cook the rice in the broth for 15 minutes. Whisk egg and lemon, temper with hot broth, stir in off the heat. Return the chicken.",
+      "trainingDayTopUp": "+20 g rice (+70 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B7",
+      "name": "Poached eggs, avocado toast + skyr",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 380,
+      "protein_g": 27,
+      "ingredients": [
+        "2 eggs",
+        "1 slice wholegrain bread",
+        "40 g avocado",
+        "Cherry tomatoes",
+        "100 g 0% skyr on the side",
+        "Chilli flakes, lemon"
+      ],
+      "method": "Poach the eggs 3 minutes in barely simmering water. Mash avocado with lemon on the toast, top with eggs and tomatoes.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B8",
+      "name": "Kayianas (tomato eggs) + toast",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 385,
+      "protein_g": 25,
+      "ingredients": [
+        "2 eggs + 1 egg white",
+        "150 g grated ripe tomato",
+        "20 g feta",
+        "1 tsp olive oil",
+        "Oregano",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Cook the grated tomato in the oil 5 minutes until thick. Add the beaten eggs and stir gently 2 minutes; crumble feta on top.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B9",
+      "name": "Apple-cinnamon porridge",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 370,
+      "protein_g": 25,
+      "ingredients": [
+        "40 g rolled oats",
+        "250 ml skimmed milk",
+        "½ apple, grated",
+        "100 g 0% skyr",
+        "5 g walnuts",
+        "Cinnamon"
+      ],
+      "method": "Simmer oats, milk and apple 4–5 minutes, stirring. Top with skyr, walnuts and cinnamon.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B10",
+      "name": "Smoked salmon & cottage cheese toast",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 360,
+      "protein_g": 31,
+      "ingredients": [
+        "60 g wholegrain bread",
+        "100 g low-fat cottage cheese",
+        "60 g smoked salmon",
+        "Cucumber, dill, lemon, capers",
+        "1 orange"
+      ],
+      "method": "Toast the bread, spread with cottage cheese, top with salmon, cucumber and dill. Orange on the side.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B11",
+      "name": "Banana-oat pancakes",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 380,
+      "protein_g": 28,
+      "ingredients": [
+        "1 medium banana",
+        "1 egg + 2 egg whites",
+        "30 g rolled oats",
+        "100 g 0% skyr to top",
+        "Cinnamon"
+      ],
+      "method": "Blend banana, eggs and oats. Cook 4 small pancakes in a non-stick pan, 2 minutes per side. Top with skyr and cinnamon.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B12",
+      "name": "Tahini-honey yogurt with pear",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 378,
+      "protein_g": 22,
+      "ingredients": [
+        "200 g 2% Greek yogurt",
+        "10 g tahini",
+        "5 g honey",
+        "1 pear, sliced",
+        "15 g rolled oats"
+      ],
+      "method": "Swirl tahini and honey into the yogurt; top with pear and oats.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B13",
+      "name": "Mushroom, spinach & cheese omelette",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 400,
+      "protein_g": 28,
+      "ingredients": [
+        "2 eggs + 2 egg whites",
+        "100 g mushrooms",
+        "40 g spinach",
+        "20 g light cheese",
+        "1 tsp olive oil",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Sauté mushrooms 4 minutes, add spinach until wilted. Pour in eggs, add cheese, fold after 3 minutes.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B14",
+      "name": "Cottage cheese, pomegranate & walnut bowl",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 375,
+      "protein_g": 31,
+      "ingredients": [
+        "250 g low-fat cottage cheese",
+        "50 g pomegranate seeds",
+        "½ apple, diced",
+        "10 g walnuts",
+        "10 g honey"
+      ],
+      "method": "Spoon cottage cheese into a bowl; top with fruit, walnuts and honey.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "B15",
+      "name": "Village plate: eggs, feta, tomato + skyr",
+      "mealType": "breakfast",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 385,
+      "protein_g": 29,
+      "ingredients": [
+        "2 boiled eggs",
+        "20 g feta",
+        "Tomato and cucumber",
+        "1 slice wholegrain bread",
+        "100 g 0% skyr"
+      ],
+      "method": "Boil eggs 9 minutes (batch on Sunday). Plate with feta, sliced veg and bread; skyr on the side.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L7",
+      "name": "Black-eyed pea & tuna salad",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 485,
+      "protein_g": 41,
+      "ingredients": [
+        "150 g cooked black-eyed peas",
+        "1 can tuna in water (120 g)",
+        "Spring onion, dill, tomato",
+        "1 tbsp olive oil, lemon",
+        "1 orange"
+      ],
+      "method": "Toss beans, tuna, chopped herbs and tomato with oil and lemon. Orange after.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L8",
+      "name": "Chicken gyro-style pita",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 450,
+      "protein_g": 37,
+      "ingredients": [
+        "1 pita (60 g)",
+        "130 g chicken breast, sliced thin",
+        "Paprika, cumin, oregano, lemon",
+        "60 g tzatziki",
+        "Tomato, onion",
+        "Side salad with 1 tsp olive oil"
+      ],
+      "method": "Season the chicken and pan-sear 5–6 minutes. Fill the warm pita with chicken, tzatziki, tomato and onion.",
+      "trainingDayTopUp": "+½ pita (+80 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L9",
+      "name": "Quinoa, chicken & roast pumpkin bowl",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 475,
+      "protein_g": 42,
+      "ingredients": [
+        "150 g chicken breast",
+        "45 g dry quinoa",
+        "150 g pumpkin cubes",
+        "Rocket",
+        "20 g feta",
+        "1 tsp olive oil, lemon"
+      ],
+      "method": "Roast pumpkin at 200 °C for 25 minutes; simmer quinoa 12 minutes. Slice grilled chicken over rocket, quinoa and pumpkin; crumble feta.",
+      "trainingDayTopUp": "+20 g quinoa (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L10",
+      "name": "Tuna, egg & potato salad",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 510,
+      "protein_g": 39,
+      "ingredients": [
+        "100 g tuna in water",
+        "2 boiled eggs",
+        "150 g boiled potato",
+        "100 g green beans",
+        "Tomato, 5 olives",
+        "2 tsp olive oil, mustard, vinegar"
+      ],
+      "method": "Boil potatoes and beans; cool. Combine with tuna, halved eggs, tomato and olives; dress with oil, mustard and vinegar.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L11",
+      "name": "One-pot chicken kritharoto",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 470,
+      "protein_g": 39,
+      "ingredients": [
+        "150 g skinless chicken thigh, diced",
+        "50 g dry orzo",
+        "100 g passata",
+        "½ onion",
+        "1 tsp olive oil",
+        "10 g grated kefalotyri"
+      ],
+      "method": "Brown chicken and onion in the oil 5 minutes. Add passata and 250 ml water, then orzo; simmer 12 minutes, stirring. Finish with cheese.",
+      "trainingDayTopUp": "+20 g orzo (+70 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L12",
+      "name": "Turkey, hummus & veg wrap + skyr",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 460,
+      "protein_g": 44,
+      "ingredients": [
+        "1 wholegrain tortilla (60 g)",
+        "100 g sliced turkey breast",
+        "40 g hummus",
+        "Roasted pepper, rocket",
+        "150 g 0% skyr"
+      ],
+      "method": "Spread hummus on the tortilla, add turkey, pepper and rocket; roll. Skyr on the side.",
+      "trainingDayTopUp": "+1 apple (+80 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L13",
+      "name": "Spanakorizo with poached eggs",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 500,
+      "protein_g": 26,
+      "ingredients": [
+        "40 g dry rice",
+        "300 g spinach",
+        "1 leek or spring onions",
+        "2 tsp olive oil",
+        "Dill, lemon",
+        "2 eggs",
+        "20 g feta"
+      ],
+      "method": "Soften leek in the oil, add spinach and rice with 200 ml water; simmer 18 minutes. Finish with dill and lemon; top with poached eggs and feta.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L14",
+      "name": "Lean beef & bean chili",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 490,
+      "protein_g": 36,
+      "ingredients": [
+        "120 g 5%-fat beef mince",
+        "80 g cooked kidney beans",
+        "150 g passata",
+        "Onion, pepper, garlic",
+        "Cumin, paprika, chilli",
+        "1 tsp olive oil",
+        "30 g dry rice"
+      ],
+      "method": "Brown beef with onion, pepper and spices 6 minutes. Add passata and beans; simmer 15 minutes. Serve with rice. Batch 3 portions.",
+      "trainingDayTopUp": "+20 g rice (+70 kcal)",
+      "tags": [
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "L15",
+      "name": "Yogurt chicken-salad sandwich + apple",
+      "mealType": "lunch",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 480,
+      "protein_g": 44,
+      "ingredients": [
+        "2 slices wholegrain bread",
+        "100 g cooked chicken breast, shredded",
+        "50 g Greek yogurt",
+        "Celery, mustard, lettuce",
+        "1 apple"
+      ],
+      "method": "Mix chicken, yogurt, chopped celery and mustard. Fill the sandwich with lettuce. Apple on the side.",
+      "trainingDayTopUp": "+1 banana (+100 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D11",
+      "name": "Bakaliaros plaki (baked cod)",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 505,
+      "protein_g": 36,
+      "ingredients": [
+        "180 g cod fillet (fresh or frozen)",
+        "150 g potato, sliced",
+        "150 g tomato, onion and pepper",
+        "1 tbsp olive oil",
+        "Parsley, garlic",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Bake potato, veg and oil at 200 °C for 25 minutes. Lay the cod on top and bake 12–15 minutes more.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D12",
+      "name": "Pork tenderloin, roast apple & cabbage",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 475,
+      "protein_g": 35,
+      "ingredients": [
+        "150 g pork tenderloin",
+        "1 apple, in wedges",
+        "200 g cabbage, shredded",
+        "100 g potato",
+        "2 tsp olive oil",
+        "1 tsp mustard, thyme"
+      ],
+      "method": "Rub pork with mustard and thyme; sear 3 minutes. Roast with apple, cabbage and potato at 200 °C for 20 minutes; rest 5 minutes.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D13",
+      "name": "Turkey-stuffed peppers",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 450,
+      "protein_g": 36,
+      "ingredients": [
+        "2 large peppers",
+        "150 g lean turkey mince",
+        "30 g dry rice",
+        "Grated tomato, onion, mint, parsley",
+        "1 tsp olive oil",
+        "20 g feta"
+      ],
+      "method": "Mix mince, rice, tomato, onion and herbs; fill the peppers. Bake covered at 190 °C for 35 minutes, uncovered 10 more with feta on top.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D14",
+      "name": "Fasolakia with grilled chicken",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 460,
+      "protein_g": 36,
+      "ingredients": [
+        "250 g green beans",
+        "150 g grated tomato, ½ onion",
+        "1 tbsp olive oil",
+        "130 g chicken breast",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Simmer beans, tomato, onion and oil with a splash of water 25 minutes. Grill the chicken 5 minutes per side and serve alongside.",
+      "trainingDayTopUp": "+100 g potato in the beans (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "D15",
+      "name": "Turkey steak, lemon potatoes & horta",
+      "mealType": "dinner",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 435,
+      "protein_g": 40,
+      "ingredients": [
+        "160 g turkey breast steak",
+        "150 g potato wedges",
+        "200 g horta",
+        "2 tsp olive oil",
+        "Lemon, oregano, garlic"
+      ],
+      "method": "Roast potatoes with half the oil, lemon and oregano at 200 °C for 30 minutes. Pan-sear turkey 4 minutes per side. Serve with boiled horta and the rest of the oil.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB1",
+      "name": "Pumpkin-spice overnight oats",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 372,
+      "protein_g": 23,
+      "ingredients": [
+        "40 g rolled oats",
+        "80 g pumpkin purée (roasted, mashed)",
+        "150 ml skimmed milk",
+        "100 g 0% skyr",
+        "10 g walnuts",
+        "5 g honey",
+        "Cinnamon, nutmeg"
+      ],
+      "method": "Mix everything except the walnuts in a jar the night before. Top with walnuts in the morning.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB2",
+      "name": "Baked cinnamon pear & yogurt",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 368,
+      "protein_g": 23,
+      "ingredients": [
+        "1 pear, halved",
+        "200 g 2% Greek yogurt",
+        "15 g rolled oats, toasted",
+        "10 g walnuts",
+        "Cinnamon"
+      ],
+      "method": "Bake the pear halves with cinnamon at 190 °C for 20 minutes (or batch the night before). Serve warm over yogurt with oats and walnuts.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB3",
+      "name": "Leek & feta egg muffins",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 360,
+      "protein_g": 24,
+      "ingredients": [
+        "2 eggs + 2 egg whites",
+        "1 small leek, finely sliced",
+        "25 g feta",
+        "1 tsp olive oil",
+        "Dill, pepper",
+        "1 mandarin"
+      ],
+      "method": "Soften the leek in the oil 5 minutes. Whisk eggs, add leek, feta and dill; pour into 3 muffin cups and bake at 180 °C for 18 minutes. Batch a tray for 3 days.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB4",
+      "name": "Sweet potato & egg hash",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 372,
+      "protein_g": 24,
+      "ingredients": [
+        "150 g sweet potato, diced small",
+        "2 eggs + 1 egg white",
+        "Handful of spinach",
+        "1 tsp olive oil",
+        "50 g 0% skyr",
+        "Paprika"
+      ],
+      "method": "Pan-fry the sweet potato in the oil with a splash of water, covered, 8 minutes. Add spinach, make wells, crack in the eggs, cover 4 minutes. Dollop of skyr.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB5",
+      "name": "Quince-cinnamon skyr bowl",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 369,
+      "protein_g": 31,
+      "ingredients": [
+        "80 g poached quince (no sugar)",
+        "250 g 0% skyr",
+        "25 g rolled oats",
+        "10 g walnuts",
+        "5 g honey",
+        "Cinnamon"
+      ],
+      "method": "Poach quince slices with cinnamon in water 25 minutes (batch for the week). Spoon over skyr with oats, walnuts and honey.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AB6",
+      "name": "Mushroom, thyme & egg toast",
+      "mealType": "breakfast",
+      "collection": "Autumn Breakfast",
+      "servings": 1,
+      "kcal": 373,
+      "protein_g": 26,
+      "ingredients": [
+        "1 slice wholegrain bread",
+        "150 g mushrooms",
+        "1 tsp olive oil",
+        "100 g low-fat cottage cheese or anthotyro",
+        "1 egg",
+        "Thyme",
+        "1 kiwi"
+      ],
+      "method": "Sauté mushrooms with thyme in the oil 5 minutes; fry or poach the egg. Spread cheese on toast, top with mushrooms and egg. Kiwi on the side.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL1",
+      "name": "Roast pumpkin, lentil & chicken salad",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 493,
+      "protein_g": 35,
+      "ingredients": [
+        "50 g dry green lentils",
+        "200 g pumpkin cubes",
+        "80 g grilled chicken breast",
+        "Rocket",
+        "30 g feta",
+        "1 tbsp olive oil, balsamic"
+      ],
+      "method": "Roast pumpkin at 200 °C for 25 minutes; simmer lentils 20 minutes. Toss warm with rocket, sliced chicken and feta; dress.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "autumn",
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL2",
+      "name": "Chicken, mushroom & barley soup",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 473,
+      "protein_g": 44,
+      "ingredients": [
+        "150 g chicken breast",
+        "40 g pearl barley",
+        "150 g mushrooms",
+        "Leek, carrot, celery",
+        "1 tsp olive oil",
+        "Thyme",
+        "10 g grated kefalotyri"
+      ],
+      "method": "Soften veg and mushrooms in the oil, add barley, chicken and 900 ml water; simmer 35 minutes. Shred chicken back in; cheese on top. Batch 3 portions.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL3",
+      "name": "Lean lahanodolmades avgolemono",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 453,
+      "protein_g": 38,
+      "ingredients": [
+        "150 g lean turkey mince",
+        "30 g dry rice",
+        "6–8 cabbage leaves, blanched",
+        "Onion, dill, mint",
+        "1 tsp olive oil",
+        "1 egg + juice of 1 lemon"
+      ],
+      "method": "Mix mince, rice, onion and herbs; roll in cabbage leaves. Simmer covered in water 40 minutes. Whisk egg and lemon, temper with hot broth, pour over off the heat. Batch 3 portions.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL4",
+      "name": "Sweet potato, chicken & tahini bowl",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 445,
+      "protein_g": 41,
+      "ingredients": [
+        "150 g sweet potato",
+        "130 g chicken breast",
+        "100 g broccoli or cauliflower",
+        "Rocket",
+        "10 g tahini + 50 g Greek yogurt + lemon",
+        "1 tsp olive oil"
+      ],
+      "method": "Roast sweet potato and broccoli at 200 °C for 25 minutes. Slice grilled chicken over rocket and veg; whisk the tahini-yogurt dressing and drizzle.",
+      "trainingDayTopUp": "+50 g sweet potato (+45 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL5",
+      "name": "Fasolada with sardines",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 490,
+      "protein_g": 37,
+      "ingredients": [
+        "70 g dry white beans (soaked overnight)",
+        "Carrot, celery, onion, 100 g tomato",
+        "1 tsp olive oil",
+        "90 g tinned sardines in water or grilled fresh"
+      ],
+      "method": "Simmer beans with veg and tomato 60–75 minutes (or pressure-cook 25). Stir in the oil at the end. Serve with sardines on the side, Greek-style. Batch 4 portions.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "autumn",
+        "legumes",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AL6",
+      "name": "Chicken, apple & walnut salad",
+      "mealType": "lunch",
+      "collection": "Autumn Lunch",
+      "servings": 1,
+      "kcal": 507,
+      "protein_g": 43,
+      "ingredients": [
+        "150 g chicken breast",
+        "1 apple, sliced",
+        "10 g walnuts",
+        "Celery, mixed leaves",
+        "50 g Greek yogurt + mustard dressing",
+        "1 tsp olive oil",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Grill and slice the chicken. Toss leaves, celery and apple with the yogurt-mustard dressing; top with chicken and walnuts.",
+      "trainingDayTopUp": "+1 banana (+100 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD1",
+      "name": "Chicken with chestnuts & onions",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 445,
+      "protein_g": 33,
+      "ingredients": [
+        "150 g skinless chicken thigh",
+        "80 g peeled roasted chestnuts",
+        "100 g pearl or small onions",
+        "1 tsp olive oil",
+        "Splash of wine or stock, cinnamon stick, bay leaf",
+        "Green salad, lemon"
+      ],
+      "method": "Brown chicken and onions in the oil 5 minutes. Add chestnuts, liquid and spices; cover and simmer 25 minutes. Salad on the side.",
+      "trainingDayTopUp": "+40 g chestnuts (+80 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD2",
+      "name": "Pork & quince stew",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 430,
+      "protein_g": 35,
+      "ingredients": [
+        "150 g pork tenderloin, cubed",
+        "120 g quince, in wedges",
+        "1 onion",
+        "100 g potato",
+        "1 tsp olive oil",
+        "Cinnamon, clove, bay leaf",
+        "Cabbage-carrot salad with lemon"
+      ],
+      "method": "Brown pork and onion, add quince, potato, spices and 200 ml water; simmer covered 30 minutes. Salad on the side.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD3",
+      "name": "Beef & mushroom giouvetsi",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 477,
+      "protein_g": 37,
+      "ingredients": [
+        "120 g lean beef (5%), cubed or mince",
+        "50 g dry orzo",
+        "100 g mushrooms",
+        "150 g grated tomato",
+        "1 tsp olive oil",
+        "10 g grated kefalotyri"
+      ],
+      "method": "Brown beef and mushrooms, add tomato and simmer 20 minutes. Stir in orzo and 250 ml hot water; bake at 190 °C for 20 minutes. Cheese on top.",
+      "trainingDayTopUp": "+20 g orzo (+70 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD4",
+      "name": "One-pan cod with leeks & lemon",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 425,
+      "protein_g": 35,
+      "ingredients": [
+        "180 g cod fillet",
+        "2 leeks, sliced",
+        "100 g potato, thin slices",
+        "1 tbsp olive oil",
+        "Dill, lemon"
+      ],
+      "method": "Soften leeks and potato in the oil, covered, 12 minutes. Lay cod on top, add lemon and dill, cover 8–10 minutes until it flakes.",
+      "trainingDayTopUp": "+100 g potato (+75 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD5",
+      "name": "Turkey, pumpkin & chickpea stew",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 493,
+      "protein_g": 45,
+      "ingredients": [
+        "150 g turkey breast, cubed",
+        "150 g pumpkin",
+        "80 g cooked chickpeas",
+        "100 g tomato",
+        "1 tsp olive oil",
+        "Cumin, cinnamon",
+        "30 g dry bulgur"
+      ],
+      "method": "Brown turkey with spices, add pumpkin, chickpeas, tomato and 150 ml water; simmer 20 minutes. Serve over bulgur.",
+      "trainingDayTopUp": "+20 g bulgur (+70 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AD6",
+      "name": "Grilled mackerel, beetroot & horta",
+      "mealType": "dinner",
+      "collection": "Autumn Dinner",
+      "servings": 1,
+      "kcal": 490,
+      "protein_g": 30,
+      "ingredients": [
+        "130 g mackerel (kolios) fillet",
+        "150 g roast beetroot",
+        "150 g horta",
+        "1 tsp olive oil, lemon",
+        "1 slice wholegrain bread"
+      ],
+      "method": "Grill mackerel 3–4 minutes per side. Serve with beetroot, boiled horta dressed with oil and lemon, and bread.",
+      "trainingDayTopUp": "+1 slice bread (+100 kcal)",
+      "tags": [
+        "autumn",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS1",
+      "name": "Roast chestnuts + skyr",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 180,
+      "protein_g": 12,
+      "ingredients": [
+        "60 g roasted chestnuts",
+        "100 g 0% skyr"
+      ],
+      "method": "Good before either session.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: either",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS2",
+      "name": "Baked apple with skyr",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 185,
+      "protein_g": 16,
+      "ingredients": [
+        "1 apple, baked with cinnamon",
+        "150 g 0% skyr",
+        "5 g honey"
+      ],
+      "method": "Best before lifting.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: lifting",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS3",
+      "name": "Pomegranate skyr",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 198,
+      "protein_g": 17,
+      "ingredients": [
+        "150 g 0% skyr",
+        "75 g pomegranate seeds",
+        "5 g honey",
+        "5 g walnuts"
+      ],
+      "method": "Best before lifting.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: lifting",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS4",
+      "name": "Dried figs & mandarins",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 180,
+      "protein_g": 3,
+      "ingredients": [
+        "3 dried figs (45 g)",
+        "2 mandarins"
+      ],
+      "method": "Fast carbs — best before basketball.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: basketball",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS5",
+      "name": "Pear & cottage cheese",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 180,
+      "protein_g": 13,
+      "ingredients": [
+        "1 pear",
+        "100 g low-fat cottage cheese"
+      ],
+      "method": "Best before lifting.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: lifting",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "AS6",
+      "name": "Rice cakes, tahini & honey + banana",
+      "mealType": "snack",
+      "collection": "Autumn Snacks",
+      "servings": 1,
+      "kcal": 200,
+      "protein_g": 4,
+      "ingredients": [
+        "2 rice cakes",
+        "7 g tahini",
+        "5 g honey",
+        "1 small banana"
+      ],
+      "method": "Best before basketball.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "autumn",
+        "pre-training",
+        "best before: basketball",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "P1",
+      "name": "Skyr + banana",
+      "mealType": "snack",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 190,
+      "protein_g": 17,
+      "ingredients": [
+        "150 g 0% skyr",
+        "1 medium banana"
+      ],
+      "method": "Best before lifting.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "pre-training",
+        "best before: lifting",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Skyr, rice cakes & honey",
+      "mealType": "snack",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 180,
+      "protein_g": 17,
+      "ingredients": [
+        "150 g 0% skyr",
+        "2 rice cakes",
+        "1 tsp honey"
+      ],
+      "method": "Best before lifting.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "pre-training",
+        "best before: lifting",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Banana, dates & orange",
+      "mealType": "snack",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 200,
+      "protein_g": 3,
+      "ingredients": [
+        "1 medium banana",
+        "2 dates",
+        "1 small orange"
+      ],
+      "method": "Fast carbs, low fibre and fat — best before basketball.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "pre-training",
+        "best before: basketball",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "Honey toast + cottage cheese",
+      "mealType": "snack",
+      "collection": "Everyday",
+      "servings": 1,
+      "kcal": 200,
+      "protein_g": 13,
+      "ingredients": [
+        "1 slice wholegrain bread",
+        "1 tsp honey",
+        "100 g low-fat cottage cheese"
+      ],
+      "method": "Best before basketball.",
+      "trainingDayTopUp": null,
+      "tags": [
+        "pre-training",
+        "best before: basketball",
+        "high-protein",
+        "1600-kcal-plan"
+      ]
+    }
+  ],
+  "collections": [
+    {
+      "name": "Autumn Breakfast",
+      "description": "Seasonal Greek autumn produce — pumpkin, quince, chestnuts, leeks, mushrooms, pomegranate, sweet potato, mackerel.",
+      "recipeIds": [
+        "AB1",
+        "AB2",
+        "AB3",
+        "AB4",
+        "AB5",
+        "AB6"
+      ]
+    },
+    {
+      "name": "Autumn Lunch",
+      "description": "Seasonal Greek autumn produce — pumpkin, quince, chestnuts, leeks, mushrooms, pomegranate, sweet potato, mackerel.",
+      "recipeIds": [
+        "AL1",
+        "AL2",
+        "AL3",
+        "AL4",
+        "AL5",
+        "AL6"
+      ]
+    },
+    {
+      "name": "Autumn Dinner",
+      "description": "Seasonal Greek autumn produce — pumpkin, quince, chestnuts, leeks, mushrooms, pomegranate, sweet potato, mackerel.",
+      "recipeIds": [
+        "AD1",
+        "AD2",
+        "AD3",
+        "AD4",
+        "AD5",
+        "AD6"
+      ]
+    },
+    {
+      "name": "Autumn Snacks",
+      "description": "Seasonal Greek autumn produce — pumpkin, quince, chestnuts, leeks, mushrooms, pomegranate, sweet potato, mackerel.",
+      "recipeIds": [
+        "AS1",
+        "AS2",
+        "AS3",
+        "AS4",
+        "AS5",
+        "AS6"
+      ]
+    },
+    {
+      "name": "Nov–Dec 1,600 kcal plan",
+      "description": "All recipes used in the 1,600 kcal Nov–Dec 2026 plan.",
+      "recipeIds": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5",
+        "L6",
+        "D1",
+        "D2",
+        "D3",
+        "D4",
+        "D5",
+        "D6",
+        "D7",
+        "D8",
+        "D9",
+        "D10",
+        "B7",
+        "B8",
+        "B9",
+        "B10",
+        "B11",
+        "B12",
+        "B13",
+        "B14",
+        "B15",
+        "L7",
+        "L8",
+        "L9",
+        "L10",
+        "L11",
+        "L12",
+        "L13",
+        "L14",
+        "L15",
+        "D11",
+        "D12",
+        "D13",
+        "D14",
+        "D15",
+        "AB1",
+        "AB2",
+        "AB3",
+        "AB4",
+        "AB5",
+        "AB6",
+        "AL1",
+        "AL2",
+        "AL3",
+        "AL4",
+        "AL5",
+        "AL6",
+        "AD1",
+        "AD2",
+        "AD3",
+        "AD4",
+        "AD5",
+        "AD6",
+        "AS1",
+        "AS2",
+        "AS3",
+        "AS4",
+        "AS5",
+        "AS6",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ]
+    }
+  ],
+  "mealPlan": [
+    {
+      "date": "2026-11-09",
+      "menuWeek": "A",
+      "breakfast": "B1",
+      "lunch": "L1",
+      "snack": "P1",
+      "dinner": "D1",
+      "extra": "2 mandarins",
+      "approxKcal": 1560,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-11-10",
+      "menuWeek": "A",
+      "breakfast": "AB2",
+      "lunch": "AL3",
+      "snack": "P1",
+      "dinner": "D2",
+      "extra": "2 mandarins",
+      "approxKcal": 1556,
+      "approxProtein_g": 112
+    },
+    {
+      "date": "2026-11-11",
+      "menuWeek": "A",
+      "breakfast": "B8",
+      "lunch": "L12",
+      "snack": "P1",
+      "dinner": "AD1",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-11-12",
+      "menuWeek": "A",
+      "breakfast": "B11",
+      "lunch": "L3",
+      "snack": "P1",
+      "dinner": "D3",
+      "extra": "2 mandarins",
+      "approxKcal": 1540,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-11-13",
+      "menuWeek": "A",
+      "breakfast": "B15",
+      "lunch": "AL4",
+      "snack": "P1",
+      "dinner": "D4",
+      "extra": "2 mandarins",
+      "approxKcal": 1535,
+      "approxProtein_g": 118
+    },
+    {
+      "date": "2026-11-14",
+      "menuWeek": "A",
+      "breakfast": "B4",
+      "lunch": "L14",
+      "snack": "P1",
+      "dinner": "AD2",
+      "extra": "2 mandarins",
+      "approxKcal": 1565,
+      "approxProtein_g": 111
+    },
+    {
+      "date": "2026-11-15",
+      "menuWeek": "A",
+      "breakfast": "B7",
+      "lunch": "L5",
+      "snack": "P1",
+      "dinner": "D5",
+      "extra": null,
+      "approxKcal": 1590,
+      "approxProtein_g": 134
+    },
+    {
+      "date": "2026-11-16",
+      "menuWeek": "B",
+      "breakfast": "AB5",
+      "lunch": "AL5",
+      "snack": "P1",
+      "dinner": "D6",
+      "extra": "2 mandarins",
+      "approxKcal": 1589,
+      "approxProtein_g": 126
+    },
+    {
+      "date": "2026-11-17",
+      "menuWeek": "B",
+      "breakfast": "B14",
+      "lunch": "L2",
+      "snack": "P1",
+      "dinner": "AD3",
+      "extra": null,
+      "approxKcal": 1522,
+      "approxProtein_g": 109
+    },
+    {
+      "date": "2026-11-18",
+      "menuWeek": "B",
+      "breakfast": "B3",
+      "lunch": "L7",
+      "snack": "P1",
+      "dinner": "D7",
+      "extra": "2 mandarins",
+      "approxKcal": 1580,
+      "approxProtein_g": 109
+    },
+    {
+      "date": "2026-11-19",
+      "menuWeek": "B",
+      "breakfast": "AB3",
+      "lunch": "AL6",
+      "snack": "P1",
+      "dinner": "D8",
+      "extra": "2 mandarins",
+      "approxKcal": 1557,
+      "approxProtein_g": 117
+    },
+    {
+      "date": "2026-11-20",
+      "menuWeek": "B",
+      "breakfast": "B10",
+      "lunch": "L4",
+      "snack": "P1",
+      "dinner": "AD4",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 124
+    },
+    {
+      "date": "2026-11-21",
+      "menuWeek": "B",
+      "breakfast": "B13",
+      "lunch": "L9",
+      "snack": "P1",
+      "dinner": "D9",
+      "extra": null,
+      "approxKcal": 1570,
+      "approxProtein_g": 122
+    },
+    {
+      "date": "2026-11-22",
+      "menuWeek": "B",
+      "breakfast": "AB1",
+      "lunch": "L15",
+      "snack": "P1",
+      "dinner": "D10",
+      "extra": "2 mandarins",
+      "approxKcal": 1522,
+      "approxProtein_g": 125
+    },
+    {
+      "date": "2026-11-23",
+      "menuWeek": "C",
+      "breakfast": "B6",
+      "lunch": "L6",
+      "snack": "P1",
+      "dinner": "AD5",
+      "extra": "2 mandarins",
+      "approxKcal": 1578,
+      "approxProtein_g": 135
+    },
+    {
+      "date": "2026-11-24",
+      "menuWeek": "C",
+      "breakfast": "B9",
+      "lunch": "L11",
+      "snack": "P1",
+      "dinner": "D11",
+      "extra": null,
+      "approxKcal": 1535,
+      "approxProtein_g": 117
+    },
+    {
+      "date": "2026-11-25",
+      "menuWeek": "C",
+      "breakfast": "AB6",
+      "lunch": "AL1",
+      "snack": "P1",
+      "dinner": "D12",
+      "extra": null,
+      "approxKcal": 1531,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-11-26",
+      "menuWeek": "C",
+      "breakfast": "B2",
+      "lunch": "L8",
+      "snack": "P1",
+      "dinner": "AD6",
+      "extra": "2 mandarins",
+      "approxKcal": 1590,
+      "approxProtein_g": 109
+    },
+    {
+      "date": "2026-11-27",
+      "menuWeek": "C",
+      "breakfast": "B5",
+      "lunch": "L13",
+      "snack": "P1",
+      "dinner": "D13",
+      "extra": "2 mandarins",
+      "approxKcal": 1555,
+      "approxProtein_g": 108
+    },
+    {
+      "date": "2026-11-28",
+      "menuWeek": "C",
+      "breakfast": "AB4",
+      "lunch": "AL2",
+      "snack": "P1",
+      "dinner": "D14",
+      "extra": "2 mandarins",
+      "approxKcal": 1565,
+      "approxProtein_g": 122
+    },
+    {
+      "date": "2026-11-29",
+      "menuWeek": "C",
+      "breakfast": "B12",
+      "lunch": "L10",
+      "snack": "P1",
+      "dinner": "D15",
+      "extra": "2 mandarins",
+      "approxKcal": 1583,
+      "approxProtein_g": 119
+    },
+    {
+      "date": "2026-11-30",
+      "menuWeek": "D",
+      "breakfast": "B1",
+      "lunch": "L1",
+      "snack": "P1",
+      "dinner": "D1",
+      "extra": "2 mandarins",
+      "approxKcal": 1560,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-12-01",
+      "menuWeek": "D",
+      "breakfast": "AB2",
+      "lunch": "AL3",
+      "snack": "P1",
+      "dinner": "D2",
+      "extra": "2 mandarins",
+      "approxKcal": 1556,
+      "approxProtein_g": 112
+    },
+    {
+      "date": "2026-12-02",
+      "menuWeek": "D",
+      "breakfast": "B8",
+      "lunch": "L12",
+      "snack": "P1",
+      "dinner": "AD1",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-12-03",
+      "menuWeek": "D",
+      "breakfast": "B11",
+      "lunch": "L3",
+      "snack": "P1",
+      "dinner": "D3",
+      "extra": "2 mandarins",
+      "approxKcal": 1540,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-12-04",
+      "menuWeek": "D",
+      "breakfast": "B15",
+      "lunch": "AL4",
+      "snack": "P1",
+      "dinner": "D4",
+      "extra": "2 mandarins",
+      "approxKcal": 1535,
+      "approxProtein_g": 118
+    },
+    {
+      "date": "2026-12-05",
+      "menuWeek": "D",
+      "breakfast": "B4",
+      "lunch": "L14",
+      "snack": "P1",
+      "dinner": "AD2",
+      "extra": "2 mandarins",
+      "approxKcal": 1565,
+      "approxProtein_g": 111
+    },
+    {
+      "date": "2026-12-06",
+      "menuWeek": "D",
+      "breakfast": "B7",
+      "lunch": "L5",
+      "snack": "P1",
+      "dinner": "D5",
+      "extra": null,
+      "approxKcal": 1590,
+      "approxProtein_g": 134
+    },
+    {
+      "date": "2026-12-07",
+      "menuWeek": "A",
+      "breakfast": "B1",
+      "lunch": "L1",
+      "snack": "P1",
+      "dinner": "D1",
+      "extra": "2 mandarins",
+      "approxKcal": 1560,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-12-08",
+      "menuWeek": "A",
+      "breakfast": "AB2",
+      "lunch": "AL3",
+      "snack": "P1",
+      "dinner": "D2",
+      "extra": "2 mandarins",
+      "approxKcal": 1556,
+      "approxProtein_g": 112
+    },
+    {
+      "date": "2026-12-09",
+      "menuWeek": "A",
+      "breakfast": "B8",
+      "lunch": "L12",
+      "snack": "P1",
+      "dinner": "AD1",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-12-10",
+      "menuWeek": "A",
+      "breakfast": "B11",
+      "lunch": "L3",
+      "snack": "P1",
+      "dinner": "D3",
+      "extra": "2 mandarins",
+      "approxKcal": 1540,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-12-11",
+      "menuWeek": "A",
+      "breakfast": "B15",
+      "lunch": "AL4",
+      "snack": "P1",
+      "dinner": "D4",
+      "extra": "2 mandarins",
+      "approxKcal": 1535,
+      "approxProtein_g": 118
+    },
+    {
+      "date": "2026-12-12",
+      "menuWeek": "A",
+      "breakfast": "B4",
+      "lunch": "L14",
+      "snack": "P1",
+      "dinner": "AD2",
+      "extra": "2 mandarins",
+      "approxKcal": 1565,
+      "approxProtein_g": 111
+    },
+    {
+      "date": "2026-12-13",
+      "menuWeek": "A",
+      "breakfast": "B7",
+      "lunch": "L5",
+      "snack": "P1",
+      "dinner": "D5",
+      "extra": null,
+      "approxKcal": 1590,
+      "approxProtein_g": 134
+    },
+    {
+      "date": "2026-12-14",
+      "menuWeek": "B",
+      "breakfast": "AB5",
+      "lunch": "AL5",
+      "snack": "P1",
+      "dinner": "D6",
+      "extra": "2 mandarins",
+      "approxKcal": 1589,
+      "approxProtein_g": 126
+    },
+    {
+      "date": "2026-12-15",
+      "menuWeek": "B",
+      "breakfast": "B14",
+      "lunch": "L2",
+      "snack": "P1",
+      "dinner": "AD3",
+      "extra": null,
+      "approxKcal": 1522,
+      "approxProtein_g": 109
+    },
+    {
+      "date": "2026-12-16",
+      "menuWeek": "B",
+      "breakfast": "B3",
+      "lunch": "L7",
+      "snack": "P1",
+      "dinner": "D7",
+      "extra": "2 mandarins",
+      "approxKcal": 1580,
+      "approxProtein_g": 109
+    },
+    {
+      "date": "2026-12-17",
+      "menuWeek": "B",
+      "breakfast": "AB3",
+      "lunch": "AL6",
+      "snack": "P1",
+      "dinner": "D8",
+      "extra": "2 mandarins",
+      "approxKcal": 1557,
+      "approxProtein_g": 117
+    },
+    {
+      "date": "2026-12-18",
+      "menuWeek": "B",
+      "breakfast": "B10",
+      "lunch": "L4",
+      "snack": "P1",
+      "dinner": "AD4",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 124
+    },
+    {
+      "date": "2026-12-19",
+      "menuWeek": "B",
+      "breakfast": "B13",
+      "lunch": "L9",
+      "snack": "P1",
+      "dinner": "D9",
+      "extra": null,
+      "approxKcal": 1570,
+      "approxProtein_g": 122
+    },
+    {
+      "date": "2026-12-20",
+      "menuWeek": "B",
+      "breakfast": "AB1",
+      "lunch": "L15",
+      "snack": "P1",
+      "dinner": "D10",
+      "extra": "2 mandarins",
+      "approxKcal": 1522,
+      "approxProtein_g": 125
+    },
+    {
+      "date": "2026-12-21",
+      "menuWeek": "C",
+      "breakfast": "B6",
+      "lunch": "L6",
+      "snack": "P1",
+      "dinner": "AD5",
+      "extra": "2 mandarins",
+      "approxKcal": 1578,
+      "approxProtein_g": 135
+    },
+    {
+      "date": "2026-12-22",
+      "menuWeek": "C",
+      "breakfast": "B9",
+      "lunch": "L11",
+      "snack": "P1",
+      "dinner": "D11",
+      "extra": null,
+      "approxKcal": 1535,
+      "approxProtein_g": 117
+    },
+    {
+      "date": "2026-12-23",
+      "menuWeek": "C",
+      "breakfast": "AB6",
+      "lunch": "AL1",
+      "snack": "P1",
+      "dinner": "D12",
+      "extra": null,
+      "approxKcal": 1531,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-12-24",
+      "festive": true,
+      "note": "Festive day — light protein-heavy daytime meals, ~700–900 kcal family meal"
+    },
+    {
+      "date": "2026-12-25",
+      "festive": true,
+      "note": "Festive day — light protein-heavy daytime meals, ~700–900 kcal family meal"
+    },
+    {
+      "date": "2026-12-26",
+      "menuWeek": "C",
+      "breakfast": "AB4",
+      "lunch": "AL2",
+      "snack": "P1",
+      "dinner": "D14",
+      "extra": "2 mandarins",
+      "approxKcal": 1565,
+      "approxProtein_g": 122
+    },
+    {
+      "date": "2026-12-27",
+      "menuWeek": "C",
+      "breakfast": "B12",
+      "lunch": "L10",
+      "snack": "P1",
+      "dinner": "D15",
+      "extra": "2 mandarins",
+      "approxKcal": 1583,
+      "approxProtein_g": 119
+    },
+    {
+      "date": "2026-12-28",
+      "menuWeek": "D",
+      "breakfast": "B1",
+      "lunch": "L1",
+      "snack": "P1",
+      "dinner": "D1",
+      "extra": "2 mandarins",
+      "approxKcal": 1560,
+      "approxProtein_g": 113
+    },
+    {
+      "date": "2026-12-29",
+      "menuWeek": "D",
+      "breakfast": "AB2",
+      "lunch": "AL3",
+      "snack": "P1",
+      "dinner": "D2",
+      "extra": "2 mandarins",
+      "approxKcal": 1556,
+      "approxProtein_g": 112
+    },
+    {
+      "date": "2026-12-30",
+      "menuWeek": "D",
+      "breakfast": "B8",
+      "lunch": "L12",
+      "snack": "P1",
+      "dinner": "AD1",
+      "extra": "2 mandarins",
+      "approxKcal": 1550,
+      "approxProtein_g": 120
+    },
+    {
+      "date": "2026-12-31",
+      "festive": true,
+      "note": "Festive day — light protein-heavy daytime meals, ~700–900 kcal family meal"
+    }
+  ]
+}
